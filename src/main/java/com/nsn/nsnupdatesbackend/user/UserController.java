@@ -22,9 +22,7 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
-    @PostMapping
-    public ResponseEntity<?> registerUser(@RequestBody UserDto user) {
-        userService.saveUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<UserDto> getUserByUsername(String username) {
+        return ResponseEntity.ok().body(userService.getUserByUsername(username));
     }
 }

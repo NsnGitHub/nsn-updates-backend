@@ -1,5 +1,7 @@
 package com.nsn.nsnupdatesbackend.user;
 
+import com.nsn.nsnupdatesbackend.enums.PrivacySetting;
+import com.nsn.nsnupdatesbackend.registration.RegistrationRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,22 +31,28 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll().stream().map(userMapper::toUserDto).collect(Collectors.toList());
     }
 
-    public void saveUser(UserDto user) {
+    public UserDto getUserByUsername(String username) {
+        return userMapper.toUserDto(userRepository.findUserByUsername(username));
+    }
+
+    public void registerUser(RegistrationRequestDTO user) {
         String encodedPassword = passwordEncoder.encode(user.password());
 
         User newUser = new User();
         newUser.setUsername(user.username());
         newUser.setDisplayName(user.displayName());
         newUser.setEmail(user.email());
-        newUser.setCreatedAt(LocalDateTime.now());
         newUser.setPasswordHash(encodedPassword);
+        newUser.setBio(null);
+        newUser.setPrivacySetting(PrivacySetting.PUBLIC);
+        newUser.setCreatedAt(LocalDateTime.now());
 
         userRepository.save(newUser);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findUserByUsername(username);
 
         if (user == null) {
             throw new UsernameNotFoundException(String.format("User with username '%s' not found.", username));

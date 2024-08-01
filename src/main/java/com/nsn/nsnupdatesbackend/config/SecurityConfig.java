@@ -35,13 +35,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorizeRequest ->
                 authorizeRequest
                     .requestMatchers("/login").permitAll()
-                    .requestMatchers("/register").permitAll()
+                    .requestMatchers("/api/v1/register").permitAll()
                     .anyRequest().authenticated()
-            )
-            .formLogin(formLogin -> formLogin
-                .loginPage("/login")
-                .defaultSuccessUrl("/home", true)
-                .permitAll()
             )
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session ->
