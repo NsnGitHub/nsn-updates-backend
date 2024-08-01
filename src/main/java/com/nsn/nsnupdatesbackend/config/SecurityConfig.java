@@ -21,7 +21,7 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtils jwtUtils;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtils jwtUtils) throws Exception {
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtils jwtUtils) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtils = jwtUtils;
     }
@@ -29,19 +29,25 @@ public class SecurityConfig {
     @Bean
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         AuthenticationManager authenticationManager = authenticationConfiguration.getAuthenticationManager();
-        JWTAuthenticationFilter jwtAuthFilter = new JWTAuthenticationFilter(authenticationManager, jwtUtils);
+        JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(authenticationManager, jwtUtils);
 
         http
             .authorizeHttpRequests(authorizeRequest ->
                 authorizeRequest
                     .requestMatchers("/login").permitAll()
-                    .anyRequest().permitAll()
+                    .requestMatchers("/register").permitAll()
+                    .anyRequest().authenticated()
+            )
+            .formLogin(formLogin -> formLogin
+                .loginPage("/login")
+                .defaultSuccessUrl("/home", true)
+                .permitAll()
             )
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .addFilter(jwtAuthFilter)
+            .addFilter(jwtAuthenticationFilter)
             .addFilterBefore(new JWTAuthorizationFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class);
 
 
