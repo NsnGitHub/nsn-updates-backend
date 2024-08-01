@@ -1,22 +1,27 @@
 package com.nsn.nsnupdatesbackend.filters;
 
+import com.nsn.nsnupdatesbackend.utils.JWTUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
 
-public class JWTAuthFilter extends UsernamePasswordAuthenticationFilter {
+public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
+    private final JWTUtils jwtUtils;
 
-    public JWTAuthFilter(AuthenticationManager authenticationManager) {
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JWTUtils jwtUtils) {
         this.authenticationManager = authenticationManager;
+        this.jwtUtils = jwtUtils;
     }
 
     @Override
@@ -30,7 +35,10 @@ public class JWTAuthFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        System.out.println("successful authentication");
+        User user = (User) authResult.getPrincipal();
+        String accessToken = jwtUtils.createToken(user.getUsername());
+
+        response.setHeader("Authorization", "Bearer " + accessToken);
     }
 
     @Override

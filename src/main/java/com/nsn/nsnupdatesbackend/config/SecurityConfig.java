@@ -1,6 +1,8 @@
 package com.nsn.nsnupdatesbackend.config;
 
-import com.nsn.nsnupdatesbackend.filters.JWTAuthFilter;
+import com.nsn.nsnupdatesbackend.filters.JWTAuthenticationFilter;
+import com.nsn.nsnupdatesbackend.filters.JWTAuthorizationFilter;
+import com.nsn.nsnupdatesbackend.utils.JWTUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,20 +13,23 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final JWTUtils jwtUtils;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtils jwtUtils) throws Exception {
         this.authenticationConfiguration = authenticationConfiguration;
+        this.jwtUtils = jwtUtils;
     }
 
     @Bean
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         AuthenticationManager authenticationManager = authenticationConfiguration.getAuthenticationManager();
-        JWTAuthFilter jwtAuthFilter = new JWTAuthFilter(authenticationManager);
+        JWTAuthenticationFilter jwtAuthFilter = new JWTAuthenticationFilter(authenticationManager, jwtUtils);
 
         http
             .authorizeHttpRequests(authorizeRequest ->
@@ -36,7 +41,9 @@ public class SecurityConfig {
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .addFilter(jwtAuthFilter);
+            .addFilter(jwtAuthFilter)
+            .addFilterBefore(new JWTAuthorizationFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class);
+
 
 
         return http.build();
