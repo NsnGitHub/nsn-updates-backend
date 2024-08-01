@@ -1,24 +1,55 @@
 package com.nsn.nsnupdatesbackend.user;
 
-import com.nsn.nsnupdatesbackend.enums.PrivacySetting;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
-    public UserService(UserRepository userRepository) {
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll().stream().map(userMapper::toUserDto).collect(Collectors.toList());
     }
 
     public void saveUser(UserDto user) {
-        User newUser = new User(user.username(), user.displayName(), user.email(), LocalDateTime.now(), user.password(), "123");
+        String encodedPassword = passwordEncoder.encode(user.password());
+
+        User newUser = new User();
+        newUser.setUsername(user.username());
+        newUser.setDisplayName(user.displayName());
+        newUser.setEmail(user.email());
+        newUser.setCreatedAt(LocalDateTime.now());
+        newUser.setPasswordHash(encodedPassword);
+
         userRepository.save(newUser);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username);
+
+        if (user == null) {
+            throw new UsernameNotFoundException(String.format("User with username '%s' not found.", username));
+        }
+
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPasswordHash(), new ArrayList<>());
     }
 }

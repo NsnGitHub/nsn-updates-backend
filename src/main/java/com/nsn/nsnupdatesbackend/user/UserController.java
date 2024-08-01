@@ -1,10 +1,10 @@
 package com.nsn.nsnupdatesbackend.user;
 
-import com.nsn.nsnupdatesbackend.enums.PrivacySetting;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -18,12 +18,13 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
     @PostMapping
-    public void registerUser(@RequestBody UserDto user) {
+    public ResponseEntity<?> registerUser(@RequestBody UserDto user) {
         userService.saveUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

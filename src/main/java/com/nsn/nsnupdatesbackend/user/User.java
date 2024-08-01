@@ -17,16 +17,14 @@ public class User {
     private String bio;
     private LocalDateTime createdAt;
     private String passwordHash;
-    private String passwordSalt;
     private PrivacySetting privacySetting;
 
-    public User(String username, String displayName, String email, LocalDateTime createdAt, String passwordHash, String passwordSalt) {
+    public User(String username, String displayName, String email, LocalDateTime createdAt, String passwordHash) {
         this.username = username;
         this.displayName = displayName;
         this.email = email;
         this.createdAt = createdAt;
         this.passwordHash = passwordHash;
-        this.passwordSalt = passwordSalt;
 
         this.bio = "";
         this.privacySetting = PrivacySetting.PUBLIC;
@@ -38,6 +36,10 @@ public class User {
 
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getDisplayName() {
@@ -78,14 +80,6 @@ public class User {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
-    }
-
-    public String getPasswordSalt() {
-        return passwordSalt;
-    }
-
-    public void setPasswordSalt(String passwordSalt) {
-        this.passwordSalt = passwordSalt;
     }
 
     public PrivacySetting getPrivacySetting() {
