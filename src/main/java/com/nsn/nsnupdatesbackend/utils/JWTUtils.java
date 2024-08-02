@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.utils;
 
+import com.nsn.nsnupdatesbackend.enums.EJwtToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -14,9 +15,15 @@ import java.util.Date;
 @Component
 public class JWTUtils {
     private final String jwtSecret;
+    private final long jwtAccessTokenDuration;
+    private final long jwtRefreshTokenDuration;
 
-    public JWTUtils(@Value("${JWT_SECRET}") String jwtSecret) {
-        this.jwtSecret = jwtSecret;
+    public JWTUtils(@Value("${JWT_SECRET}") String jwtSecret,
+        @Value("${JWT_ACCESS_TOKEN_TIME}") String jwtAccessTokenDuration,
+        @Value("${JWT_REFRESH_TOKEN_TIME}") String jwtRefreshTokenDuration) {
+            this.jwtSecret = jwtSecret;
+            this.jwtAccessTokenDuration = Long.parseLong(jwtAccessTokenDuration);
+            this.jwtRefreshTokenDuration = Long.parseLong(jwtRefreshTokenDuration);
     }
 
     private Key getKey() {
@@ -24,13 +31,19 @@ public class JWTUtils {
         return Keys.hmacShaKeyFor(bytes);
     }
 
-    public String createToken(String username) {
+    public String createToken(String username, EJwtToken tokenType) {
         Key key = getKey();
+
+        long duration = jwtAccessTokenDuration;
+
+        if (tokenType == EJwtToken.REFRESH_TOKEN) {
+            duration = jwtRefreshTokenDuration;
+        }
 
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 3600 * 1000))
+                .expiration(new Date(System.currentTimeMillis() + duration))
                 .signWith(key)
                 .compact();
     }

@@ -1,6 +1,6 @@
 package com.nsn.nsnupdatesbackend.enums;
 
-public enum PrivacySetting {
+public enum EPrivacySetting {
     PUBLIC,
     FOLLOWER,
     PRIVATE

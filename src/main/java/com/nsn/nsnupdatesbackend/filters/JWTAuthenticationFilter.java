@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.filters;
 
+import com.nsn.nsnupdatesbackend.enums.EJwtToken;
 import com.nsn.nsnupdatesbackend.utils.JWTUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,9 +33,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
         User user = (User) authResult.getPrincipal();
-        String accessToken = jwtUtils.createToken(user.getUsername());
+        String accessToken = jwtUtils.createToken(user.getUsername(), EJwtToken.ACCESS_TOKEN);
+        String refreshToken = jwtUtils.createToken(user.getUsername(), EJwtToken.REFRESH_TOKEN);
 
-        response.setHeader("Authorization", "Bearer " + accessToken);
+        response.setHeader("Access-Token", "Bearer " + accessToken);
+        response.setHeader("Refresh-Token", "Bearer " + refreshToken);
     }
 
     @Override

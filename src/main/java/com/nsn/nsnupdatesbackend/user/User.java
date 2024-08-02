@@ -1,6 +1,6 @@
 package com.nsn.nsnupdatesbackend.user;
 
-import com.nsn.nsnupdatesbackend.enums.PrivacySetting;
+import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ public class User {
     private String bio;
     private LocalDateTime createdAt;
     private String passwordHash;
-    private PrivacySetting privacySetting;
+    private EPrivacySetting privacySetting;
 
     public User(String username, String displayName, String email, LocalDateTime createdAt, String passwordHash) {
         this.username = username;
@@ -27,7 +27,7 @@ public class User {
         this.passwordHash = passwordHash;
 
         this.bio = "";
-        this.privacySetting = PrivacySetting.PUBLIC;
+        this.privacySetting = EPrivacySetting.PUBLIC;
     }
 
     public User() {
@@ -86,11 +86,11 @@ public class User {
         this.passwordHash = passwordHash;
     }
 
-    public PrivacySetting getPrivacySetting() {
+    public EPrivacySetting getPrivacySetting() {
         return privacySetting;
     }
 
-    public void setPrivacySetting(PrivacySetting privacySetting) {
+    public void setPrivacySetting(EPrivacySetting privacySetting) {
         this.privacySetting = privacySetting;
     }
 }

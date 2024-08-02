@@ -1,6 +1,6 @@
 package com.nsn.nsnupdatesbackend.user;
 
-import com.nsn.nsnupdatesbackend.enums.PrivacySetting;
+import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
 import com.nsn.nsnupdatesbackend.registration.RegistrationRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,7 +44,7 @@ public class UserService implements UserDetailsService {
         newUser.setEmail(user.email());
         newUser.setPasswordHash(encodedPassword);
         newUser.setBio(null);
-        newUser.setPrivacySetting(PrivacySetting.PUBLIC);
+        newUser.setPrivacySetting(EPrivacySetting.PUBLIC);
         newUser.setCreatedAt(LocalDateTime.now());
 
         userRepository.save(newUser);
