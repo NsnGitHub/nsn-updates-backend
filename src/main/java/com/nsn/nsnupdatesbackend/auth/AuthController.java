@@ -1,30 +1,53 @@
 package com.nsn.nsnupdatesbackend.auth;
 
 import com.nsn.nsnupdatesbackend.enums.EJwtToken;
-import com.nsn.nsnupdatesbackend.user.User;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import com.nsn.nsnupdatesbackend.user.UserDto;
 import com.nsn.nsnupdatesbackend.user.UserService;
 import com.nsn.nsnupdatesbackend.utils.JWTUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
 
-@Controller
+@RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
     private final JWTUtils jwtUtils;
     private final UserService userService;
+    private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthController(JWTUtils jwtUtils, UserService userService) {
+    public AuthController(JWTUtils jwtUtils, UserService userService, AuthenticationManager authenticationManager) {
         this.jwtUtils = jwtUtils;
         this.userService = userService;
+        this.authenticationManager = authenticationManager;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> signIn(@RequestBody AuthLogInReq logInReq) {
+        try {
+            UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(logInReq.username(), logInReq.password());
+            Authentication authRes = authenticationManager.authenticate(authRequest);
+            User user = (User) authRes.getPrincipal();
+
+            String accessToken = jwtUtils.createToken(user.getUsername(), EJwtToken.ACCESS_TOKEN);
+            String refreshToken = jwtUtils.createToken(user.getUsername(), EJwtToken.REFRESH_TOKEN);
+
+            System.out.println(accessToken);
+            System.out.println(refreshToken);
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     @PostMapping("/refresh")

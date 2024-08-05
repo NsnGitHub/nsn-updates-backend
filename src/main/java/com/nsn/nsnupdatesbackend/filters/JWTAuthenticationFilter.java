@@ -39,9 +39,4 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setHeader("Access-Token", "Bearer " + accessToken);
         response.setHeader("Refresh-Token", "Bearer " + refreshToken);
     }
-
-    @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
-        System.out.println("unsuccessful authentication");
-    }
 }

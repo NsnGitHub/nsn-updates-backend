@@ -1,6 +1,5 @@
 package com.nsn.nsnupdatesbackend.config;
 
-import com.nsn.nsnupdatesbackend.filters.JWTAuthenticationFilter;
 import com.nsn.nsnupdatesbackend.filters.JWTAuthorizationFilter;
 import com.nsn.nsnupdatesbackend.utils.JWTUtils;
 import org.springframework.context.annotation.Bean;
@@ -28,13 +27,11 @@ public class SecurityConfig {
 
     @Bean
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        AuthenticationManager authenticationManager = authenticationConfiguration.getAuthenticationManager();
-        JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(authenticationManager, jwtUtils);
 
         http
             .authorizeHttpRequests(authorizeRequest ->
                 authorizeRequest
-                    .requestMatchers("/login").permitAll()
+                    .requestMatchers("/api/v1/auth/**").permitAll()
                     .requestMatchers("/api/v1/register").permitAll()
                     .anyRequest().authenticated()
             )
@@ -42,10 +39,7 @@ public class SecurityConfig {
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .addFilter(jwtAuthenticationFilter)
             .addFilterBefore(new JWTAuthorizationFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class);
-
-
 
         return http.build();
     }
@@ -53,5 +47,10 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager() throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 }
