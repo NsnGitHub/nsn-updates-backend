@@ -60,7 +60,6 @@ public class AuthService {
                 throw new UsernameNotFoundException("User not found");
             }
 
-
             String newAccessToken = jwtUtils.createToken(user.getUsername(), EJwtToken.ACCESS_TOKEN);
 
             return new AuthDto(newAccessToken, jwtToken);
