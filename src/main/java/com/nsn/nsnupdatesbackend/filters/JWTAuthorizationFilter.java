@@ -1,7 +1,6 @@
 package com.nsn.nsnupdatesbackend.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nsn.nsnupdatesbackend.enums.EJwtToken;
 import com.nsn.nsnupdatesbackend.exception.APIException;
 import com.nsn.nsnupdatesbackend.utils.JWTUtils;
 import jakarta.servlet.FilterChain;

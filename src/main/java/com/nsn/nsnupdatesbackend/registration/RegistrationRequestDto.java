@@ -1,6 +1,6 @@
 package com.nsn.nsnupdatesbackend.registration;
 
-public record RegistrationRequestDTO(
+public record RegistrationRequestDto(
         String username,
         String displayName,
         String email,

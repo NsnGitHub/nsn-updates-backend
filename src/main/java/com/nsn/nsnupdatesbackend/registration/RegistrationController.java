@@ -17,7 +17,7 @@ public class RegistrationController {
     }
 
     @PostMapping
-    public ResponseEntity<?> registerUser(@RequestBody RegistrationRequestDTO user) {
+    public ResponseEntity<?> registerUser(@RequestBody RegistrationRequestDto user) {
         userService.registerUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

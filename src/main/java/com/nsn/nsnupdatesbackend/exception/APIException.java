@@ -1,6 +1,5 @@
 package com.nsn.nsnupdatesbackend.exception;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.http.HttpStatus;
 

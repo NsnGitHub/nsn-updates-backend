@@ -1,7 +1,7 @@
 package com.nsn.nsnupdatesbackend.user;
 
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
-import com.nsn.nsnupdatesbackend.registration.RegistrationRequestDTO;
+import com.nsn.nsnupdatesbackend.registration.RegistrationRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -39,7 +39,7 @@ public class AppUserService implements UserDetailsService {
         return userMapper.toUserDto(getUserByUsername(username));
     }
 
-    public void registerUser(RegistrationRequestDTO user) {
+    public void registerUser(RegistrationRequestDto user) {
         String encodedPassword = passwordEncoder.encode(user.password());
 
         AppUser newUser = new AppUser();
