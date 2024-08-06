@@ -46,7 +46,8 @@ public class AuthController {
 
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            throw e;
+            System.out.println(e);
+            throw (e);
         }
     }
 

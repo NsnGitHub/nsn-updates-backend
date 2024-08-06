@@ -13,30 +13,30 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    private final AuthenticationManager authenticationManager;
-    private final JWTUtils jwtUtils;
-
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JWTUtils jwtUtils) {
-        this.authenticationManager = authenticationManager;
-        this.jwtUtils = jwtUtils;
-    }
-
-    @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
-        return authenticationManager.authenticate(authRequest);
-    }
-
-    @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
-        User user = (User) authResult.getPrincipal();
-        String accessToken = jwtUtils.createToken(user.getUsername(), EJwtToken.ACCESS_TOKEN);
-        String refreshToken = jwtUtils.createToken(user.getUsername(), EJwtToken.REFRESH_TOKEN);
-
-        response.setHeader("Access-Token", "Bearer " + accessToken);
-        response.setHeader("Refresh-Token", "Bearer " + refreshToken);
-    }
+//    private final AuthenticationManager authenticationManager;
+//    private final JWTUtils jwtUtils;
+//
+//    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JWTUtils jwtUtils) {
+//        this.authenticationManager = authenticationManager;
+//        this.jwtUtils = jwtUtils;
+//    }
+//
+//    @Override
+//    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+//        String username = request.getParameter("username");
+//        String password = request.getParameter("password");
+//
+//        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
+//        return authenticationManager.authenticate(authRequest);
+//    }
+//
+//    @Override
+//    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
+//        User user = (User) authResult.getPrincipal();
+//        String accessToken = jwtUtils.createToken(user.getUsername(), EJwtToken.ACCESS_TOKEN);
+//        String refreshToken = jwtUtils.createToken(user.getUsername(), EJwtToken.REFRESH_TOKEN);
+//
+//        response.setHeader("Access-Token", "Bearer " + accessToken);
+//        response.setHeader("Refresh-Token", "Bearer " + refreshToken);
+//    }
 }
