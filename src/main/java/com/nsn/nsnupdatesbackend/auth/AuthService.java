@@ -32,7 +32,7 @@ public class AuthService {
         this.authenticationManager = authenticationManager;
     }
 
-    public AuthDto login(AuthLogInReqDTO authLogInReqDTO) {
+    public AuthDto login(AuthLogInReqDto authLogInReqDTO) {
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
             authLogInReqDTO.username(), authLogInReqDTO.password()
         );
