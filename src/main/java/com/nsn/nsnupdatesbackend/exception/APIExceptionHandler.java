@@ -1,6 +1,7 @@
 package com.nsn.nsnupdatesbackend.exception;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,13 @@ public class APIExceptionHandler {
     public ResponseEntity<?> handleException(UsernameNotFoundException exception, HttpServletRequest request) {
         APIException apiException = new APIException(request.getServletPath(), HttpStatus.BAD_REQUEST,
                 exception.getMessage(), ZonedDateTime.now(ZoneId.of("UTC")));
+        return ResponseEntity.status(apiException.getStatus()).body(apiException);
+    }
+
+    @ExceptionHandler(SignatureException.class)
+    public ResponseEntity<?> handleException(SignatureException exception, HttpServletRequest request) {
+        APIException apiException = new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED,
+                "Invalid Token", ZonedDateTime.now(ZoneId.of("UTC")));
         return ResponseEntity.status(apiException.getStatus()).body(apiException);
     }
 

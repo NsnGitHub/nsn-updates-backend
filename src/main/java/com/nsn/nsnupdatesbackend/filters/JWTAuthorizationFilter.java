@@ -1,6 +1,7 @@
 package com.nsn.nsnupdatesbackend.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nsn.nsnupdatesbackend.enums.EJwtToken;
 import com.nsn.nsnupdatesbackend.exception.APIException;
 import com.nsn.nsnupdatesbackend.utils.JWTUtils;
 import jakarta.servlet.FilterChain;
@@ -39,6 +40,10 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             if (authorization != null && authorization.startsWith("Bearer ")) {
                 String token = authorization.substring(7);
                 try {
+                    if (!jwtUtils.isAccessToken(token)) {
+                        throw new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, "Invalid Token",
+                            ZonedDateTime.now(ZoneId.of("UTC")));
+                    }
                     String username = jwtUtils.getUsername(token);
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, null, null);
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
@@ -55,7 +60,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     private void handleException(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setStatus(401);
         response.setContentType(APPLICATION_JSON_VALUE);
-        APIException apiException = new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, e.getMessage(),
+        APIException apiException = new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, "Invalid Token",
             ZonedDateTime.now(ZoneId.of("UTC")));
         new ObjectMapper().registerModule(new JavaTimeModule()).writeValue(response.getOutputStream(), apiException);
     }

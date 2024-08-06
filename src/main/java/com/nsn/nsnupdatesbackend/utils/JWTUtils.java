@@ -1,17 +1,23 @@
 package com.nsn.nsnupdatesbackend.utils;
 
 import com.nsn.nsnupdatesbackend.enums.EJwtToken;
+import com.nsn.nsnupdatesbackend.exception.APIException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.HashMap;
 
 @Component
 public class JWTUtils {
@@ -33,6 +39,10 @@ public class JWTUtils {
     }
 
     public String createToken(String username, EJwtToken tokenType) {
+        HashMap<String, Object> claims = new HashMap<>();
+
+        claims.put("token_role", tokenType);
+
         Key key = getKey();
 
         long duration = jwtAccessTokenDuration;
@@ -42,6 +52,7 @@ public class JWTUtils {
         }
 
         return Jwts.builder()
+                .claims(claims)
                 .subject(username)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + duration))
@@ -49,15 +60,23 @@ public class JWTUtils {
                 .compact();
     }
 
-    private Claims parseToken(String token) {
+    public Claims extractClaims(String token) {
         Key key = getKey();
-
         return Jwts.parser().verifyWith((SecretKey) key).build().parseSignedClaims(token).getPayload();
     }
 
+    public boolean isAccessToken(String token) {
+        String tokenRole = extractClaims(token).get("token_role").toString();
+        return tokenRole.equals(EJwtToken.ACCESS_TOKEN.toString());
+    }
+
+    public boolean isRefreshToken(String token) {
+        String tokenRole = extractClaims(token).get("token_role").toString();
+        return tokenRole.equals(EJwtToken.REFRESH_TOKEN.toString());
+    }
+
     public String getUsername(String token) {
-        Claims claims = parseToken(token);
-        return claims.getSubject();
+        return extractClaims(token).getSubject();
     }
 
 }

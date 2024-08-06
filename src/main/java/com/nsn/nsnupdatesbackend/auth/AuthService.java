@@ -48,8 +48,12 @@ public class AuthService {
     public AuthDto handleRefreshToken(String refreshToken, HttpServletRequest request) throws APIException {
         if (refreshToken != null && refreshToken.startsWith("Bearer ")) {
             String jwtToken = refreshToken.substring(7);
-            String username = jwtUtils.getUsername(jwtToken);
 
+            if (!jwtUtils.isRefreshToken(jwtToken)) {
+                throw new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, "Invalid Token",
+                    ZonedDateTime.now(ZoneId.of("UTC")));
+            }
+            String username = jwtUtils.getUsername(jwtToken);
             AppUser user = userService.getUserByUsername(username);
 
             if (user == null) {
@@ -61,7 +65,7 @@ public class AuthService {
 
             return new AuthDto(newAccessToken, jwtToken);
         } else {
-            throw new APIException(request.getServletPath(), HttpStatus.BAD_REQUEST, "Invalid JWT Refresh Token",
+            throw new APIException(request.getServletPath(), HttpStatus.BAD_REQUEST, "Invalid Token",
                 ZonedDateTime.now(ZoneId.of("UTC")));
         }
     }
