@@ -15,30 +15,34 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService implements UserDetailsService {
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
+public class AppUserService implements UserDetailsService {
+    private final AppUserRepository userRepository;
+    private final AppUserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    public AppUserService(AppUserRepository userRepository, AppUserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public List<UserDto> getAllUsers() {
+    public List<AppUserDto> getAllUsers() {
         return userRepository.findAll().stream().map(userMapper::toUserDto).collect(Collectors.toList());
     }
 
-    public UserDto getUserByUsername(String username) {
-        return userMapper.toUserDto(userRepository.findUserByUsername(username));
+    public AppUser getUserByUsername(String username) {
+        return userRepository.findUserByUsername(username);
+    }
+
+    public AppUserDto getUserDtoByUsername(String username) {
+        return userMapper.toUserDto(getUserByUsername(username));
     }
 
     public void registerUser(RegistrationRequestDTO user) {
         String encodedPassword = passwordEncoder.encode(user.password());
 
-        User newUser = new User();
+        AppUser newUser = new AppUser();
         newUser.setUsername(user.username());
         newUser.setDisplayName(user.displayName());
         newUser.setEmail(user.email());
@@ -52,7 +56,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findUserByUsername(username);
+        AppUser user = userRepository.findUserByUsername(username);
 
         if (user == null) {
             throw new UsernameNotFoundException(String.format("User with username '%s' not found.", username));

@@ -12,6 +12,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Replaced by AuthController as I needed more functionality to invalid refresh tokens.
+ */
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 //    private final AuthenticationManager authenticationManager;
 //    private final JWTUtils jwtUtils;

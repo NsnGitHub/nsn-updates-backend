@@ -1,7 +1,6 @@
 package com.nsn.nsnupdatesbackend.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,20 +8,20 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1/user")
-public class UserController {
-    private final UserService userService;
+public class AppUserController {
+    private final AppUserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public AppUserController(AppUserService userService) {
         this.userService = userService;
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
+    public ResponseEntity<List<AppUserDto>> getAllUsers() {
         return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
-    public ResponseEntity<UserDto> getUserByUsername(String username) {
-        return ResponseEntity.ok().body(userService.getUserByUsername(username));
+    public ResponseEntity<AppUserDto> getUserDtoByUsername(String username) {
+        return ResponseEntity.ok().body(userService.getUserDtoByUsername(username));
     }
 }

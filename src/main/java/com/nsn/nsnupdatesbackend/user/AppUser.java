@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name="user_data")
-public class User {
+public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,7 +19,7 @@ public class User {
     private String passwordHash;
     private EPrivacySetting privacySetting;
 
-    public User(String username, String displayName, String email, LocalDateTime createdAt, String passwordHash) {
+    public AppUser(String username, String displayName, String email, LocalDateTime createdAt, String passwordHash) {
         this.username = username;
         this.displayName = displayName;
         this.email = email;
@@ -30,7 +30,7 @@ public class User {
         this.privacySetting = EPrivacySetting.PUBLIC;
     }
 
-    public User() {
+    public AppUser() {
 
     }
 

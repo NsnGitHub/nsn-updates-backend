@@ -1,6 +1,6 @@
 package com.nsn.nsnupdatesbackend.auth;
 
-public record AuthLogInReq(
+public record AuthLogInReqDTO(
         String username,
         String password
 ) {
