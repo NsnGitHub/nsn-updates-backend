@@ -2,6 +2,7 @@ package com.nsn.nsnupdatesbackend.user;
 
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
 import com.nsn.nsnupdatesbackend.registration.RegistrationRequestDto;
+import jakarta.persistence.EntityExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -41,7 +42,26 @@ public class AppUserService implements UserDetailsService {
         return userMapper.toUserDto(getUserByUsername(username));
     }
 
+    private boolean isUsernameRegistered(String requestedUsername) {
+        AppUser user = userRepository.findUserByUsername(requestedUsername);
+        return user != null;
+    }
+
+    private boolean isEmailRegistered(String email) {
+        AppUser user = userRepository.findUserByEmail(email);
+        return user != null;
+    }
+
     public void registerUser(RegistrationRequestDto user) {
+
+        if (isUsernameRegistered(user.username())) {
+            throw new EntityExistsException("Username is already in use");
+        }
+
+        if (isEmailRegistered(user.email())) {
+            throw new EntityExistsException("Email is already in use");
+        }
+
         String encodedPassword = passwordEncoder.encode(user.password());
 
         AppUser newUser = new AppUser();
