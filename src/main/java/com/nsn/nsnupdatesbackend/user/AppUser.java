@@ -8,10 +8,11 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
-@Table(name="user_data")
+@Table(name="app_user")
+@SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
 public class AppUser {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
     private Integer id;
 
     private String username;
