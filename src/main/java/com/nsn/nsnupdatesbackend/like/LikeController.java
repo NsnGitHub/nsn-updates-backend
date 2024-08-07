@@ -26,7 +26,6 @@ public class LikeController {
     public ResponseEntity<?> like(@RequestHeader("Authorization") String token, @RequestBody LikeReqDto likeReqDto) {
         String jwtToken = token.substring(7);
         String username = jwtUtils.getUsername(jwtToken);
-
         likeService.like(username, likeReqDto.updateId());
 
         return ResponseEntity.ok().build();
