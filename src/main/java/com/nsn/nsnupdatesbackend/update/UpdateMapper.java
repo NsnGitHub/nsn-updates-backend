@@ -1,8 +1,6 @@
 package com.nsn.nsnupdatesbackend.update;
 
 import com.nsn.nsnupdatesbackend.user.AppUser;
-import com.nsn.nsnupdatesbackend.user.AppUserDto;
-import com.nsn.nsnupdatesbackend.user.AppUserMapper;
 import org.springframework.stereotype.Service;
 
 @Service

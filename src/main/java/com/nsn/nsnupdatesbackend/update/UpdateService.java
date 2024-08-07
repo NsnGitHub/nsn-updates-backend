@@ -1,6 +1,7 @@
 package com.nsn.nsnupdatesbackend.update;
 
 import com.nsn.nsnupdatesbackend.user.AppUser;
+import com.nsn.nsnupdatesbackend.user.AppUserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,11 +17,13 @@ public class UpdateService {
 
     private final UpdateRepository updateRepository;
     private final UpdateMapper updateMapper;
+    private final AppUserService appUserService;
 
     @Autowired
-    public UpdateService(UpdateRepository updateRepository, UpdateMapper updateMapper) {
+    public UpdateService(UpdateRepository updateRepository, UpdateMapper updateMapper, AppUserService appUserService) {
         this.updateRepository = updateRepository;
         this.updateMapper = updateMapper;
+        this.appUserService = appUserService;
     }
 
     public List<UpdateDto> getAllUpdates() {
@@ -36,8 +39,9 @@ public class UpdateService {
         }
     }
 
-    public void savePost(UpdatePostReqDto updatePostReqDto, AppUser user) {
-        Update newUpdate = new Update(updatePostReqDto.content(), ZonedDateTime.now(ZoneId.of("UTC")), user);
+    public void savePost(String username, UpdatePostReqDto updatePostReqDto) {
+        AppUser appUser = appUserService.getUserByUsername(username);
+        Update newUpdate = new Update(updatePostReqDto.content(), ZonedDateTime.now(ZoneId.of("UTC")), appUser);
         updateRepository.save(newUpdate);
     }
 }

@@ -1,7 +1,5 @@
 package com.nsn.nsnupdatesbackend.like;
 
-import com.nsn.nsnupdatesbackend.user.AppUser;
-import com.nsn.nsnupdatesbackend.user.AppUserService;
 import com.nsn.nsnupdatesbackend.utils.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +10,11 @@ import org.springframework.web.bind.annotation.*;
 public class LikeController {
 
     private final LikeService likeService;
-    private final AppUserService appUserService;
     private final JWTUtils jwtUtils;
 
     @Autowired
-    public LikeController(LikeService likeService, AppUserService appUserService, JWTUtils jwtUtils) {
+    public LikeController(LikeService likeService, JWTUtils jwtUtils) {
         this.likeService = likeService;
-        this.appUserService = appUserService;
         this.jwtUtils = jwtUtils;
     }
 

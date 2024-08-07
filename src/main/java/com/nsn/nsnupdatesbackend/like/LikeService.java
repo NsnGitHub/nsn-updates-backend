@@ -1,6 +1,5 @@
 package com.nsn.nsnupdatesbackend.like;
 
-import com.nsn.nsnupdatesbackend.exception.APIException;
 import com.nsn.nsnupdatesbackend.update.Update;
 import com.nsn.nsnupdatesbackend.update.UpdateService;
 import com.nsn.nsnupdatesbackend.user.AppUser;

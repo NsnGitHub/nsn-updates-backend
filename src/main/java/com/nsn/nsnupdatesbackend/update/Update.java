@@ -1,11 +1,9 @@
 package com.nsn.nsnupdatesbackend.update;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.nsn.nsnupdatesbackend.like.Like;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.Fetch;
 
 import java.time.ZonedDateTime;
 import java.util.List;
