@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UpdateService {
@@ -20,8 +21,8 @@ public class UpdateService {
         this.updateMapper = updateMapper;
     }
 
-    public List<Update> getAllPosts() {
-        return updateRepository.findAll();
+    public List<UpdateDto> getAllUpdates() {
+        return updateRepository.findAll().stream().map(updateMapper::toUpdateDto).collect(Collectors.toList());
     }
 
     public void savePost(Update update) {

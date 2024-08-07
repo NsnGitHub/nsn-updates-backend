@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "api/v1/update")
@@ -31,8 +32,8 @@ public class UpdateController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Update>> getAllUpdates() {
-        return ResponseEntity.ok().body(updateService.getAllPosts());
+    public ResponseEntity<List<UpdateDto>> getAllUpdates() {
+        return ResponseEntity.ok().body(updateService.getAllUpdates());
     }
 
     @PostMapping

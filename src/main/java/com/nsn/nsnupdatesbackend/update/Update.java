@@ -1,8 +1,10 @@
 package com.nsn.nsnupdatesbackend.update;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.Fetch;
 
 import java.time.ZonedDateTime;
 
@@ -16,7 +18,7 @@ public class Update {
     @Size(min = 1, max = 1000)
     private String content;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "app_user_id")
     private AppUser appUser;
 
@@ -42,5 +44,13 @@ public class Update {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public AppUser getAppUser() {
+        return appUser;
+    }
+
+    public void setAppUser(AppUser appUser) {
+        this.appUser = appUser;
     }
 }
