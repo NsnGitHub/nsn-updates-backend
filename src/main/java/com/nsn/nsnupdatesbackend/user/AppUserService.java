@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,7 +51,7 @@ public class AppUserService implements UserDetailsService {
         newUser.setPasswordHash(encodedPassword);
         newUser.setBio(null);
         newUser.setPrivacySetting(EPrivacySetting.PUBLIC);
-        newUser.setCreatedAt(LocalDateTime.now());
+        newUser.setCreatedAt(ZonedDateTime.now(ZoneId.of("UTC")));
 
         userRepository.save(newUser);
     }

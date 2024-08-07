@@ -1,25 +1,33 @@
 package com.nsn.nsnupdatesbackend.user;
 
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
+import com.nsn.nsnupdatesbackend.update.Update;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 @Entity
 @Table(name="user_data")
 public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
+
     private String username;
     private String displayName;
     private String email;
     private String bio;
-    private LocalDateTime createdAt;
+    private ZonedDateTime createdAt;
     private String passwordHash;
+
+    @Enumerated(EnumType.STRING)
     private EPrivacySetting privacySetting;
 
-    public AppUser(String username, String displayName, String email, LocalDateTime createdAt, String passwordHash) {
+    @OneToMany(mappedBy="appUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Update> updates;
+
+    public AppUser(String username, String displayName, String email, ZonedDateTime createdAt, String passwordHash) {
         this.username = username;
         this.displayName = displayName;
         this.email = email;
@@ -34,7 +42,7 @@ public class AppUser {
 
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -70,11 +78,11 @@ public class AppUser {
         this.bio = bio;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public ZonedDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(ZonedDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
