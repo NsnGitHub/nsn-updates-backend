@@ -5,6 +5,7 @@ import com.nsn.nsnupdatesbackend.exception.APIException;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import com.nsn.nsnupdatesbackend.utils.JWTUtils;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,7 +58,7 @@ public class AuthService {
             AppUser user = userService.getUserByUsername(username);
 
             if (user == null) {
-                throw new UsernameNotFoundException("User not found");
+                throw new EntityNotFoundException("User not found");
             }
 
             String newAccessToken = jwtUtils.createToken(user.getUsername(), EJwtToken.ACCESS_TOKEN);

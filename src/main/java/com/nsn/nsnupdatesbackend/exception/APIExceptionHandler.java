@@ -1,6 +1,7 @@
 package com.nsn.nsnupdatesbackend.exception;
 
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +31,8 @@ public class APIExceptionHandler {
         return ResponseEntity.status(apiException.getStatus()).body(apiException);
     }
 
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<?> handleException(UsernameNotFoundException exception, HttpServletRequest request) {
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<?> handleException(EntityNotFoundException exception, HttpServletRequest request) {
         APIException apiException = new APIException(request.getServletPath(), HttpStatus.BAD_REQUEST,
                 exception.getMessage(), ZonedDateTime.now(ZoneId.of("UTC")));
         return ResponseEntity.status(apiException.getStatus()).body(apiException);
