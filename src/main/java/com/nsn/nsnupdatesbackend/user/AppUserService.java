@@ -3,6 +3,7 @@ package com.nsn.nsnupdatesbackend.user;
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
 import com.nsn.nsnupdatesbackend.registration.RegistrationRequestDto;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -35,7 +36,12 @@ public class AppUserService implements UserDetailsService {
     }
 
     public AppUser getUserByUsername(String username) {
-        return userRepository.findUserByUsername(username);
+        AppUser user = userRepository.findUserByUsername(username);
+
+        if (user == null) {
+            throw new EntityNotFoundException("User not found");
+        }
+        return user;
     }
 
     public AppUserDto getUserDtoByUsername(String username) {

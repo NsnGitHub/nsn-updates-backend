@@ -1,6 +1,7 @@
 package com.nsn.nsnupdatesbackend.user;
 
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
+import com.nsn.nsnupdatesbackend.like.Like;
 import com.nsn.nsnupdatesbackend.update.Update;
 import jakarta.persistence.*;
 
@@ -8,7 +9,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
-@Table(name="app_user")
+@Table(name = "app_user")
 @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
 public class AppUser {
     @Id
@@ -27,6 +28,9 @@ public class AppUser {
 
     @OneToMany(mappedBy="appUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Update> updates;
+
+    @OneToMany(mappedBy="appUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes;
 
     public AppUser(String username, String displayName, String email, ZonedDateTime createdAt, String passwordHash) {
         this.username = username;

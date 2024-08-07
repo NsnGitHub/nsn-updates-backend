@@ -38,19 +38,10 @@ public class UpdateController {
 
     @PostMapping
     public ResponseEntity<?> postUpdate(@RequestHeader("Authorization") String token, @RequestBody UpdatePostReqDto updatePostReqDto, HttpServletRequest request) {
-        if (!(token != null && token.startsWith("Bearer "))) {
-            throw new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, "Invalid Token", ZonedDateTime.now(ZoneId.of("UTC")));
-        }
-
         String jwtToken = token.substring(7);
-
         String username = jwtUtils.getUsername(jwtToken);
         AppUser user = appUserService.getUserByUsername(username);
-        if (user == null) {
-            throw new EntityNotFoundException("User not found");
-        }
-        Update newUpdate = new Update(updatePostReqDto.content(), ZonedDateTime.now(ZoneId.of("UTC")), user);
-        updateService.savePost(newUpdate);
+        updateService.savePost(updatePostReqDto, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
