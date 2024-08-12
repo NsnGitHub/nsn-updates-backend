@@ -32,9 +32,9 @@ public class AuthService {
         this.authenticationManager = authenticationManager;
     }
 
-    public AuthDto login(AuthLogInReqDto authLogInReqDTO) {
+    public AuthDto login(String username, String password) {
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
-            authLogInReqDTO.username(), authLogInReqDTO.password()
+            username, password
         );
         Authentication authRes = authenticationManager.authenticate(authRequest);
         User user = (User) authRes.getPrincipal();

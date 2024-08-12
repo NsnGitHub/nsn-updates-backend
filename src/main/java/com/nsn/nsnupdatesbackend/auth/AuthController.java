@@ -19,7 +19,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthDto> signIn(@RequestBody AuthLogInReqDto logInReq) {
-        return ResponseEntity.ok().body(authService.login(logInReq));
+        return ResponseEntity.ok().body(authService.login(logInReq.username(), logInReq.password()));
     }
 
     @PostMapping("/refresh")

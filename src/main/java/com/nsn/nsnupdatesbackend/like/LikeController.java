@@ -5,28 +5,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/v1/like")
 public class LikeController {
 
     private final LikeService likeService;
-    private final JWTUtils jwtUtils;
 
     @Autowired
-    public LikeController(LikeService likeService, JWTUtils jwtUtils) {
+    public LikeController(LikeService likeService) {
         this.likeService = likeService;
-        this.jwtUtils = jwtUtils;
     }
 
     @PostMapping
-    public ResponseEntity<?> like(@RequestHeader("Authorization") String token, @RequestBody LikeReqDto likeReqDto) {
-        String jwtToken = token.substring(7);
-        String username = jwtUtils.getUsername(jwtToken);
-        likeService.like(username, likeReqDto.updateId());
-
+    public ResponseEntity<?> like(Principal principal, @RequestBody LikeReqDto likeReqDto) {
+        likeService.like(principal.getName(), likeReqDto.updateId());
         return ResponseEntity.ok().build();
     }
-//
+
 //    @PostMapping
 //    public ResponseEntity<?> unLike(@RequestBody LikeReqDto likeReqDto){
 //        return ResponseEntity.ok().build();

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -29,11 +30,8 @@ public class UpdateController {
     }
 
     @PostMapping
-    public ResponseEntity<?> postUpdate(@RequestHeader("Authorization") String token, @RequestBody UpdatePostReqDto updatePostReqDto, HttpServletRequest request) {
-        String jwtToken = token.substring(7);
-        String username = jwtUtils.getUsername(jwtToken);
-        updateService.savePost(username, updatePostReqDto);
-
+    public ResponseEntity<?> postUpdate(Principal principal, @RequestBody UpdatePostReqDto updatePostReqDto, HttpServletRequest request) {
+        updateService.savePost(principal.getName(), updatePostReqDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
