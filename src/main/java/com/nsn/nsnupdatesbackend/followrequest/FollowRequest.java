@@ -34,4 +34,6 @@ public class FollowRequest {
     public void setTarget(AppUser target) {
         this.target = target;
     }
+
+
 }

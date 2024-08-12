@@ -26,8 +26,16 @@ public class FollowRequestController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/respond")
-    public void respond() {
+    @PostMapping("/request/accept")
+    public ResponseEntity<?> acceptRequest(Principal principal, @RequestBody FollowRequestDto followRequestDto) {
+        followRequestService.acceptFollowRequest(followRequestDto.requesterUsername(), principal.getName());
+        return ResponseEntity.ok().build();
+    }
 
+
+    @PostMapping("/request/reject")
+    public ResponseEntity<?> rejectRequest(Principal principal, @RequestBody FollowRequestDto followRequestDto) {
+        followRequestService.rejectFollowRequest(followRequestDto.requesterUsername(), principal.getName());
+        return ResponseEntity.ok().build();
     }
 }
