@@ -1,6 +1,8 @@
 package com.nsn.nsnupdatesbackend.user;
 
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
+import com.nsn.nsnupdatesbackend.follow.Follow;
+import com.nsn.nsnupdatesbackend.follow.FollowRequest;
 import com.nsn.nsnupdatesbackend.like.Like;
 import com.nsn.nsnupdatesbackend.update.Update;
 import jakarta.persistence.*;
@@ -31,6 +33,18 @@ public class AppUser {
 
     @OneToMany(mappedBy="appUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likes;
+
+    @OneToMany(mappedBy="follower", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follow> following;
+
+    @OneToMany(mappedBy = "followee", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follow> followedBy;
+
+    @OneToMany(mappedBy="requester", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FollowRequest> requestsSent;
+
+    @OneToMany(mappedBy="target", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FollowRequest> requestsReceived;
 
     public AppUser(String username, String displayName, String email, ZonedDateTime createdAt, String passwordHash) {
         this.username = username;
