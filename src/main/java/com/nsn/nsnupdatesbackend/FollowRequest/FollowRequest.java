@@ -20,5 +20,18 @@ public class FollowRequest {
     @JoinColumn(name="target_id")
     private AppUser target;
 
+    @Enumerated(EnumType.STRING)
     private EFollowRequestStatus status;
+
+    public void setStatus(EFollowRequestStatus status) {
+        this.status = status;
+    }
+
+    public void setRequester(AppUser requester) {
+        this.requester = requester;
+    }
+
+    public void setTarget(AppUser target) {
+        this.target = target;
+    }
 }

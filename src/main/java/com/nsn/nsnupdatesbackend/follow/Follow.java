@@ -17,4 +17,13 @@ public class Follow {
     @ManyToOne
     @JoinColumn(name="followee_id")
     private AppUser followee;
+
+    public Follow (AppUser follower, AppUser followee) {
+        this.follower = follower;
+        this.followee = followee;
+    }
+
+    public Follow() {
+
+    }
 }
