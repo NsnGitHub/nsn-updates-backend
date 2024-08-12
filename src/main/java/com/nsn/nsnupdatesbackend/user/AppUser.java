@@ -2,7 +2,7 @@ package com.nsn.nsnupdatesbackend.user;
 
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
 import com.nsn.nsnupdatesbackend.follow.Follow;
-import com.nsn.nsnupdatesbackend.FollowRequest.FollowRequest;
+import com.nsn.nsnupdatesbackend.followrequest.FollowRequest;
 import com.nsn.nsnupdatesbackend.like.Like;
 import com.nsn.nsnupdatesbackend.update.Update;
 import jakarta.persistence.*;

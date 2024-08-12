@@ -1,4 +1,4 @@
-package com.nsn.nsnupdatesbackend.FollowRequest;
+package com.nsn.nsnupdatesbackend.followrequest;
 
 public record FollowRequestDto(
         String requesterUsername,

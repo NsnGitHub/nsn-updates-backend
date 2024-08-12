@@ -1,4 +1,4 @@
-package com.nsn.nsnupdatesbackend.FollowRequest;
+package com.nsn.nsnupdatesbackend.followrequest;
 
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;

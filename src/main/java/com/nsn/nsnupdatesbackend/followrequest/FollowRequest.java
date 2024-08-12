@@ -1,4 +1,4 @@
-package com.nsn.nsnupdatesbackend.FollowRequest;
+package com.nsn.nsnupdatesbackend.followrequest;
 
 import com.nsn.nsnupdatesbackend.enums.EFollowRequestStatus;
 import com.nsn.nsnupdatesbackend.user.AppUser;
