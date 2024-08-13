@@ -1,11 +1,11 @@
 package com.nsn.nsnupdatesbackend.followrequest;
 
 import com.nsn.nsnupdatesbackend.enums.EFollowRequestStatus;
-import com.nsn.nsnupdatesbackend.follow.Follow;
 import com.nsn.nsnupdatesbackend.follow.FollowService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import com.nsn.nsnupdatesbackend.utils.UserNotFoundUtil;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,13 +25,19 @@ public class FollowRequestService {
     }
 
     public void saveFollowRequest(String requesterUsername, String targetUsername) {
-        FollowRequest followRequest = new FollowRequest();
-
         AppUser requester = appUserService.getUserByUsername(requesterUsername);
         AppUser target = appUserService.getUserByUsername(targetUsername);
 
-        UserNotFoundUtil.throwIfRequesterAndTargetUserNotFound(requester, target);
+        if (followRequestRepository.existsFollowRequestByRequesterAndTargetAndStatus(requester, target, EFollowRequestStatus.FOLLOW_PENDING)) {
+            throw new EntityExistsException("Request has already been made to target");
+        }
 
+        if (followRequestRepository.countFollowRequestsByRequesterAndTargetAndStatus(requester, target, EFollowRequestStatus.FOLLOW_REJECTED) >= 1) {
+            // Hide fact that user's request has already been declined
+            throw new EntityExistsException("Request has already been made to target");
+        }
+
+        FollowRequest followRequest = new FollowRequest();
         followRequest.setRequester(requester);
         followRequest.setTarget(target);
         followRequest.setStatus(EFollowRequestStatus.FOLLOW_PENDING);

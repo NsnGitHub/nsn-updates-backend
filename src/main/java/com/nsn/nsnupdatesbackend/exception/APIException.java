@@ -11,11 +11,11 @@ public class APIException extends RuntimeException {
     private final HttpStatus status;
     private final ZonedDateTime timestamp;
 
-    public APIException(String path, HttpStatus status, String message, ZonedDateTime timestamp) {
+    public APIException(String path, HttpStatus status, String message) {
         super(message);
         this.path = path;
         this.status = status;
-        this.timestamp = timestamp;
+        this.timestamp = ZonedDateTime.now();
     }
 
     public String getPath() {

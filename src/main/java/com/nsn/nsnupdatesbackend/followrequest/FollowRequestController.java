@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/api/v1/follow")
+@RequestMapping("/api/v1/follow/request")
 public class FollowRequestController {
 
     private final FollowRequestService followRequestService;
@@ -20,20 +20,20 @@ public class FollowRequestController {
         this.followRequestService = followRequestService;
     }
 
-    @PostMapping("/request")
+    @PostMapping
     public ResponseEntity<?> request(Principal principal, @RequestBody FollowRequestDto followRequestDto) {
         followRequestService.saveFollowRequest(principal.getName(), followRequestDto.targetUsername());
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/request/accept")
+    @PostMapping("/accept")
     public ResponseEntity<?> acceptRequest(Principal principal, @RequestBody FollowRequestDto followRequestDto) {
         followRequestService.acceptFollowRequest(followRequestDto.requesterUsername(), principal.getName());
         return ResponseEntity.ok().build();
     }
 
 
-    @PostMapping("/request/reject")
+    @PostMapping("/reject")
     public ResponseEntity<?> rejectRequest(Principal principal, @RequestBody FollowRequestDto followRequestDto) {
         followRequestService.rejectFollowRequest(followRequestDto.requesterUsername(), principal.getName());
         return ResponseEntity.ok().build();

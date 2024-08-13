@@ -26,4 +26,12 @@ public class Follow {
     public Follow() {
 
     }
+
+    public AppUser getFollower() {
+        return this.follower;
+    }
+
+    public AppUser getFollowee() {
+        return this.followee;
+    }
 }

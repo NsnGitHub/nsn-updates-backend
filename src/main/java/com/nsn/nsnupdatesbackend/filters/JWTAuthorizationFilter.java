@@ -40,8 +40,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                 String token = authorization.substring(7);
                 try {
                     if (!jwtUtils.isAccessToken(token)) {
-                        throw new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, "Invalid Token",
-                            ZonedDateTime.now(ZoneId.of("UTC")));
+                        throw new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, "Invalid Token");
                     }
                     String username = jwtUtils.getUsername(token);
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, null, null);
@@ -59,8 +58,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     private void handleException(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setStatus(401);
         response.setContentType(APPLICATION_JSON_VALUE);
-        APIException apiException = new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, "Invalid Token",
-            ZonedDateTime.now(ZoneId.of("UTC")));
+        APIException apiException = new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, "Invalid Token");
         new ObjectMapper().registerModule(new JavaTimeModule()).writeValue(response.getOutputStream(), apiException);
     }
 }
