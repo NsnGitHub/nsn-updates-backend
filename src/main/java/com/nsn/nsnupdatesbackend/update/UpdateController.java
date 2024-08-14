@@ -25,6 +25,11 @@ public class UpdateController {
         return ResponseEntity.ok().body(updateService.getUpdatesFromInboxByUsername(principal.getName()));
     }
 
+    @GetMapping("/paginated")
+    public ResponseEntity<List<UpdateDto>> getAllUpdatesForUserPaginated(Principal principal, @RequestParam int page, @RequestParam int size) {
+        return ResponseEntity.ok().body(updateService.getUpdatesFromInboxByUsernamePaginated(page, size, principal.getName()));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<?> postUpdate(Principal principal, @RequestBody UpdatePostReqDto updatePostReqDto) {
         updateService.createPost(principal.getName(), updatePostReqDto);

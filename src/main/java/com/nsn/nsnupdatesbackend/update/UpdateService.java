@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -69,6 +70,20 @@ public class UpdateService {
         AppUser user = appUserService.getUserByUsername(username);
         List<Update> inbox = user.getInbox();
 
+        // Sort
+        inbox.sort(Comparator.comparing(Update::getCreatedAt).reversed());
+
         return inbox.stream().map(updateMapper::toUpdateDto).toList();
+    }
+
+    public List<UpdateDto> getUpdatesFromInboxByUsernamePaginated(int page, int size, String username) {
+        AppUser user = appUserService.getUserByUsername(username);
+        List<Update> inbox = user.getInbox();
+
+        // Sort
+        inbox.sort(Comparator.comparing(Update::getCreatedAt).reversed());
+
+        // Implement pagination with stream skip and limit, then map to UpdateDto
+        return inbox.stream().skip((long) page * size).limit(size).map(updateMapper::toUpdateDto).toList();
     }
 }
