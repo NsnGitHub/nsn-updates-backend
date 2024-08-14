@@ -8,5 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface LikeRepository extends JpaRepository<Like, Integer> {
     Like findLikeById(Integer id);
+    Like findLikeByAppUserAndUpdate(AppUser user, Update update);
     boolean existsByAppUserAndUpdate(AppUser user, Update update);
 }

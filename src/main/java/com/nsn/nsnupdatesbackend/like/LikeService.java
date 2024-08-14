@@ -50,4 +50,20 @@ public class LikeService {
         Like like = new Like(user, update);
         likeRepository.save(like);
     }
+
+    public void unlike(String username, Integer updateId) {
+        AppUser user = appUserService.getUserByUsername(username);
+        Update update = updateService.getUpdateById(updateId);
+
+        if (isUpdateMadeByUser(user, update)) {
+            throw new AccessDeniedException("User cannot unlike their own post");
+        }
+
+        if (!isUpdateLikedByUser(user, update)) {
+            throw new EntityExistsException("User cannot unlike a post they did not like");
+        }
+
+        Like like = likeRepository.findLikeByAppUserAndUpdate(user, update);
+        likeRepository.delete(like);
+    }
 }
