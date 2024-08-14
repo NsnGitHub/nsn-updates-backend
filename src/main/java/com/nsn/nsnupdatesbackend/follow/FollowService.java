@@ -18,7 +18,8 @@ public class FollowService {
     private final AppUserMapper appUserMapper;
 
     @Autowired
-    public FollowService(FollowRepository followRepository, AppUserService appUserService, AppUserMapper appUserMapper) {
+    public FollowService(FollowRepository followRepository, AppUserService appUserService,
+                         AppUserMapper appUserMapper) {
         this.followRepository = followRepository;
         this.appUserService = appUserService;
         this.appUserMapper = appUserMapper;

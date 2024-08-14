@@ -28,11 +28,13 @@ public class FollowRequestService {
         AppUser requester = appUserService.getUserByUsername(requesterUsername);
         AppUser target = appUserService.getUserByUsername(targetUsername);
 
-        if (followRequestRepository.existsFollowRequestByRequesterAndTargetAndStatus(requester, target, EFollowRequestStatus.FOLLOW_PENDING)) {
+        if (followRequestRepository.existsFollowRequestByRequesterAndTargetAndStatus(requester, target,
+                EFollowRequestStatus.FOLLOW_PENDING)) {
             throw new EntityExistsException("Request has already been made to target");
         }
 
-        if (followRequestRepository.countFollowRequestsByRequesterAndTargetAndStatus(requester, target, EFollowRequestStatus.FOLLOW_REJECTED) >= 1) {
+        if (followRequestRepository.countFollowRequestsByRequesterAndTargetAndStatus(requester, target,
+                EFollowRequestStatus.FOLLOW_REJECTED) >= 1) {
             // Hide fact that user's request has already been declined
             throw new EntityExistsException("Request has already been made to target");
         }

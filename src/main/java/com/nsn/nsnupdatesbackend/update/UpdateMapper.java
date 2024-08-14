@@ -7,7 +7,8 @@ import org.springframework.stereotype.Service;
 public class UpdateMapper {
 
     public UpdateDto toUpdateDto(Update update) {
-        return new UpdateDto(update.getId(), update.getContent(), update.getCreatedAt(), update.getNumberOfLikes(), toUpdatePosterDto(update.getAppUser()));
+        return new UpdateDto(update.getId(), update.getContent(), update.getCreatedAt(), update.getNumberOfLikes(),
+                toUpdatePosterDto(update.getAppUser()));
     }
 
     private UpdatePosterDto toUpdatePosterDto(AppUser user) {

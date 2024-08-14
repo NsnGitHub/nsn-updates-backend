@@ -59,7 +59,7 @@ public class APIExceptionHandler {
     }
 
     @ExceptionHandler(APIException.class)
-    public ResponseEntity<?> handleException(APIException apiException, HttpServletRequest request) {
+    public ResponseEntity<?> handleException(APIException apiException) {
         return ResponseEntity.status(apiException.getStatus()).body(apiException);
     }
 

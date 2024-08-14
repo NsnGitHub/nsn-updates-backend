@@ -1,6 +1,5 @@
 package com.nsn.nsnupdatesbackend.like;
 
-import com.nsn.nsnupdatesbackend.utils.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

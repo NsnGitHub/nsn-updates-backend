@@ -23,7 +23,8 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthDto> refreshToken(@RequestHeader("Authorization") String token, HttpServletRequest request) throws APIException {
+    public ResponseEntity<AuthDto> refreshToken(@RequestHeader("Authorization") String token,
+                                                HttpServletRequest request) throws APIException {
         return ResponseEntity.ok().body(authService.handleRefreshToken(token, request));
     }
 }
