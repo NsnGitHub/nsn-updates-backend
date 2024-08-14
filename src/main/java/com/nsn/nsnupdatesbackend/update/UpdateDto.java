@@ -7,6 +7,6 @@ public record UpdateDto(
         String content,
         ZonedDateTime createdAt,
         int numberOfLikes,
-        UpdatePosterDto appUser
+        UpdatePosterDto postingUser
 ) {
 }

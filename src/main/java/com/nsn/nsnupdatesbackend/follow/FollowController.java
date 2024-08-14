@@ -23,12 +23,12 @@ public class FollowController {
 
     @GetMapping("/followers")
     public ResponseEntity<List<AppUserDto>> getFollowers(Principal principal) {
-        return ResponseEntity.ok().body(followService.getFollowersForUser(principal.getName()));
+        return ResponseEntity.ok().body(followService.getFollowersDtoForUsername(principal.getName()));
     }
 
     @GetMapping("/following")
     public ResponseEntity<List<AppUserDto>> getFollowing(Principal principal) {
-        return ResponseEntity.ok().body(followService.getFollowingForUser(principal.getName()));
+        return ResponseEntity.ok().body(followService.getFollowingDtoForUsername(principal.getName()));
     }
 
 }

@@ -81,6 +81,10 @@ public class AppUserService implements UserDetailsService {
         userRepository.save(newUser);
     }
 
+    public void saveUser(AppUser user) {
+        userRepository.save(user);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AppUser user = userRepository.findUserByUsername(username);
@@ -89,6 +93,8 @@ public class AppUserService implements UserDetailsService {
             throw new UsernameNotFoundException(String.format("User with username '%s' not found.", username));
         }
 
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPasswordHash(), new ArrayList<>());
+        return new org.springframework.security.core.userdetails.User(
+            user.getUsername(),user.getPasswordHash(),new ArrayList<>()
+        );
     }
 }

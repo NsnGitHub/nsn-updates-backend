@@ -1,7 +1,5 @@
 package com.nsn.nsnupdatesbackend.update;
 
-import com.nsn.nsnupdatesbackend.utils.JWTUtils;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,22 +14,20 @@ import java.util.List;
 public class UpdateController {
 
     private final UpdateService updateService;
-    private final JWTUtils jwtUtils;
 
     @Autowired
-    public UpdateController(UpdateService updateService, JWTUtils jwtUtils) {
+    public UpdateController(UpdateService updateService) {
         this.updateService = updateService;
-        this.jwtUtils = jwtUtils;
     }
 
     @GetMapping
-    public ResponseEntity<List<UpdateDto>> getAllUpdates() {
-        return ResponseEntity.ok().body(updateService.getAllUpdates());
+    public ResponseEntity<List<UpdateDto>> getAllUpdatesForUser(Principal principal) {
+        return ResponseEntity.ok().body(updateService.getUpdatesFromInboxByUsername(principal.getName()));
     }
 
-    @PostMapping
-    public ResponseEntity<?> postUpdate(Principal principal, @RequestBody UpdatePostReqDto updatePostReqDto, HttpServletRequest request) {
-        updateService.savePost(principal.getName(), updatePostReqDto);
+    @PostMapping("/create")
+    public ResponseEntity<?> postUpdate(Principal principal, @RequestBody UpdatePostReqDto updatePostReqDto) {
+        updateService.createPost(principal.getName(), updatePostReqDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

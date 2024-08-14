@@ -8,6 +8,7 @@ import com.nsn.nsnupdatesbackend.update.Update;
 import jakarta.persistence.*;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -45,6 +46,14 @@ public class AppUser {
 
     @OneToMany(mappedBy="target", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FollowRequest> requestsReceived;
+
+    @ManyToMany
+    @JoinTable(
+            name = "inbox",
+            joinColumns = @JoinColumn(name = "app_user_id"),
+            inverseJoinColumns = @JoinColumn(name = "update_id")
+    )
+    private final List<Update> inboxedUpdates = new ArrayList<>();
 
     public AppUser(String username, String displayName, String email, ZonedDateTime createdAt, String passwordHash) {
         this.username = username;
@@ -119,5 +128,9 @@ public class AppUser {
 
     public void setPrivacySetting(EPrivacySetting privacySetting) {
         this.privacySetting = privacySetting;
+    }
+
+    public List<Update> getInbox() {
+        return inboxedUpdates;
     }
 }

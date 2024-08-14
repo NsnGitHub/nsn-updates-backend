@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,10 +26,15 @@ public class Update {
     @OneToMany(mappedBy = "update", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likes;
 
+    @ManyToMany(mappedBy = "inboxedUpdates", cascade = CascadeType.ALL)
+    private List<AppUser> inboxes;
+
     public Update(String content, ZonedDateTime createdAt, AppUser appUser) {
         this.content = content;
         this.createdAt = createdAt;
         this.appUser = appUser;
+        this.likes = new ArrayList<>();
+        this.inboxes = new ArrayList<>();
     }
 
     public Update() {}
