@@ -1,5 +1,7 @@
 package com.nsn.nsnupdatesbackend.like;
 
+import com.nsn.nsnupdatesbackend.enums.ENotificationType;
+import com.nsn.nsnupdatesbackend.notification.NotificationService;
 import com.nsn.nsnupdatesbackend.update.Update;
 import com.nsn.nsnupdatesbackend.update.UpdateService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
@@ -15,12 +17,14 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final AppUserService appUserService;
     private final UpdateService updateService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public LikeService(LikeRepository likeRepository, AppUserService appUserService, UpdateService updateService) {
+    public LikeService(LikeRepository likeRepository, AppUserService appUserService, UpdateService updateService, NotificationService notificationService) {
         this.likeRepository = likeRepository;
         this.appUserService = appUserService;
         this.updateService = updateService;
+        this.notificationService = notificationService;
     }
 
     public Like getLikeById(Integer id) {
@@ -49,6 +53,8 @@ public class LikeService {
 
         Like like = new Like(user, update);
         likeRepository.save(like);
+
+        notificationService.createNotification(user.getId(), update.getAppUser().getId(), ENotificationType.NOTIFICATION_UPDATE_LIKED);
     }
 
     public void unlike(String username, Integer updateId) {
