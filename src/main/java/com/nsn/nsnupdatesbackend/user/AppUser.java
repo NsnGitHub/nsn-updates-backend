@@ -4,6 +4,7 @@ import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
 import com.nsn.nsnupdatesbackend.follow.Follow;
 import com.nsn.nsnupdatesbackend.followrequest.FollowRequest;
 import com.nsn.nsnupdatesbackend.like.Like;
+import com.nsn.nsnupdatesbackend.notification.Notification;
 import com.nsn.nsnupdatesbackend.update.Update;
 import jakarta.persistence.*;
 
@@ -54,6 +55,12 @@ public class AppUser {
             inverseJoinColumns = @JoinColumn(name = "update_id")
     )
     private final List<Update> inboxedUpdates = new ArrayList<>();
+
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notificationsReceived;
+
+    @OneToMany(mappedBy = "actor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notificationsTriggered;
 
     public AppUser(String username, String displayName, String email, ZonedDateTime createdAt, String passwordHash) {
         this.username = username;
