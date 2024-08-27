@@ -29,17 +29,28 @@ public class FollowService {
         this.notificationService = notificationService;
     }
 
-    public void follow(String followerUsername, String followeeUsername) {
+    public void followFromUsername(String followerUsername, String followeeUsername) {
         AppUser follower = appUserService.getUserByUsername(followerUsername);
         AppUser followee = appUserService.getUserByUsername(followeeUsername);
 
-        UserNotFoundUtil.throwIfRequesterAndTargetUserNotFound(follower, followee);
-
-        Follow follow = new Follow(follower, followee);
-        followRepository.save(follow);
+        follow(follower, followee);
 
         notificationService.createNotificationFromUserAndTarget(followee, follower,
                 ENotificationType.NOTIFICATION_FOLLOW_ACCEPTED);
+    }
+
+    // Creating follow object from AppUser objects means the followees privacy setting was on public
+    // so further verification was needed.
+    public void followFromAppUser(AppUser follower, AppUser followee) {
+        follow(follower, followee);
+
+        notificationService.createNotificationFromUserAndTarget(follower, followee,
+                ENotificationType.NOTIFICATION_FOLLOW_PUBLIC);
+    }
+
+    private void follow(AppUser follower, AppUser followee) {
+        Follow follow = new Follow(follower, followee);
+        followRepository.save(follow);
     }
 
     public List<AppUserDto> getFollowersDtoForUsername(String username) {

@@ -2,6 +2,7 @@ package com.nsn.nsnupdatesbackend.followrequest;
 
 import com.nsn.nsnupdatesbackend.enums.EFollowRequestStatus;
 import com.nsn.nsnupdatesbackend.enums.ENotificationType;
+import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
 import com.nsn.nsnupdatesbackend.follow.FollowService;
 import com.nsn.nsnupdatesbackend.notification.NotificationService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
@@ -31,6 +32,12 @@ public class FollowRequestService {
     public void saveFollowRequest(String requesterUsername, String targetUsername) {
         AppUser requester = appUserService.getUserByUsername(requesterUsername);
         AppUser target = appUserService.getUserByUsername(targetUsername);
+
+        if (target.getPrivacySetting() == EPrivacySetting.PUBLIC) {
+            followService.followFromAppUser(requester, target);
+
+            return;
+        }
 
         if (followRequestRepository.existsFollowRequestByRequesterAndTargetAndStatus(requester, target,
                 EFollowRequestStatus.FOLLOW_PENDING)) {
@@ -65,7 +72,7 @@ public class FollowRequestService {
         FollowRequest followRequest = getFollowRequest(requesterUsername, targetUsername);
         followRequest.setStatus(EFollowRequestStatus.FOLLOW_ACCEPTED);
         followRequestRepository.save(followRequest);
-        followService.follow(requesterUsername, targetUsername);
+        followService.followFromUsername(requesterUsername, targetUsername);
     }
 
     private FollowRequest getFollowRequest(String requesterUsername, String targetUsername) {
