@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.followrequest;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ public class FollowRequestController {
     }
 
     @PostMapping
-    public ResponseEntity<?> request(Principal principal, @RequestBody FollowRequestDto followRequestDto) {
+    public ResponseEntity<?> request(Principal principal, @RequestBody FollowRequestDto followRequestDto) throws BadRequestException {
         followRequestService.saveFollowRequest(principal.getName(), followRequestDto.targetUsername());
         return ResponseEntity.ok().build();
     }

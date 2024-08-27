@@ -10,6 +10,7 @@ import com.nsn.nsnupdatesbackend.user.AppUserService;
 import com.nsn.nsnupdatesbackend.utils.UserNotFoundUtil;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,14 +30,22 @@ public class FollowRequestService {
             this.notificationService = notificationService;
     }
 
-    public void saveFollowRequest(String requesterUsername, String targetUsername) {
+    public void saveFollowRequest(String requesterUsername, String targetUsername) throws BadRequestException {
         AppUser requester = appUserService.getUserByUsername(requesterUsername);
         AppUser target = appUserService.getUserByUsername(targetUsername);
+
+        if (requester == target) {
+            throw new BadRequestException("User cannot follow themself");
+        }
 
         if (target.getPrivacySetting() == EPrivacySetting.PUBLIC) {
             followService.followFromAppUser(requester, target);
 
             return;
+        }
+
+        if (target.getPrivacySetting() == EPrivacySetting.PRIVATE) {
+            throw new BadRequestException("Target user's privacy setting is on private");
         }
 
         if (followRequestRepository.existsFollowRequestByRequesterAndTargetAndStatus(requester, target,

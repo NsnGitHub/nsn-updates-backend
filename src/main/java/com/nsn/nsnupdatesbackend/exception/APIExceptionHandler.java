@@ -4,6 +4,7 @@ import io.jsonwebtoken.security.SignatureException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -54,6 +55,13 @@ public class APIExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleException(AccessDeniedException exception, HttpServletRequest request) {
         APIException apiException = new APIException(request.getServletPath(), HttpStatus.FORBIDDEN,
+            exception.getMessage());
+        return ResponseEntity.status(apiException.getStatus()).body(apiException);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<?> handleException(BadRequestException exception, HttpServletRequest request) {
+        APIException apiException = new APIException(request.getServletPath(), HttpStatus.BAD_REQUEST,
             exception.getMessage());
         return ResponseEntity.status(apiException.getStatus()).body(apiException);
     }
