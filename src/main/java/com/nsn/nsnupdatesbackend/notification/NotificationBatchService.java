@@ -30,6 +30,7 @@ public class NotificationBatchService {
         );
 
         map.forEach((user, notifications) -> {
+            System.out.println(user.getUsername());
             Map<ENotificationType, List<Notification>> notificationTypeMap = notifications
                     .stream()
                     .collect(Collectors.groupingBy(Notification::getNotificationType));

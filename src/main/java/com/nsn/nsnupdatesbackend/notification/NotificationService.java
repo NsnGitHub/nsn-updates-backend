@@ -15,14 +15,26 @@ public class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
-    public void createNotification(Integer userId, Integer targetId, ENotificationType  eNotificationType) {
-        AppUser userDummy = new AppUser();
-        userDummy.setId(userId);
+    public void createNotificationFromUserAndTarget(AppUser user, AppUser target,
+                                                     ENotificationType  eNotificationType) {
 
-        AppUser targetDummy = new AppUser();
-        targetDummy.setId(targetId);
-
-       Notification notification = new Notification(userDummy, targetDummy, eNotificationType);
+       Notification notification = new Notification(target, user, eNotificationType);
        notificationRepository.save(notification);
     }
+
+//    /**
+//        Notifications only created when something happens with another service, their user and target AppUser objects
+//        should be loaded, so it would have access to the ID
+//    **/
+//    public void createNotificationFromUserIdAndTargetId(Integer userId, Integer targetId,
+//                                                     ENotificationType  eNotificationType) {
+//        AppUser userDummy = new AppUser();
+//        userDummy.setId(userId);
+//
+//        AppUser targetDummy = new AppUser();
+//        targetDummy.setId(targetId);
+//
+//       Notification notification = new Notification(userDummy, targetDummy, eNotificationType);
+//       notificationRepository.save(notification);
+//    }
 }

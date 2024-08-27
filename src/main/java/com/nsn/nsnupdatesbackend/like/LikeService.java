@@ -54,7 +54,8 @@ public class LikeService {
         Like like = new Like(user, update);
         likeRepository.save(like);
 
-        notificationService.createNotification(user.getId(), update.getAppUser().getId(), ENotificationType.NOTIFICATION_UPDATE_LIKED);
+        notificationService.createNotificationFromUserAndTarget(user, update.getAppUser(),
+                ENotificationType.NOTIFICATION_UPDATE_LIKED);
     }
 
     public void unlike(String username, Integer updateId) {

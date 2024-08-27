@@ -1,7 +1,9 @@
 package com.nsn.nsnupdatesbackend.followrequest;
 
 import com.nsn.nsnupdatesbackend.enums.EFollowRequestStatus;
+import com.nsn.nsnupdatesbackend.enums.ENotificationType;
 import com.nsn.nsnupdatesbackend.follow.FollowService;
+import com.nsn.nsnupdatesbackend.notification.NotificationService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import com.nsn.nsnupdatesbackend.utils.UserNotFoundUtil;
@@ -15,13 +17,15 @@ public class FollowRequestService {
     private final FollowRequestRepository followRequestRepository;
     private final AppUserService appUserService;
     private final FollowService followService;
+    private final NotificationService notificationService;
 
     @Autowired
     public FollowRequestService(FollowRequestRepository followRequestRepository, AppUserService appUserService,
-        FollowService followService) {
+        FollowService followService, NotificationService notificationService) {
             this.followRequestRepository = followRequestRepository;
             this.appUserService = appUserService;
             this.followService = followService;
+            this.notificationService = notificationService;
     }
 
     public void saveFollowRequest(String requesterUsername, String targetUsername) {
@@ -45,6 +49,9 @@ public class FollowRequestService {
         followRequest.setStatus(EFollowRequestStatus.FOLLOW_PENDING);
 
         followRequestRepository.save(followRequest);
+
+        notificationService.createNotificationFromUserAndTarget(requester, target,
+                ENotificationType.NOTIFICATION_FOLLOW_REQUEST);
     }
 
     public void rejectFollowRequest(String requesterUsername, String targetUsername) {

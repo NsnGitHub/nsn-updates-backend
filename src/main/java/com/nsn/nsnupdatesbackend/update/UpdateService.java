@@ -1,6 +1,8 @@
 package com.nsn.nsnupdatesbackend.update;
 
+import com.nsn.nsnupdatesbackend.enums.ENotificationType;
 import com.nsn.nsnupdatesbackend.follow.FollowService;
+import com.nsn.nsnupdatesbackend.notification.NotificationService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,14 +24,16 @@ public class UpdateService {
     private final UpdateMapper updateMapper;
     private final AppUserService appUserService;
     private final FollowService followService;
+    private final NotificationService notificationService;
 
     @Autowired
     public UpdateService(UpdateRepository updateRepository, UpdateMapper updateMapper, AppUserService appUserService,
-                         FollowService followService) {
+                         FollowService followService, NotificationService notificationService) {
             this.updateRepository = updateRepository;
             this.updateMapper = updateMapper;
             this.appUserService = appUserService;
             this.followService = followService;
+            this.notificationService = notificationService;
     }
 
     public List<UpdateDto> getAllUpdates() {
@@ -63,6 +67,8 @@ public class UpdateService {
             List<Update> inbox = follower.getInbox();
             inbox.add(update);
             appUserService.saveUser(follower);
+            notificationService.createNotificationFromUserAndTarget(user, follower,
+                    ENotificationType.NOTIFICATION_FOLLOWED_POSTED);
         }
     }
 

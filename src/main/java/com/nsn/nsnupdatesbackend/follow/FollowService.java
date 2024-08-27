@@ -1,5 +1,7 @@
 package com.nsn.nsnupdatesbackend.follow;
 
+import com.nsn.nsnupdatesbackend.enums.ENotificationType;
+import com.nsn.nsnupdatesbackend.notification.NotificationService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserDto;
 import com.nsn.nsnupdatesbackend.user.AppUserMapper;
@@ -16,13 +18,15 @@ public class FollowService {
     private final FollowRepository followRepository;
     private final AppUserService appUserService;
     private final AppUserMapper appUserMapper;
+    private final NotificationService notificationService;
 
     @Autowired
     public FollowService(FollowRepository followRepository, AppUserService appUserService,
-                         AppUserMapper appUserMapper) {
+                         AppUserMapper appUserMapper, NotificationService notificationService) {
         this.followRepository = followRepository;
         this.appUserService = appUserService;
         this.appUserMapper = appUserMapper;
+        this.notificationService = notificationService;
     }
 
     public void follow(String followerUsername, String followeeUsername) {
@@ -33,6 +37,9 @@ public class FollowService {
 
         Follow follow = new Follow(follower, followee);
         followRepository.save(follow);
+
+        notificationService.createNotificationFromUserAndTarget(followee, follower,
+                ENotificationType.NOTIFICATION_FOLLOW_ACCEPTED);
     }
 
     public List<AppUserDto> getFollowersDtoForUsername(String username) {
