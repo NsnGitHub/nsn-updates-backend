@@ -5,8 +5,8 @@ import com.nsn.nsnupdatesbackend.enums.EJwtToken;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import com.nsn.nsnupdatesbackend.utils.JWTUtils;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -35,6 +35,17 @@ public class UpdateControllerTest extends AbstractBaseTestContainer {
         appUserService.saveUser(user);
 
         jwtToken = jwtUtils.createToken("nsntest1", EJwtToken.ACCESS_TOKEN);
+    }
+
+    @AfterAll
+    static void cleanUp(@Autowired AppUserService appUserService) {
+        try {
+            AppUser userToDelete = appUserService.getUserByUsername("nsntest1");
+            appUserService.deleteUser(userToDelete);
+        } catch (Exception ignored) {
+            // User doesn't exist
+        }
+
     }
 
     @Test

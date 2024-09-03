@@ -4,12 +4,14 @@ import com.nsn.nsnupdatesbackend.AbstractBaseTestContainer;
 import com.nsn.nsnupdatesbackend.follow.FollowService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 public class UpdateServiceTest extends AbstractBaseTestContainer {
@@ -17,27 +19,29 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
     @Autowired
     private UpdateService updateService;
 
-    @Autowired
-    private AppUserService appUserService;
-
-    @Autowired
-    private FollowService followService;
-
     /**
      * Creating objects here to be used in multiple tests.
      */
 
-    AppUser user1 = new AppUser("nsntest1", "nsntest1", "nsntest1@test.com", "password");
-    AppUser user2 = new AppUser("nsntest2", "nsntest2", "nsntest2@test.com", "password");
+    private static final AppUser user1 = new AppUser("nsntest1", "nsntest1", "nsntest1@test.com", "password");
+    private static final AppUser user2 = new AppUser("nsntest2", "nsntest2", "nsntest2@test.com", "password");
 
     /**
      * Start of tests
      */
 
-    @BeforeEach
-    void setUp() {
+    @BeforeAll
+    static void setUp(@Autowired AppUserService appUserService, @Autowired FollowService followService) {
         appUserService.saveUser(user1);
         appUserService.saveUser(user2);
+        followService.followFromAppUser(user1, user2);
+    }
+
+    @AfterAll
+    static void cleanUp(@Autowired AppUserService appUserService, @Autowired FollowService followService) {
+        followService.unfollowFromAppUser(user1, user2);
+        appUserService.deleteUser(user1);
+        appUserService.deleteUser(user2);
     }
 
     @Test
@@ -55,7 +59,7 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
     @Test
     void canPostedUpdatesBeReceivedByFollowers() {
         // Create an entry where user1 IS FOLLOWING user2
-        followService.followFromAppUser(user1, user2);
+//        followService.followFromAppUser(user1, user2);
 
         String content = "Hello this is a test post.";
         UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content);
@@ -68,7 +72,7 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
     @Test
     void canPostedUpdatesBeReceivedByFollowersWithPagination() {
         // Create an entry where user1 IS FOLLOWING user2
-        followService.followFromAppUser(user1, user2);
+//        followService.followFromAppUser(user1, user2);
 
         String content = "Hello this is a test post.";
         UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content);
@@ -89,5 +93,32 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
         assertEquals(4, updateService.getUpdatesFromInboxByUsernamePaginated(PAGE, 4, user1.getUsername()).size());
         assertEquals(5, updateService.getUpdatesFromInboxByUsernamePaginated(PAGE, 5, user1.getUsername()).size());
 
+    }
+
+    @Test
+    void canSaveUpdateEdits() {
+        String content = "Hello this is a test post.";
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content);
+        UpdateDto createdUpdate = updateService.createPost(user1.getUsername(), updatePostReqDto);
+
+        assertFalse(createdUpdate.isEdited());
+
+        String newContent = "Hello this is an edited post.";
+        UpdatePostReqDto updatePostReqDtoForEdited = new UpdatePostReqDto(newContent);
+        UpdateDto editedUpdate = updateService.editUpdate(createdUpdate, updatePostReqDtoForEdited);
+
+        assertEquals(createdUpdate.id(), editedUpdate.id());
+        assertEquals(newContent, editedUpdate.content());
+        assertTrue(editedUpdate.isEdited());
+    }
+
+    @Test
+    void canDeleteUpdate() {
+        String content = "Hello this is a test post.";
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content);
+        UpdateDto createdUpdate = updateService.createPost(user1.getUsername(), updatePostReqDto);
+
+        assertDoesNotThrow(() -> updateService.deleteUpdateById(createdUpdate.id()));
+        assertThrows(EntityNotFoundException.class, () -> updateService.getUpdateById(createdUpdate.id()));
     }
 }
