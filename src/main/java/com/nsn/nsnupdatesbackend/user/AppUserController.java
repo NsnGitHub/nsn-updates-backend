@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -16,12 +17,12 @@ public class AppUserController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<AppUserDto>> getAllUsers() {
-        return ResponseEntity.ok().body(userService.getAllUsers());
+    @PostMapping
+    public ResponseEntity<AppUserDto> getUserDetails(Principal principal) {
+
+        // Implement when user profile details figured out.
+
+        return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<AppUserDto> getUserDtoByUsername(String username) {
-        return ResponseEntity.ok().body(userService.getUserDtoByUsername(username));
-    }
 }

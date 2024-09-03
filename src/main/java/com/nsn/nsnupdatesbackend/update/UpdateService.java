@@ -6,6 +6,7 @@ import com.nsn.nsnupdatesbackend.notification.NotificationService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -55,7 +56,6 @@ public class UpdateService {
 
         updateRepository.save(newUpdate);
 
-        System.out.println("DEBUG: ABOUT TO EXECUTE ASYNC FUNCTION");
         asyncAddUpdateToAllFollowersInbox(appUser, newUpdate);
     }
 

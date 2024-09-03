@@ -1,6 +1,7 @@
 package com.nsn.nsnupdatesbackend.registration;
 
 import com.nsn.nsnupdatesbackend.user.AppUserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class RegistrationController {
     }
 
     @PostMapping
-    public ResponseEntity<?> registerUser(@RequestBody RegistrationRequestDto user) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody RegistrationRequestDto user) {
         userService.registerUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

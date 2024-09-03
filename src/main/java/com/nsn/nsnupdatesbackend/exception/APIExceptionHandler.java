@@ -9,13 +9,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.View;
 
 
 @RestControllerAdvice
 public class APIExceptionHandler {
+
+    private final View error;
+
+    public APIExceptionHandler(View error) {
+        this.error = error;
+    }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<?> handleException(BadCredentialsException exception, HttpServletRequest request) {
@@ -63,6 +71,14 @@ public class APIExceptionHandler {
     public ResponseEntity<?> handleException(BadRequestException exception, HttpServletRequest request) {
         APIException apiException = new APIException(request.getServletPath(), HttpStatus.BAD_REQUEST,
             exception.getMessage());
+        return ResponseEntity.status(apiException.getStatus()).body(apiException);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleException(MethodArgumentNotValidException exception, HttpServletRequest request) {
+        String errorMessage = exception.getBindingResult().getAllErrors().getFirst().getDefaultMessage();
+        APIException apiException = new APIException(request.getServletPath(), HttpStatus.BAD_REQUEST,
+            errorMessage);
         return ResponseEntity.status(apiException.getStatus()).body(apiException);
     }
 

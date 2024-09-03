@@ -40,6 +40,7 @@ public class AppUserService implements UserDetailsService {
         if (user == null) {
             throw new EntityNotFoundException("User not found");
         }
+
         return user;
     }
 
@@ -83,6 +84,10 @@ public class AppUserService implements UserDetailsService {
 
     public void saveUser(AppUser user) {
         userRepository.save(user);
+    }
+
+    public void deleteUser(AppUser user) {
+        userRepository.delete(user);
     }
 
     @Override

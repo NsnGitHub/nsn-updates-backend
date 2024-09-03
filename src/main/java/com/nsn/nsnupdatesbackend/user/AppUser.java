@@ -8,6 +8,7 @@ import com.nsn.nsnupdatesbackend.notification.Notification;
 import com.nsn.nsnupdatesbackend.update.Update;
 import jakarta.persistence.*;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,13 +63,13 @@ public class AppUser {
     @OneToMany(mappedBy = "actor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notificationsTriggered;
 
-    public AppUser(String username, String displayName, String email, ZonedDateTime createdAt, String passwordHash) {
+    public AppUser(String username, String displayName, String email, String passwordHash) {
         this.username = username;
         this.displayName = displayName;
         this.email = email;
-        this.createdAt = createdAt;
         this.passwordHash = passwordHash;
 
+        this.createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
         this.bio = "";
         this.privacySetting = EPrivacySetting.PUBLIC;
     }

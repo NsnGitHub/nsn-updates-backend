@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.update;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class UpdateController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> postUpdate(Principal principal, @RequestBody UpdatePostReqDto updatePostReqDto) {
+    public ResponseEntity<?> postUpdate(Principal principal, @Valid @RequestBody UpdatePostReqDto updatePostReqDto) {
         updateService.createPost(principal.getName(), updatePostReqDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
