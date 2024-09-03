@@ -40,7 +40,7 @@ public class FollowService {
     }
 
     // Creating follow object from AppUser objects means the followees privacy setting was on public
-    // so further verification was needed.
+    // so no further logic was needed.
     public void followFromAppUser(AppUser follower, AppUser followee) {
         follow(follower, followee);
 
