@@ -34,7 +34,7 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
     static void setUp(@Autowired AppUserService appUserService, @Autowired FollowService followService) {
         appUserService.saveUser(user1);
         appUserService.saveUser(user2);
-        followService.followFromAppUser(user1, user2);
+        followService.followFromAppUser(user1, user2, false);
     }
 
     @AfterAll
@@ -58,9 +58,6 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
 
     @Test
     void canPostedUpdatesBeReceivedByFollowers() {
-        // Create an entry where user1 IS FOLLOWING user2
-//        followService.followFromAppUser(user1, user2);
-
         String content = "Hello this is a test post.";
         UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content);
         updateService.createPost(user2.getUsername(), updatePostReqDto);
@@ -71,9 +68,6 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
 
     @Test
     void canPostedUpdatesBeReceivedByFollowersWithPagination() {
-        // Create an entry where user1 IS FOLLOWING user2
-//        followService.followFromAppUser(user1, user2);
-
         String content = "Hello this is a test post.";
         UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content);
 

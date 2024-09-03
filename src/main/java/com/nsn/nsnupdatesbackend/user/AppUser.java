@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.user;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
 import com.nsn.nsnupdatesbackend.follow.Follow;
 import com.nsn.nsnupdatesbackend.followrequest.FollowRequest;
@@ -35,6 +36,7 @@ public class AppUser {
     private List<Update> updates;
 
     @OneToMany(mappedBy="appUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Like> likes;
 
     @OneToMany(mappedBy="follower", cascade = CascadeType.ALL, orphanRemoval = true)

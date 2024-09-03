@@ -39,7 +39,7 @@ public class FollowRequestService {
         }
 
         if (target.getPrivacySetting() == EPrivacySetting.PUBLIC) {
-            followService.followFromAppUser(requester, target);
+            followService.followFromAppUser(requester, target, true);
 
             return;
         }
@@ -81,7 +81,7 @@ public class FollowRequestService {
         FollowRequest followRequest = getFollowRequest(requesterUsername, targetUsername);
         followRequest.setStatus(EFollowRequestStatus.FOLLOW_ACCEPTED);
         followRequestRepository.save(followRequest);
-        followService.followFromUsername(requesterUsername, targetUsername);
+        followService.followFromUsername(requesterUsername, targetUsername, true);
     }
 
     private FollowRequest getFollowRequest(String requesterUsername, String targetUsername) {

@@ -1,10 +1,12 @@
 package com.nsn.nsnupdatesbackend.update;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nsn.nsnupdatesbackend.like.Like;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,17 +26,22 @@ public class Update {
     private AppUser appUser;
 
     @OneToMany(mappedBy = "update", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Like> likes;
 
     @ManyToMany(mappedBy = "inboxedUpdates", cascade = CascadeType.ALL)
     private List<AppUser> inboxes;
 
-    public Update(String content, ZonedDateTime createdAt, AppUser appUser) {
+    private boolean isEdited;
+
+    public Update(String content, AppUser appUser) {
         this.content = content;
-        this.createdAt = createdAt;
         this.appUser = appUser;
+
+        this.createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
         this.likes = new ArrayList<>();
         this.inboxes = new ArrayList<>();
+        this.isEdited = false;
     }
 
     public Update() {}
@@ -69,5 +76,13 @@ public class Update {
 
     public int getNumberOfLikes() {
         return likes.size();
+    }
+
+    public boolean getIsEdited() {
+        return isEdited;
+    }
+
+    public void setIsEdited(boolean isEdited) {
+        this.isEdited = isEdited;
     }
 }

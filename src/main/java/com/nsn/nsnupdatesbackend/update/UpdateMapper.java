@@ -8,7 +8,7 @@ public class UpdateMapper {
 
     public UpdateDto toUpdateDto(Update update) {
         return new UpdateDto(update.getId(), update.getContent(), update.getCreatedAt(), update.getNumberOfLikes(),
-                toUpdatePosterDto(update.getAppUser()));
+                toUpdatePosterDto(update.getAppUser()), update.getIsEdited());
     }
 
     private UpdatePosterDto toUpdatePosterDto(AppUser user) {

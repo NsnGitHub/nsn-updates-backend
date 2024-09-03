@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.like;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.nsn.nsnupdatesbackend.update.Update;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import jakarta.persistence.*;
@@ -14,10 +15,12 @@ public class Like {
 
     @ManyToOne
     @JoinColumn(name = "app_user_id")
+    @JsonBackReference
     private AppUser appUser;
 
     @ManyToOne
     @JoinColumn(name = "update_id")
+    @JsonBackReference
     private Update update;
 
     public Like (AppUser appUser, Update update) {
@@ -33,5 +36,9 @@ public class Like {
 
     public Update getUpdate() {
         return update;
+    }
+
+    public Integer getId() {
+        return id;
     }
 }

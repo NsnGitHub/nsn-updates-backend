@@ -7,9 +7,13 @@ import com.nsn.nsnupdatesbackend.update.UpdateService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
 
 @Service
 public class LikeService {
@@ -18,17 +22,26 @@ public class LikeService {
     private final AppUserService appUserService;
     private final UpdateService updateService;
     private final NotificationService notificationService;
+    private final LikeMapper likeMapper;
 
     @Autowired
-    public LikeService(LikeRepository likeRepository, AppUserService appUserService, UpdateService updateService, NotificationService notificationService) {
+    public LikeService(LikeRepository likeRepository, AppUserService appUserService, UpdateService updateService,
+                       NotificationService notificationService, LikeMapper likeMapper) {
         this.likeRepository = likeRepository;
         this.appUserService = appUserService;
         this.updateService = updateService;
         this.notificationService = notificationService;
+        this.likeMapper = likeMapper;
     }
 
-    public Like getLikeById(Integer id) {
-        return likeRepository.findLikeById(id);
+    public LikeDto getLikeById(Integer id) {
+        Like like = likeRepository.findLikeById(id);
+
+        if (like == null) {
+            throw new EntityNotFoundException(String.format("Like with id %s not found", id));
+        }
+
+        return likeMapper.toLikeDto(like);
     }
 
     private boolean isUpdateLikedByUser(AppUser user, Update update) {
@@ -39,7 +52,7 @@ public class LikeService {
         return user == update.getAppUser();
     }
 
-    public void like(String username, Integer updateId) {
+    public LikeDto like(String username, Integer updateId) {
         AppUser user = appUserService.getUserByUsername(username);
         Update update = updateService.getUpdateById(updateId);
 
@@ -56,6 +69,8 @@ public class LikeService {
 
         notificationService.createNotificationFromUserAndTarget(user, update.getAppUser(),
                 ENotificationType.NOTIFICATION_UPDATE_LIKED);
+
+        return likeMapper.toLikeDto(like);
     }
 
     public void unlike(String username, Integer updateId) {

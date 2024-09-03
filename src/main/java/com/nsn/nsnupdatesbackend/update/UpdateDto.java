@@ -7,6 +7,7 @@ public record UpdateDto(
         String content,
         ZonedDateTime createdAt,
         int numberOfLikes,
-        UpdatePosterDto postingUser
+        UpdatePosterDto postingUser,
+        boolean isEdited
 ) {
 }

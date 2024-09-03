@@ -50,13 +50,46 @@ public class UpdateService {
         }
     }
 
-    public void createPost(String username, UpdatePostReqDto updatePostReqDto) {
+    public UpdateDto getUpdateDtoById(Integer id) {
+        Optional<Update> update = updateRepository.findById(id);
+        if (update.isPresent()) {
+            return updateMapper.toUpdateDto(update.get());
+        } else {
+            throw new EntityNotFoundException("Update with id " + id + " not found");
+        }
+    }
+
+    public UpdateDto createPost(String username, UpdatePostReqDto updatePostReqDto) {
         AppUser appUser = appUserService.getUserByUsername(username);
-        Update newUpdate = new Update(updatePostReqDto.content(), ZonedDateTime.now(ZoneId.of("UTC")), appUser);
+        Update newUpdate = new Update(updatePostReqDto.content(), appUser);
 
         updateRepository.save(newUpdate);
 
         asyncAddUpdateToAllFollowersInbox(appUser, newUpdate);
+
+        return updateMapper.toUpdateDto(newUpdate);
+    }
+
+    public void saveUpdate(Update update) {
+        updateRepository.save(update);
+    }
+
+    public UpdateDto editUpdate(UpdateDto updateDto, UpdatePostReqDto updatePostReqDto) {
+        Update update = getUpdateById(updateDto.id());
+        update.setIsEdited(true);
+        update.setContent(updatePostReqDto.content());
+        saveUpdate(update);
+
+        return updateMapper.toUpdateDto(update);
+    }
+
+    public void deleteUpdate(Update update) {
+        updateRepository.delete(update);
+    }
+
+    public void deleteUpdateById(Integer id) {
+        Update update = getUpdateById(id);
+        updateRepository.delete(update);
     }
 
     @Async

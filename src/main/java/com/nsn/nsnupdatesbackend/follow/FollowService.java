@@ -6,7 +6,6 @@ import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserDto;
 import com.nsn.nsnupdatesbackend.user.AppUserMapper;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
-import com.nsn.nsnupdatesbackend.utils.UserNotFoundUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,28 +28,46 @@ public class FollowService {
         this.notificationService = notificationService;
     }
 
-    public void followFromUsername(String followerUsername, String followeeUsername) {
+    public void followFromUsername(String followerUsername, String followeeUsername, boolean notify) {
         AppUser follower = appUserService.getUserByUsername(followerUsername);
         AppUser followee = appUserService.getUserByUsername(followeeUsername);
 
         follow(follower, followee);
 
-        notificationService.createNotificationFromUserAndTarget(followee, follower,
-                ENotificationType.NOTIFICATION_FOLLOW_ACCEPTED);
+        if (notify) {
+            notificationService.createNotificationFromUserAndTarget(followee, follower,
+                    ENotificationType.NOTIFICATION_FOLLOW_ACCEPTED);
+        }
+
     }
 
     // Creating follow object from AppUser objects means the followees privacy setting was on public
     // so no further logic was needed.
-    public void followFromAppUser(AppUser follower, AppUser followee) {
+    public void followFromAppUser(AppUser follower, AppUser followee, boolean notify) {
         follow(follower, followee);
 
-        notificationService.createNotificationFromUserAndTarget(follower, followee,
-                ENotificationType.NOTIFICATION_FOLLOW_PUBLIC);
+        if (notify) {
+            notificationService.createNotificationFromUserAndTarget(follower, followee,
+                    ENotificationType.NOTIFICATION_FOLLOW_PUBLIC);
+        }
+    }
+
+    public void unfollowFromAppUser(AppUser follower, AppUser followee) {
+        unfollow(follower, followee);
     }
 
     private void follow(AppUser follower, AppUser followee) {
         Follow follow = new Follow(follower, followee);
         followRepository.save(follow);
+    }
+
+    private void unfollow(AppUser follower, AppUser followee) {
+        Follow follow = followRepository.findByFollowerAndFollowee(follower, followee);
+
+        if (follow != null) {
+            followRepository.delete(follow);
+        }
+
     }
 
     public List<AppUserDto> getFollowersDtoForUsername(String username) {
