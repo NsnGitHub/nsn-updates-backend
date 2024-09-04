@@ -23,13 +23,13 @@ public class FollowRequestController {
 
     @PostMapping
     public ResponseEntity<?> request(Principal principal, @RequestBody FollowRequestDto followRequestDto) throws BadRequestException {
-        followRequestService.saveFollowRequest(principal.getName(), followRequestDto.targetUsername());
+        followRequestService.createFollowRequest(principal.getName(), followRequestDto.targetUsername(), true);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/accept")
     public ResponseEntity<?> acceptRequest(Principal principal, @RequestBody FollowRequestDto followRequestDto) {
-        followRequestService.acceptFollowRequest(followRequestDto.requesterUsername(), principal.getName());
+        followRequestService.acceptFollowRequest(followRequestDto.requesterUsername(), principal.getName(), true);
         return ResponseEntity.ok().build();
     }
 

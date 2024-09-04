@@ -5,7 +5,7 @@ import com.nsn.nsnupdatesbackend.user.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FollowRequestRepository extends JpaRepository<FollowRequest, Integer> {
-    FollowRequest getFollowRequestByRequesterAndTarget(AppUser requester, AppUser target);
+    FollowRequest getFollowRequestByRequesterAndTargetAndStatus(AppUser requester, AppUser target, EFollowRequestStatus status);
     boolean existsFollowRequestByRequesterAndTargetAndStatus(AppUser requester, AppUser target,
                                                              EFollowRequestStatus status);
     int countFollowRequestsByRequesterAndTargetAndStatus(AppUser requester, AppUser target,

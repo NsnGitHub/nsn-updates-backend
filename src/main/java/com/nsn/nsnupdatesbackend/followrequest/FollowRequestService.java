@@ -3,6 +3,7 @@ package com.nsn.nsnupdatesbackend.followrequest;
 import com.nsn.nsnupdatesbackend.enums.EFollowRequestStatus;
 import com.nsn.nsnupdatesbackend.enums.ENotificationType;
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
+import com.nsn.nsnupdatesbackend.follow.Follow;
 import com.nsn.nsnupdatesbackend.follow.FollowService;
 import com.nsn.nsnupdatesbackend.notification.NotificationService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
@@ -13,6 +14,9 @@ import jakarta.persistence.EntityNotFoundException;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FollowRequestService {
@@ -30,7 +34,7 @@ public class FollowRequestService {
             this.notificationService = notificationService;
     }
 
-    public void saveFollowRequest(String requesterUsername, String targetUsername) throws BadRequestException {
+    public void createFollowRequest(String requesterUsername, String targetUsername, boolean notify) throws BadRequestException {
         AppUser requester = appUserService.getUserByUsername(requesterUsername);
         AppUser target = appUserService.getUserByUsername(targetUsername);
 
@@ -39,7 +43,7 @@ public class FollowRequestService {
         }
 
         if (target.getPrivacySetting() == EPrivacySetting.PUBLIC) {
-            followService.followFromAppUser(requester, target, true);
+            followService.followFromAppUser(requester, target, notify);
 
             return;
         }
@@ -49,14 +53,20 @@ public class FollowRequestService {
         }
 
         if (followRequestRepository.existsFollowRequestByRequesterAndTargetAndStatus(requester, target,
-                EFollowRequestStatus.FOLLOW_PENDING)) {
-            throw new EntityExistsException("Request has already been made to target");
+                EFollowRequestStatus.FOLLOW_ACCEPTED)) {
+            throw new EntityExistsException("Already following target user");
         }
 
+        // Do not allow spam of follow requests
         if (followRequestRepository.countFollowRequestsByRequesterAndTargetAndStatus(requester, target,
-                EFollowRequestStatus.FOLLOW_REJECTED) >= 1) {
+                EFollowRequestStatus.FOLLOW_REJECTED) >= 2) {
             // Hide fact that user's request has already been declined
-            throw new EntityExistsException("Request has already been made to target");
+            throw new EntityExistsException("Request has already been made to target user");
+        }
+
+        if (followRequestRepository.existsFollowRequestByRequesterAndTargetAndStatus(requester, target,
+                EFollowRequestStatus.FOLLOW_PENDING)) {
+            throw new EntityExistsException("Request has already been made to target user");
         }
 
         FollowRequest followRequest = new FollowRequest();
@@ -66,34 +76,37 @@ public class FollowRequestService {
 
         followRequestRepository.save(followRequest);
 
-        notificationService.createNotificationFromUserAndTarget(requester, target,
-                ENotificationType.NOTIFICATION_FOLLOW_REQUEST);
+        if (notify) {
+            notificationService.createNotificationFromUserAndTarget(requester, target,
+                    ENotificationType.NOTIFICATION_FOLLOW_REQUEST);
+        }
     }
 
     public void rejectFollowRequest(String requesterUsername, String targetUsername) {
-        FollowRequest followRequest = getFollowRequest(requesterUsername, targetUsername);
+        FollowRequest followRequest = getPendingFollowRequest(requesterUsername, targetUsername);
         followRequest.setStatus(EFollowRequestStatus.FOLLOW_REJECTED);
 
         followRequestRepository.save(followRequest);
     }
 
-    public void acceptFollowRequest(String requesterUsername, String targetUsername) {
-        FollowRequest followRequest = getFollowRequest(requesterUsername, targetUsername);
+    public void acceptFollowRequest(String requesterUsername, String targetUsername, boolean notify) {
+        FollowRequest followRequest = getPendingFollowRequest(requesterUsername, targetUsername);
         followRequest.setStatus(EFollowRequestStatus.FOLLOW_ACCEPTED);
+
         followRequestRepository.save(followRequest);
-        followService.followFromUsername(requesterUsername, targetUsername, true);
+        followService.followFromUsername(requesterUsername, targetUsername, notify);
     }
 
-    private FollowRequest getFollowRequest(String requesterUsername, String targetUsername) {
+    private FollowRequest getPendingFollowRequest(String requesterUsername, String targetUsername) {
         AppUser requester = appUserService.getUserByUsername(requesterUsername);
         AppUser target = appUserService.getUserByUsername(targetUsername);
 
-        UserNotFoundUtil.throwIfRequesterAndTargetUserNotFound(requester, target);
-
-        FollowRequest followRequest = followRequestRepository.getFollowRequestByRequesterAndTarget(requester, target);
+        FollowRequest followRequest = followRequestRepository.getFollowRequestByRequesterAndTargetAndStatus(
+                requester, target, EFollowRequestStatus.FOLLOW_PENDING
+        );
 
         if (followRequest == null) {
-            throw new EntityNotFoundException("Follow request does not exist for requesting user and target user.");
+            throw new EntityNotFoundException("Pending follow request not found between requester and target.");
         }
 
         return followRequest;

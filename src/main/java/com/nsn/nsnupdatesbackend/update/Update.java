@@ -33,6 +33,7 @@ public class Update {
     private List<AppUser> inboxes;
 
     private boolean isEdited;
+    private ZonedDateTime editedAt;
 
     public Update(String content, AppUser appUser) {
         this.content = content;
@@ -42,6 +43,7 @@ public class Update {
         this.likes = new ArrayList<>();
         this.inboxes = new ArrayList<>();
         this.isEdited = false;
+        this.editedAt = null;
     }
 
     public Update() {}
@@ -84,5 +86,13 @@ public class Update {
 
     public void setIsEdited(boolean isEdited) {
         this.isEdited = isEdited;
+    }
+
+    public ZonedDateTime getEditedAt() {
+        return editedAt;
+    }
+
+    public void setEditedAt(ZonedDateTime editedAt) {
+        this.editedAt = editedAt;
     }
 }

@@ -8,6 +8,7 @@ public record UpdateDto(
         ZonedDateTime createdAt,
         int numberOfLikes,
         UpdatePosterDto postingUser,
-        boolean isEdited
+        boolean isEdited,
+        ZonedDateTime editedAt
 ) {
 }
