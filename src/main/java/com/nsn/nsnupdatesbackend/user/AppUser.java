@@ -73,7 +73,8 @@ public class AppUser {
 
         this.createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
         this.bio = "";
-        this.privacySetting = EPrivacySetting.PUBLIC;
+
+        this.privacySetting = EPrivacySetting.FOLLOWER;
     }
 
     public AppUser() {

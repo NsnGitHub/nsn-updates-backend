@@ -30,7 +30,7 @@ public class UpdateControllerTest extends AbstractBaseTestContainer {
     private static String jwtToken;
 
     @BeforeAll
-    static void init(@Autowired JWTUtils jwtUtils, @Autowired AppUserService appUserService) {
+    static void setUp(@Autowired JWTUtils jwtUtils, @Autowired AppUserService appUserService) {
         AppUser user = new AppUser("nsntest1", "nsntest1", "nsntest1@test.com", "password");
         appUserService.saveUser(user);
 
