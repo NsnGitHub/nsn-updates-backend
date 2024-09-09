@@ -2,6 +2,8 @@ package com.nsn.nsnupdatesbackend.update;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nsn.nsnupdatesbackend.like.Like;
+import com.nsn.nsnupdatesbackend.notification.Notification;
+import com.nsn.nsnupdatesbackend.notificationbatch.NotificationBatch;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -18,6 +20,7 @@ public class Update {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "update_seq")
     private Integer id;
     private ZonedDateTime createdAt;
+
     @Size(min = 1, max = 1000)
     private String content;
 
@@ -31,6 +34,12 @@ public class Update {
 
     @ManyToMany(mappedBy = "inboxedUpdates", cascade = CascadeType.ALL)
     private List<AppUser> inboxes;
+
+    @OneToMany(mappedBy = "update")
+    private List<Notification> notifications;
+
+    @OneToMany(mappedBy = "updateForBatch")
+    private List<NotificationBatch> notificationBatches;
 
     private boolean isEdited;
     private ZonedDateTime editedAt;

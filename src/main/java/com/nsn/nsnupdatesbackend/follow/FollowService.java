@@ -52,6 +52,13 @@ public class FollowService {
         }
     }
 
+    public void unfollowFromUsername(String followerUsername, String followeeUsername, boolean notify) {
+        AppUser follower = appUserService.getUserByUsername(followerUsername);
+        AppUser followee = appUserService.getUserByUsername(followeeUsername);
+
+        unfollow(follower, followee);
+    }
+
     public void unfollowFromAppUser(AppUser follower, AppUser followee) {
         unfollow(follower, followee);
     }

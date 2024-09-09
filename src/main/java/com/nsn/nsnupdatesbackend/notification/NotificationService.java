@@ -2,39 +2,39 @@ package com.nsn.nsnupdatesbackend.notification;
 
 import com.nsn.nsnupdatesbackend.enums.ENotificationType;
 import com.nsn.nsnupdatesbackend.user.AppUser;
+import com.nsn.nsnupdatesbackend.user.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final NotificationMapper notificationMapper;
+    private final AppUserService appUserService;
 
     @Autowired
-    public NotificationService(NotificationRepository notificationRepository) {
+    public NotificationService(NotificationRepository notificationRepository, NotificationMapper notificationMapper, AppUserService appUserService) {
         this.notificationRepository = notificationRepository;
+        this.notificationMapper = notificationMapper;
+        this.appUserService = appUserService;
+    }
+
+    public List<NotificationDto> getNotifications() {
+        return notificationRepository.findAll().stream().map(notificationMapper::toNotificationDto).collect(Collectors.toList());
+    }
+
+    public List<NotificationDto> getNotificationsForUser() {
+        AppUser user = appUserService.getUserByUsername("test");
+        return notificationRepository.findNotificationsByIsSentToUserIsTrueAndAppUser(user).stream().map(notificationMapper::toNotificationDto).collect(Collectors.toList());
     }
 
     public void createNotificationFromUserAndTarget(AppUser user, AppUser target,
                                                      ENotificationType  eNotificationType) {
-
        Notification notification = new Notification(target, user, eNotificationType);
        notificationRepository.save(notification);
     }
-
-//    /**
-//        Notifications only created when something happens with another service, their user and target AppUser objects
-//        should be loaded, so it would have access to the ID
-//    **/
-//    public void createNotificationFromUserIdAndTargetId(Integer userId, Integer targetId,
-//                                                     ENotificationType  eNotificationType) {
-//        AppUser userDummy = new AppUser();
-//        userDummy.setId(userId);
-//
-//        AppUser targetDummy = new AppUser();
-//        targetDummy.setId(targetId);
-//
-//       Notification notification = new Notification(userDummy, targetDummy, eNotificationType);
-//       notificationRepository.save(notification);
-//    }
 }

@@ -7,10 +7,12 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -37,7 +39,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } else {
             String authorization = request.getHeader(AUTHORIZATION);
-            System.out.println(authorization);
             if (authorization != null && authorization.startsWith("Bearer ")) {
                 String token = authorization.substring(7);
                 try {
@@ -45,6 +46,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                         throw new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, "Invalid Token");
                     }
                     String username = jwtUtils.getUsername(token);
+
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new
                             UsernamePasswordAuthenticationToken(username, null, null);
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
