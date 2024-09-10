@@ -63,6 +63,10 @@ public class NotificationBatch implements INotification {
         return isRead;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public void setAppUser(AppUser appUser) {
         this.appUser = appUser;
     }

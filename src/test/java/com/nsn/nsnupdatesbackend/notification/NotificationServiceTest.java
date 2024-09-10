@@ -3,6 +3,7 @@ package com.nsn.nsnupdatesbackend.notification;
 import com.nsn.nsnupdatesbackend.AbstractBaseTestContainer;
 import com.nsn.nsnupdatesbackend.enums.ENotificationType;
 import com.nsn.nsnupdatesbackend.notificationbatch.NotificationBatch;
+import com.nsn.nsnupdatesbackend.notificationbatch.NotificationBatchDto;
 import com.nsn.nsnupdatesbackend.notificationbatch.NotificationBatchService;
 import com.nsn.nsnupdatesbackend.update.Update;
 import com.nsn.nsnupdatesbackend.update.UpdateService;
@@ -90,13 +91,13 @@ public class NotificationServiceTest extends AbstractBaseTestContainer {
         assertEquals(3, notificationService.getNotifications().size());
 
         // Batch notification stuff
-        List<NotificationBatch> notificationBatchList = notificationBatchService.getNotificationBatchesForUserWithUsername(user2.getUsername());
+        List<NotificationBatchDto> notificationBatchList = notificationBatchService.getNotificationBatchesForUserWithUsername(user2.getUsername());
 
         assertEquals(1, notificationBatchList.size());
 
-        NotificationBatch batch = notificationBatchList.getFirst();
+        NotificationBatchDto batch = notificationBatchList.getFirst();
 
-        assertEquals(3, batch.getNotifications().size());
+        assertEquals(3, batch.notificationDtoList().size());
     }
 
 }

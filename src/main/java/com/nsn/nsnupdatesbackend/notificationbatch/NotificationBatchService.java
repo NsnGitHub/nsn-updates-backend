@@ -25,17 +25,19 @@ public class NotificationBatchService {
     private final AppUserService appUserService;
 
     private final UpdateService updateService;
+    private final NotificationBatchMapper notificationBatchMapper;
 
     @Autowired
     public NotificationBatchService(NotificationRepository notificationRepository,
                                     NotificationBatchRepository notificationBatchRepository,
                                     AppUserService appUserService,
-                                    UpdateService updateService
-    ) {
+                                    UpdateService updateService,
+                                    NotificationBatchMapper notificationBatchMapper) {
         this.notificationRepository = notificationRepository;
         this.notificationBatchRepository = notificationBatchRepository;
         this.appUserService = appUserService;
         this.updateService = updateService;
+        this.notificationBatchMapper = notificationBatchMapper;
     }
 
     public void sendBatchNotifications() {
@@ -93,9 +95,9 @@ public class NotificationBatchService {
         });
     }
 
-    public List<NotificationBatch> getNotificationBatchesForUserWithUsername(String username) {
+    public List<NotificationBatchDto> getNotificationBatchesForUserWithUsername(String username) {
         AppUser appUser = appUserService.getUserByUsername(username);
-        return notificationBatchRepository.findNotificationBatchByAppUser(appUser);
+        return notificationBatchRepository.findNotificationBatchByAppUser(appUser).stream().map(notificationBatchMapper::toNotificationBatchDto).toList();
     }
 
     public void createNotificationBatch() {
