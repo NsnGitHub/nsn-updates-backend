@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.notification;
 
+import com.nsn.nsnupdatesbackend.notificationbatch.NotificationBatch;
 import com.nsn.nsnupdatesbackend.notificationbatch.NotificationBatchService;
 import com.nsn.nsnupdatesbackend.notificationwebsocket.NotificationWebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/notification")
@@ -40,14 +42,14 @@ public class NotificationController {
         notificationBatchService.sendBatchNotifications();
     }
 
-    @GetMapping("/notifications/{id}")
-    public void getNotificationDetailed(@PathVariable("id") String id, Principal principal) {
-
+    @GetMapping("/notifications/createbatch")
+    public void test2() {
+        notificationBatchService.createNotificationBatch();
     }
 
-    @GetMapping("/notifications/test")
-    public void createTestNotification() {
-        notificationBatchService.createNotifications();
+    @GetMapping("/notificationbatch")
+    public ResponseEntity<?> test3(Principal principal) {
+        return ResponseEntity.status(HttpStatus.OK).body(notificationBatchService.getNotificationBatchesForUserWithUsername(principal.getName()));
     }
 
 }

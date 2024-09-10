@@ -2,10 +2,7 @@ package com.nsn.nsnupdatesbackend.notificationbatch;
 
 import com.nsn.nsnupdatesbackend.enums.ENotificationType;
 import com.nsn.nsnupdatesbackend.notification.Notification;
-import com.nsn.nsnupdatesbackend.notification.NotificationMapper;
 import com.nsn.nsnupdatesbackend.notification.NotificationRepository;
-import com.nsn.nsnupdatesbackend.notification.NotificationService;
-import com.nsn.nsnupdatesbackend.notificationwebsocket.NotificationWebSocketService;
 import com.nsn.nsnupdatesbackend.update.Update;
 import com.nsn.nsnupdatesbackend.update.UpdateService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
@@ -13,6 +10,9 @@ import com.nsn.nsnupdatesbackend.user.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,21 +21,21 @@ import java.util.stream.Collectors;
 public class NotificationBatchService {
 
     private final NotificationRepository notificationRepository;
-    private final NotificationService notificationService;
+    private final NotificationBatchRepository notificationBatchRepository;
     private final AppUserService appUserService;
-    private final UpdateService updateService;
-    private final NotificationWebSocketService notificationWebSocketService;
-    private final NotificationMapper notificationMapper;
 
+    private final UpdateService updateService;
 
     @Autowired
-    public NotificationBatchService(NotificationRepository notificationRepository, NotificationService notificationService, AppUserService appUserService, UpdateService updateService, NotificationWebSocketService notificationWebSocketService, NotificationMapper notificationMapper) {
+    public NotificationBatchService(NotificationRepository notificationRepository,
+                                    NotificationBatchRepository notificationBatchRepository,
+                                    AppUserService appUserService,
+                                    UpdateService updateService
+    ) {
         this.notificationRepository = notificationRepository;
-        this.notificationService = notificationService;
+        this.notificationBatchRepository = notificationBatchRepository;
         this.appUserService = appUserService;
         this.updateService = updateService;
-        this.notificationWebSocketService = notificationWebSocketService;
-        this.notificationMapper = notificationMapper;
     }
 
     public void sendBatchNotifications() {
@@ -54,7 +54,6 @@ public class NotificationBatchService {
         }
 
         map.forEach((user, notifications) -> {
-            System.out.println(user.getUsername());
             Map<ENotificationType, List<Notification>> notificationTypeMap = notifications
                     .stream()
                     .collect(Collectors.groupingBy(Notification::getNotificationType));
@@ -65,17 +64,6 @@ public class NotificationBatchService {
 
                 notificationListForUpdate.forEach((update, notificationListForIndividualUpdate) -> {
 
-                    notificationListForIndividualUpdate.forEach(x -> {
-                        x.setIsSentToUser(true);
-                        notificationRepository.save(x);
-                    });
-
-                    Notification notification = new Notification(
-                            user,
-                            null,
-                            notificationType
-                    );
-
                     String message = "";
                     if (notificationType == ENotificationType.NOTIFICATION_FOLLOWED_POSTED) {
                         message = "%s users you follow have posted".formatted(notificationListForIndividualUpdate.size());
@@ -83,9 +71,20 @@ public class NotificationBatchService {
                         message = "%s users have liked your update".formatted(notificationListForIndividualUpdate.size());
                     }
 
-                    notification.setMessage(message);
+                    NotificationBatch notificationBatch = new NotificationBatch();
+                    notificationBatch.setNotificationType(notificationType);
+                    notificationBatch.setUpdate(update);
+                    notificationBatch.setMessage(message);
+                    notificationBatch.setAppUser(user);
+                    notificationBatch.setCreatedAt(ZonedDateTime.now(ZoneId.of("UTC")));
 
-                    notificationRepository.save(notification);
+                    notificationListForIndividualUpdate.forEach(x -> {
+                        x.setNotificationBatch(notificationBatch);
+                        x.setIsSentToUser(true);
+                    });
+
+                    notificationBatch.setNotifications(notificationListForIndividualUpdate);
+                    notificationBatchRepository.save(notificationBatch);
 
                 });
 
@@ -94,7 +93,12 @@ public class NotificationBatchService {
         });
     }
 
-    public void createNotifications() {
+    public List<NotificationBatch> getNotificationBatchesForUserWithUsername(String username) {
+        AppUser appUser = appUserService.getUserByUsername(username);
+        return notificationBatchRepository.findNotificationBatchByAppUser(appUser);
+    }
+
+    public void createNotificationBatch() {
         AppUser user = new AppUser("test", "test", "test1@test.com", "test");
         appUserService.saveUser(user);
 
@@ -127,12 +131,12 @@ public class NotificationBatchService {
         notificationRepository.save(notification5);
         notificationRepository.save(notification6);
 
-        notificationWebSocketService.sendNotificationToUser(receiver.getUsername(), notificationMapper.toNotificationDto(notification1));
-        notificationWebSocketService.sendNotificationToUser(receiver.getUsername(), notificationMapper.toNotificationDto(notification2));
-        notificationWebSocketService.sendNotificationToUser(receiver.getUsername(), notificationMapper.toNotificationDto(notification3));
-        notificationWebSocketService.sendNotificationToUser(receiver.getUsername(), notificationMapper.toNotificationDto(notification4));
-        notificationWebSocketService.sendNotificationToUser(receiver.getUsername(), notificationMapper.toNotificationDto(notification5));
-        notificationWebSocketService.sendNotificationToUser(receiver.getUsername(), notificationMapper.toNotificationDto(notification6));
+//        notificationWebSocketService.sendNotificationToUser(receiver.getUsername(), notificationMapper.toNotificationDto(notification1));
+//        notificationWebSocketService.sendNotificationToUser(receiver.getUsername(), notificationMapper.toNotificationDto(notification2));
+//        notificationWebSocketService.sendNotificationToUser(receiver.getUsername(), notificationMapper.toNotificationDto(notification3));
+//        notificationWebSocketService.sendNotificationToUser(receiver.getUsername(), notificationMapper.toNotificationDto(notification4));
+//        notificationWebSocketService.sendNotificationToUser(receiver.getUsername(), notificationMapper.toNotificationDto(notification5));
+//        notificationWebSocketService.sendNotificationToUser(receiver.getUsername(), notificationMapper.toNotificationDto(notification6));
 
     }
 }

@@ -6,6 +6,7 @@ import com.nsn.nsnupdatesbackend.follow.Follow;
 import com.nsn.nsnupdatesbackend.followrequest.FollowRequest;
 import com.nsn.nsnupdatesbackend.like.Like;
 import com.nsn.nsnupdatesbackend.notification.Notification;
+import com.nsn.nsnupdatesbackend.notificationbatch.NotificationBatch;
 import com.nsn.nsnupdatesbackend.update.Update;
 import jakarta.persistence.*;
 
@@ -64,6 +65,9 @@ public class AppUser {
 
     @OneToMany(mappedBy = "actor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notificationsTriggered;
+
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<NotificationBatch> notificationBatchesReceived;
 
     public AppUser(String username, String displayName, String email, String passwordHash) {
         this.username = username;

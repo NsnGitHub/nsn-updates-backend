@@ -34,7 +34,7 @@ public class NotificationService {
 
     public Notification createNotificationFromUserAndTarget(AppUser user, AppUser target,
                                                      ENotificationType  eNotificationType) {
-       Notification notification = new Notification(target, user, eNotificationType);
+       Notification notification = new Notification(user, target, eNotificationType);
        notificationRepository.save(notification);
        return notification;
     }

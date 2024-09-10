@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.notification;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.nsn.nsnupdatesbackend.enums.ENotificationType;
 import com.nsn.nsnupdatesbackend.interfaces.INotification;
 import com.nsn.nsnupdatesbackend.notificationbatch.NotificationBatch;
@@ -27,6 +28,7 @@ public class Notification implements INotification {
     @JoinColumn(name = "actor_id")
     private AppUser actor;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "notification_batch_id")
     private NotificationBatch notificationBatch;
@@ -45,10 +47,22 @@ public class Notification implements INotification {
     @Size(min = 1, max = 1000)
     private String message;
 
-    public Notification(AppUser appUser, AppUser actor, ENotificationType notificationType) {
+    public Notification(AppUser actor, AppUser appUser, ENotificationType notificationType) {
         this.appUser = appUser;
         this.actor = actor;
         this.notificationType = notificationType;
+
+        this.update = null;
+        this.isSentToUser = false;
+        this.isRead = false;
+        this.createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
+    }
+
+    public Notification(AppUser actor, AppUser appUser, ENotificationType notificationType, Update update) {
+        this.appUser = appUser;
+        this.actor = actor;
+        this.notificationType = notificationType;
+        this.update = update;
 
         this.isSentToUser = false;
         this.isRead = false;
@@ -107,6 +121,14 @@ public class Notification implements INotification {
 
     public void setUpdate(Update update) {
         this.update = update;
+    }
+
+    public void setNotificationBatch(NotificationBatch notificationBatch) {
+        this.notificationBatch = notificationBatch;
+    }
+
+    public NotificationBatch getNotificationBatch() {
+        return notificationBatch;
     }
 
     @Override
