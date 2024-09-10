@@ -27,14 +27,20 @@ public class NotificationService {
         return notificationRepository.findAll().stream().map(notificationMapper::toNotificationDto).collect(Collectors.toList());
     }
 
-    public List<NotificationDto> getNotificationsForUser() {
-        AppUser user = appUserService.getUserByUsername("test");
+    public List<NotificationDto> getNotificationsForUserWithUsername(String username) {
+        AppUser user = appUserService.getUserByUsername(username);
         return notificationRepository.findNotificationsByIsSentToUserIsTrueAndAppUser(user).stream().map(notificationMapper::toNotificationDto).collect(Collectors.toList());
     }
 
-    public void createNotificationFromUserAndTarget(AppUser user, AppUser target,
+    public Notification createNotificationFromUserAndTarget(AppUser user, AppUser target,
                                                      ENotificationType  eNotificationType) {
        Notification notification = new Notification(target, user, eNotificationType);
        notificationRepository.save(notification);
+       return notification;
+    }
+
+    public void sendNotification(Notification notification) {
+        notification.setIsSentToUser(true);
+        notificationRepository.save(notification);
     }
 }

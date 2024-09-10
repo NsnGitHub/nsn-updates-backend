@@ -31,8 +31,8 @@ public class NotificationController {
     }
 
     @GetMapping("/notifications2")
-    public ResponseEntity<?> getNotifications2() {
-        return ResponseEntity.status(HttpStatus.OK).body(notificationService.getNotificationsForUser());
+    public ResponseEntity<?> getNotifications2(Principal principal) {
+        return ResponseEntity.status(HttpStatus.OK).body(notificationService.getNotificationsForUserWithUsername(principal.getName()));
     }
 
     @GetMapping("/notifications/batch")
