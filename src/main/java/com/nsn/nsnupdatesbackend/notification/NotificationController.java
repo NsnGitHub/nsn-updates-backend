@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/notification")
@@ -19,34 +20,24 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @Autowired
-    public NotificationController(NotificationBatchService notificationBatchService, NotificationService notificationService, NotificationWebSocketService notificationWebSocketService) {
+    public NotificationController(NotificationBatchService notificationBatchService, NotificationService notificationService) {
         this.notificationBatchService = notificationBatchService;
         this.notificationService = notificationService;
     }
 
-    @GetMapping("/notifications")
-    public ResponseEntity<?> getNotifications() {
-        return ResponseEntity.status(HttpStatus.OK).body(notificationService.getNotifications());
-    }
-
-    @GetMapping("/notifications2")
-    public ResponseEntity<?> getNotifications2(Principal principal) {
+    @GetMapping()
+    public ResponseEntity<?> getNotifications(Principal principal) {
         return ResponseEntity.status(HttpStatus.OK).body(notificationService.getNotificationsForUserWithUsername(principal.getName()));
     }
 
-    @GetMapping("/notifications/batch")
-    public void test() {
-        notificationBatchService.sendBatchNotifications();
-    }
-
-    @GetMapping("/notifications/createbatch")
-    public void test2() {
-        notificationBatchService.createNotificationBatch();
-    }
-
-    @GetMapping("/notificationbatch")
-    public ResponseEntity<?> test3(Principal principal) {
+    @GetMapping("/batch")
+    public ResponseEntity<?> getNotificationBatch(Principal principal) {
         return ResponseEntity.status(HttpStatus.OK).body(notificationBatchService.getNotificationBatchesForUserWithUsername(principal.getName()));
+    }
+
+    @GetMapping("/follow")
+    public ResponseEntity<List<NotificationDto>> getFollowNotifications(Principal principal) {
+        return ResponseEntity.status(HttpStatus.OK).body(notificationService.getFollowNotificationsForUserWithUsername(principal.getName()));
     }
 
 }
