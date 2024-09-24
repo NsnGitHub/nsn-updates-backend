@@ -80,6 +80,7 @@ public class AppUser {
         this.createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
         this.bio = "";
 
+        // default, though this will be set in the registration process.
         this.privacySetting = EPrivacySetting.FOLLOWER;
     }
 

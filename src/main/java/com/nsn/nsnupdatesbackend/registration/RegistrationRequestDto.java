@@ -1,7 +1,9 @@
 package com.nsn.nsnupdatesbackend.registration;
 
+import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public record RegistrationRequestDto(
@@ -29,7 +31,10 @@ public record RegistrationRequestDto(
                 message = "Password must be at least 5 characters long and can contain any printable ASCII character" +
                         "except space"
         )
-        String password
+        String password,
+
+        @NotNull(message = "Privacy setting must be set")
+        EPrivacySetting ePrivacySetting
 ) {
 
 }

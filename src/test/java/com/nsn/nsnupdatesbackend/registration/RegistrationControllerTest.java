@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,7 +26,8 @@ public class RegistrationControllerTest {
                     "username": "nsn test1",
                     "displayName": "nsn test",
                     "email": "nsntest1@gmail.com",
-                    "password": "passw0rd!"
+                    "password": "passw0rd!",
+                    "ePrivacySetting": "FOLLOWER"
                 }
                 """;
 
@@ -47,7 +49,8 @@ public class RegistrationControllerTest {
                     "username": "nsntest!",
                     "displayName": "nsn test",
                     "email": "nsntest1@gmail.com",
-                    "password": "passw0rd!"
+                    "password": "passw0rd!",
+                    "ePrivacySetting": "FOLLOWER"
                 }
                 """;
 
@@ -69,7 +72,8 @@ public class RegistrationControllerTest {
                     "username": "nsntest*($@",
                     "displayName": "nsn test",
                     "email": "nsntest1@gmail.com",
-                    "password": "passw0rd!"
+                    "password": "passw0rd!",
+                    "ePrivacySetting": "FOLLOWER"
                 }
                 """;
 
@@ -91,7 +95,8 @@ public class RegistrationControllerTest {
                     "username": null,
                     "displayName": "nsn test",
                     "email": "nsntest1@gmail.com",
-                    "password": "passw0rd!"
+                    "password": "passw0rd!",
+                    "ePrivacySetting": "FOLLOWER"
                 }
                 """;
 
@@ -113,7 +118,8 @@ public class RegistrationControllerTest {
                     "username": "",
                     "displayName": "nsn test",
                     "email": "nsntest1@gmail.com",
-                    "password": "passw0rd!"
+                    "password": "passw0rd!",
+                    "ePrivacySetting": "FOLLOWER"
                 }
                 """;
 
@@ -135,7 +141,8 @@ public class RegistrationControllerTest {
                     "username": "superlongtestingusernamethatisnotallowed",
                     "displayName": "nsn test",
                     "email": "nsntest1@gmail.com",
-                    "password": "passw0rd!"
+                    "password": "passw0rd!",
+                    "ePrivacySetting": "FOLLOWER"
                 }
                 """;
 
@@ -158,7 +165,8 @@ public class RegistrationControllerTest {
                     "username": "nsntest1",
                     "displayName": "nsn test",
                     "email": "nsntest1@gmail.com",
-                    "password": "pass w0rd!"
+                    "password": "pass w0rd!",
+                    "ePrivacySetting": "FOLLOWER"
                 }
                 """;
 
@@ -180,7 +188,8 @@ public class RegistrationControllerTest {
                     "username": "nsntest1",
                     "displayName": "nsn test",
                     "email": "nsntest1@gmail.com",
-                    "password": null
+                    "password": null,
+                    "ePrivacySetting": "FOLLOWER"
                 }
                 """;
 
@@ -202,7 +211,8 @@ public class RegistrationControllerTest {
                     "username": "nsntest1",
                     "displayName": "nsn test",
                     "email": "nsntest1@gmail.com",
-                    "password": ""
+                    "password": "",
+                    "ePrivacySetting": "FOLLOWER"
                 }
                 """;
 
@@ -224,7 +234,8 @@ public class RegistrationControllerTest {
                     "username": "nsntest1",
                     "displayName": "Nsn Test",
                     "email": "nsntest1notanemail",
-                    "password": "passw0rd!"
+                    "password": "passw0rd!",
+                    "ePrivacySetting": "FOLLOWER"
                 }
                 """;
 
@@ -246,7 +257,8 @@ public class RegistrationControllerTest {
                     "username": "nsntest1",
                     "displayName": "Nsn Test",
                     "email": "nsntest1@gmail.com",
-                    "password": "passw0rd!"
+                    "password": "passw0rd!",
+                    "ePrivacySetting": "FOLLOWER"
                 }
                 """;
 
@@ -256,5 +268,27 @@ public class RegistrationControllerTest {
                 .content(validJson)
         )
             .andExpect(status().isCreated());
+    }
+
+    @Test
+    void cannotExcludePrivacySetting() throws Exception {
+        String invalidJson = """
+                {
+                    "username": "nsntest1",
+                    "displayName": "Nsn Test",
+                    "email": "nsntest1@gmail.com",
+                    "password": "passw0rd!"
+                }
+                """;
+
+        String response = mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidJson)
+        )
+        .andExpect(status().isBadRequest())
+        .andReturn().getResponse().getContentAsString();
+
+        assertTrue(response.contains("Privacy setting must be set"));
     }
 }

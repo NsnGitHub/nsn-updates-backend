@@ -76,7 +76,7 @@ public class AppUserService implements UserDetailsService {
         newUser.setEmail(user.email());
         newUser.setPasswordHash(encodedPassword);
         newUser.setBio(null);
-        newUser.setPrivacySetting(EPrivacySetting.PUBLIC);
+        newUser.setPrivacySetting(user.ePrivacySetting());
         newUser.setCreatedAt(ZonedDateTime.now(ZoneId.of("UTC")));
 
         userRepository.save(newUser);

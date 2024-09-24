@@ -22,11 +22,11 @@ public class AppUserServiceTest extends AbstractBaseTestContainer {
      */
 
     RegistrationRequestDto request1 = new RegistrationRequestDto(
-            "nsntest1", "nsntest1", "nsntest1@test.com", "password"
+            "nsntest1", "nsntest1", "nsntest1@test.com", "password", EPrivacySetting.FOLLOWER
     );
 
     RegistrationRequestDto request2 = new RegistrationRequestDto(
-            "nsntest2", "nsntest2", "nsntest2@test.com", "password"
+            "nsntest2", "nsntest2", "nsntest2@test.com", "password", EPrivacySetting.FOLLOWER
     );
 
 
@@ -48,7 +48,7 @@ public class AppUserServiceTest extends AbstractBaseTestContainer {
         appUserService.registerUser(request1);
 
         RegistrationRequestDto requestWithDuplicateUsername = new RegistrationRequestDto(
-                "nsntest1", "nsntest2", "nsntest2@test.com", "password"
+                "nsntest1", "nsntest2", "nsntest2@test.com", "password", EPrivacySetting.FOLLOWER
         );
 
         assertThrows(EntityExistsException.class, () -> appUserService.registerUser(requestWithDuplicateUsername));
@@ -59,7 +59,7 @@ public class AppUserServiceTest extends AbstractBaseTestContainer {
         appUserService.registerUser(request1);
 
         RegistrationRequestDto requestWithDuplicateEmail = new RegistrationRequestDto(
-                "nsntest2", "nsntest2", "nsntest1@test.com", "password"
+                "nsntest2", "nsntest2", "nsntest1@test.com", "password", EPrivacySetting.FOLLOWER
         );
 
         assertThrows(EntityExistsException.class, () -> appUserService.registerUser(requestWithDuplicateEmail));
