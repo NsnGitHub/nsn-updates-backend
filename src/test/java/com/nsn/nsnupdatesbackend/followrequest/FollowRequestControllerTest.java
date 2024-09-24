@@ -2,6 +2,7 @@ package com.nsn.nsnupdatesbackend.followrequest;
 
 import com.nsn.nsnupdatesbackend.enums.EJwtToken;
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
+import com.nsn.nsnupdatesbackend.enums.EUserRole;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserRepository;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -46,8 +48,8 @@ public class FollowRequestControllerTest {
         appUserService.saveUser(user1);
         appUserService.saveUser(user2);
 
-        jwtTokenForUser1 = jwtUtils.createToken(user1.getUsername(), EJwtToken.ACCESS_TOKEN);
-        jwtTokenForUser2 = jwtUtils.createToken(user2.getUsername(), EJwtToken.ACCESS_TOKEN);
+        jwtTokenForUser1 = jwtUtils.createToken(user1.getUsername(), EJwtToken.ACCESS_TOKEN, EUserRole.ROLE_USER);
+        jwtTokenForUser2 = jwtUtils.createToken(user2.getUsername(), EJwtToken.ACCESS_TOKEN, EUserRole.ROLE_USER);
     }
 
     @AfterAll

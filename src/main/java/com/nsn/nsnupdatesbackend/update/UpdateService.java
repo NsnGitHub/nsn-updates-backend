@@ -1,6 +1,7 @@
 package com.nsn.nsnupdatesbackend.update;
 
 import com.nsn.nsnupdatesbackend.enums.ENotificationType;
+import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
 import com.nsn.nsnupdatesbackend.follow.FollowService;
 import com.nsn.nsnupdatesbackend.notification.NotificationService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
@@ -9,6 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
@@ -102,6 +104,23 @@ public class UpdateService {
             appUserService.saveUser(follower);
             notificationService.createNotificationFromUserAndTarget(user, follower,
                     ENotificationType.NOTIFICATION_FOLLOWED_POSTED);
+        }
+    }
+
+    public List<UpdateDto> getUpdatesByUsername(String requesterUsername, String targetUsername) {
+        AppUser targetAppUser = appUserService.getUserByUsername(targetUsername);
+
+        if (targetAppUser.getPrivacySetting() == EPrivacySetting.PUBLIC) {
+            return updateRepository.findAllByAppUser(targetAppUser).stream().map(updateMapper::toUpdateDto).toList();
+        } else if (targetAppUser.getPrivacySetting() == EPrivacySetting.PRIVATE) {
+            throw new AccessDeniedException("Target user has a private profile");
+        } else {
+            // Only privacy setting left is if their profile is on following.
+            if (followService.getIsFollowing(requesterUsername, targetAppUser.getUsername())) {
+                return updateRepository.findAllByAppUser(targetAppUser).stream().map(updateMapper::toUpdateDto).toList();
+            } else {
+                throw new AccessDeniedException("You are not a follower of the target user");
+            }
         }
     }
 

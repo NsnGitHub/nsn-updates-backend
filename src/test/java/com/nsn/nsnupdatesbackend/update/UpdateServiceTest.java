@@ -1,6 +1,7 @@
 package com.nsn.nsnupdatesbackend.update;
 
 import com.nsn.nsnupdatesbackend.AbstractBaseTestContainer;
+import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
 import com.nsn.nsnupdatesbackend.follow.FollowService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
@@ -10,6 +11,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,6 +29,11 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
 
     private static final AppUser user1 = new AppUser("nsntest1", "nsntest1", "nsntest1@test.com", "password");
     private static final AppUser user2 = new AppUser("nsntest2", "nsntest2", "nsntest2@test.com", "password");
+    private static final AppUser user3 = new AppUser("nsntest3", "nsntest3", "nsntest3@test.com", "password");
+    private static final AppUser user4 = new AppUser("nsntest4", "nsntest4", "nsntest4@test.com", "password");
+    private static final AppUser user5 = new AppUser("nsntest5", "nsntest5", "nsntest5@test.com", "password");
+
+
 
     /**
      * Start of tests
@@ -34,7 +43,14 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
     static void setUp(@Autowired AppUserService appUserService, @Autowired FollowService followService) {
         appUserService.saveUser(user1);
         appUserService.saveUser(user2);
+        appUserService.saveUser(user3);
         followService.followFromAppUser(user1, user2, false);
+
+        user4.setPrivacySetting(EPrivacySetting.PUBLIC);
+        user5.setPrivacySetting(EPrivacySetting.PRIVATE);
+
+        appUserService.saveUser(user4);
+        appUserService.saveUser(user5);
     }
 
     @AfterAll
@@ -42,6 +58,10 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
         followService.unfollowFromAppUser(user1, user2);
         appUserService.deleteUser(user1);
         appUserService.deleteUser(user2);
+        appUserService.deleteUser(user3);
+        appUserService.deleteUser(user4);
+        appUserService.deleteUser(user5);
+
     }
 
     @Test
@@ -114,5 +134,57 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
 
         assertDoesNotThrow(() -> updateService.deleteUpdateById(createdUpdate.id()));
         assertThrows(EntityNotFoundException.class, () -> updateService.getUpdateById(createdUpdate.id()));
+    }
+
+    @Test
+    void canViewPublicUserUpdates() {
+        String content = "Hello this is a test post.";
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content);
+        updateService.createPost(user2.getUsername(), updatePostReqDto);
+        updateService.createPost(user4.getUsername(), updatePostReqDto);
+
+        assertEquals(2, updateService.getAllUpdates().size());
+
+        List<UpdateDto> updates = updateService.getUpdatesByUsername(user1.getUsername(), user4.getUsername());
+        assertEquals(1, updates.size());
+    }
+
+    @Test
+    void cannotViewPrivateUserUpdates() {
+        String content = "Hello this is a test post.";
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content);
+        updateService.createPost(user5.getUsername(), updatePostReqDto);
+
+        assertEquals(1, updateService.getAllUpdates().size());
+
+        assertThrows(AccessDeniedException.class, () -> updateService.getUpdatesByUsername(
+                user1.getUsername(), user5.getUsername()
+            )
+        );
+    }
+
+    @Test
+    void canViewTargetUserUpdatesWhenRequesterIsAFollower() {
+        String content = "Hello this is a test post.";
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content);
+        updateService.createPost(user2.getUsername(), updatePostReqDto);
+        updateService.createPost(user4.getUsername(), updatePostReqDto);
+
+        assertEquals(2, updateService.getAllUpdates().size());
+        assertEquals(1, updateService.getUpdatesByUsername(user1.getUsername(), user2.getUsername()).size());
+    }
+
+    @Test
+    void cannotViewTargetUserUpdatesWhenRequesterIsNotAFollower() {
+        String content = "Hello this is a test post.";
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content);
+        updateService.createPost(user2.getUsername(), updatePostReqDto);
+        updateService.createPost(user3.getUsername(), updatePostReqDto);
+
+        assertEquals(2, updateService.getAllUpdates().size());
+        assertThrows(AccessDeniedException.class, () -> updateService.getUpdatesByUsername(
+                user1.getUsername(), user3.getUsername()
+            ).size()
+        );
     }
 }

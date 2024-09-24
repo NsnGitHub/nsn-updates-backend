@@ -15,7 +15,7 @@ public record RegistrationRequestDto(
         @NotBlank(message = "Display name cannot be blank")
         @Pattern(
                 regexp = "^[a-zA-Z ]{3,15}$",
-                message = "Display must be between 3 and 15 characters and can only contain letters and spaces"
+                message = "Display name must be between 3 and 15 characters and can only contain letters and spaces"
         )
         String displayName,
 
@@ -26,7 +26,7 @@ public record RegistrationRequestDto(
         @NotBlank(message = "Password cannot be blank")
         @Pattern(
                 regexp = "^[\\x21-\\x7E]{5,}$",
-                message = "Password must be exactly 5 characters long and can contain any printable ASCII character" +
+                message = "Password must be at least 5 characters long and can contain any printable ASCII character" +
                         "except space"
         )
         String password

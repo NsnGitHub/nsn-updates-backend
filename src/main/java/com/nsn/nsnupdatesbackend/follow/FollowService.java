@@ -95,4 +95,11 @@ public class FollowService {
         List<Follow> followers = followRepository.findByFollowee(user);
         return followers.stream().map(Follow::getFollower).toList();
     }
+
+    public boolean getIsFollowing(String requesterUsername, String targetUsername) {
+        AppUser requester = appUserService.getUserByUsername(requesterUsername);
+        AppUser target = appUserService.getUserByUsername(targetUsername);
+
+        return followRepository.existsFollowByFollowerAndFollowee(requester, target);
+    }
 }

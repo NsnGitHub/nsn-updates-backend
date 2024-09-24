@@ -2,6 +2,7 @@ package com.nsn.nsnupdatesbackend.update;
 
 import com.nsn.nsnupdatesbackend.AbstractBaseTestContainer;
 import com.nsn.nsnupdatesbackend.enums.EJwtToken;
+import com.nsn.nsnupdatesbackend.enums.EUserRole;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import com.nsn.nsnupdatesbackend.utils.JWTUtils;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,7 +36,7 @@ public class UpdateControllerTest extends AbstractBaseTestContainer {
         AppUser user = new AppUser("nsntest1", "nsntest1", "nsntest1@test.com", "password");
         appUserService.saveUser(user);
 
-        jwtToken = jwtUtils.createToken("nsntest1", EJwtToken.ACCESS_TOKEN);
+        jwtToken = jwtUtils.createToken("nsntest1", EJwtToken.ACCESS_TOKEN, EUserRole.ROLE_USER);
     }
 
     @AfterAll

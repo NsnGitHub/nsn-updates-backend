@@ -2,6 +2,7 @@ package com.nsn.nsnupdatesbackend.user;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
+import com.nsn.nsnupdatesbackend.enums.EUserRole;
 import com.nsn.nsnupdatesbackend.follow.Follow;
 import com.nsn.nsnupdatesbackend.followrequest.FollowRequest;
 import com.nsn.nsnupdatesbackend.like.Like;
@@ -29,6 +30,7 @@ public class AppUser {
     private String bio;
     private ZonedDateTime createdAt;
     private String passwordHash;
+    private EUserRole role;
 
     @Enumerated(EnumType.STRING)
     private EPrivacySetting privacySetting;
@@ -151,5 +153,13 @@ public class AppUser {
 
     public List<Update> getInbox() {
         return inboxedUpdates;
+    }
+
+    public EUserRole getRole() {
+        return role;
+    }
+
+    public void setRole(EUserRole role) {
+        this.role = role;
     }
 }

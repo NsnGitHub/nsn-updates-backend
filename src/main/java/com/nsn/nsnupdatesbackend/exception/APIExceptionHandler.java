@@ -28,7 +28,7 @@ public class APIExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<?> handleException(BadCredentialsException exception, HttpServletRequest request) {
         APIException apiException = new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED,
-            exception.getMessage());
+            "Invalid username or password");
         return ResponseEntity.status(apiException.getStatus()).body(apiException);
     }
 

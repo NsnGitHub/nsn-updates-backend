@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 public class FollowServiceTest extends AbstractBaseTestContainer {
@@ -70,5 +70,16 @@ public class FollowServiceTest extends AbstractBaseTestContainer {
         assertEquals(0, followService.getFollowingDtoForUsername(user1.getUsername()).size());
         assertEquals(0, followService.getFollowersForUser(user2).size());
 
+    }
+
+    @Test
+    void isUserAFollower() {
+        boolean isFollowing = followService.getIsFollowing(user1.getUsername(), user2.getUsername());
+        assertFalse(isFollowing);
+
+        followService.followFromAppUser(user1, user2, false);
+
+        isFollowing = followService.getIsFollowing(user1.getUsername(), user2.getUsername());
+        assertTrue(isFollowing);
     }
 }
