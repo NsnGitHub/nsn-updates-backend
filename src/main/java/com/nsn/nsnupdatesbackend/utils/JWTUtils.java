@@ -1,6 +1,7 @@
 package com.nsn.nsnupdatesbackend.utils;
 
 import com.nsn.nsnupdatesbackend.enums.EJwtToken;
+import com.nsn.nsnupdatesbackend.enums.EUserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -12,6 +13,7 @@ import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 @Component
 public class JWTUtils {
@@ -32,10 +34,18 @@ public class JWTUtils {
         return Keys.hmacShaKeyFor(bytes);
     }
 
-    public String createToken(String username, EJwtToken tokenType) {
+    public long getJwtTokenDuration(EJwtToken jwtTokenType) {
+        return switch (jwtTokenType) {
+            case ACCESS_TOKEN -> jwtAccessTokenDuration;
+            case REFRESH_TOKEN -> jwtRefreshTokenDuration;
+        };
+    }
+
+    public String createToken(String username, EJwtToken tokenType, EUserRole role) {
         HashMap<String, Object> claims = new HashMap<>();
 
         claims.put("token_role", tokenType);
+        claims.put("roles", role);
 
         Key key = getKey();
 
@@ -67,6 +77,11 @@ public class JWTUtils {
     public boolean isRefreshToken(String token) {
         String tokenRole = extractClaims(token).get("token_role").toString();
         return tokenRole.equals(EJwtToken.REFRESH_TOKEN.toString());
+    }
+
+    public boolean isGuestToken(String token) {
+        String userRole = extractClaims(token).get("roles").toString();
+        return userRole.equals(EUserRole.ROLE_GUEST.toString());
     }
 
     public String getUsername(String token) {

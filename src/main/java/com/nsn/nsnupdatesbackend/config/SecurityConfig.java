@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.config;
 
+import com.nsn.nsnupdatesbackend.enums.EUserRole;
 import com.nsn.nsnupdatesbackend.filters.JWTAuthorizationFilter;
 import com.nsn.nsnupdatesbackend.utils.JWTUtils;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +37,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(authorizeRequest ->
                 authorizeRequest
-                    .requestMatchers("/api/v1/notification/**").permitAll()
+                    .requestMatchers("/api/v1/notification/**").hasAnyAuthority(EUserRole.ROLE_GUEST.getAuthority(), EUserRole.ROLE_USER.getAuthority())
                     .requestMatchers("/api/v1/auth/**").permitAll()
                     .requestMatchers("/api/v1/register").permitAll()
                     .requestMatchers("/ws/**").permitAll()
