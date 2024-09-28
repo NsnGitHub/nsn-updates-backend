@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FollowService {
@@ -36,7 +37,7 @@ public class FollowService {
 
         if (notify) {
             notificationService.createNotificationFromUserAndTarget(followee, follower,
-                    ENotificationType.NOTIFICATION_FOLLOW_ACCEPTED);
+                    ENotificationType.NOTIFICATION_FOLLOW_ACCEPTED, Optional.empty());
         }
 
     }
@@ -48,7 +49,7 @@ public class FollowService {
 
         if (notify) {
             notificationService.createNotificationFromUserAndTarget(follower, followee,
-                    ENotificationType.NOTIFICATION_FOLLOW_PUBLIC);
+                    ENotificationType.NOTIFICATION_FOLLOW_PUBLIC, Optional.empty());
         }
     }
 

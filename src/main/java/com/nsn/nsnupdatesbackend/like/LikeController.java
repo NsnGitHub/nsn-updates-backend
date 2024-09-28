@@ -24,13 +24,8 @@ public class LikeController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<?> unlike(Principal principal, @RequestBody LikeReqDto likeReqDto){
+    public ResponseEntity<?> unlike(Principal principal, @RequestBody LikeReqDto likeReqDto) {
         likeService.unlike(principal.getName(), likeReqDto.updateId());
         return ResponseEntity.ok().build();
     }
-
-    @GetMapping ResponseEntity<?> getLikeById(@RequestParam Integer id) {
-        return ResponseEntity.ok().body(likeService.getLikeById(id));
-    }
-
 }

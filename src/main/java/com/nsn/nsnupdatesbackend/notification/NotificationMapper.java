@@ -30,7 +30,7 @@ public class NotificationMapper {
         }
 
         if (notification.getUpdate() != null) {
-            updateDto = updateMapper.toUpdateDto(notification.getUpdate());
+            updateDto = updateMapper.toUpdateDto(notification.getUpdate(), false);
         }
 
         return new NotificationDto(

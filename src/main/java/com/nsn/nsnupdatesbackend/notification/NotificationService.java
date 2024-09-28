@@ -2,6 +2,7 @@ package com.nsn.nsnupdatesbackend.notification;
 
 import com.nsn.nsnupdatesbackend.enums.ENotificationType;
 import com.nsn.nsnupdatesbackend.notificationwebsocket.NotificationWebSocketService;
+import com.nsn.nsnupdatesbackend.update.Update;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,8 +57,9 @@ public class NotificationService {
     }
 
     public Notification createNotificationFromUserAndTarget(AppUser user, AppUser target,
-                                                     ENotificationType  eNotificationType) {
+                                                     ENotificationType  eNotificationType, Optional<Update> update) {
        Notification notification = new Notification(user, target, eNotificationType);
+       notification.setUpdate(update.orElse(null));
 
        // Send out follow requests whenever made.
        if (eNotificationType == ENotificationType.NOTIFICATION_FOLLOW_ACCEPTED ||

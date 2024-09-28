@@ -104,4 +104,8 @@ public class Update {
     public void setEditedAt(ZonedDateTime editedAt) {
         this.editedAt = editedAt;
     }
+
+    public boolean hasUserLiked(AppUser user) {
+        return likes.stream().anyMatch(like -> like.getAppUser().getId().equals(user.getId()));
+    }
 }

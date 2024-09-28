@@ -9,6 +9,6 @@ public record UpdateDto(
         int numberOfLikes,
         UpdatePosterDto postingUser,
         boolean isEdited,
-        ZonedDateTime editedAt
-) {
-}
+        ZonedDateTime editedAt,
+        boolean userHasLiked
+) {}

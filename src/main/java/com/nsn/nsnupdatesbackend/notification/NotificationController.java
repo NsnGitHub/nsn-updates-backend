@@ -1,7 +1,6 @@
 package com.nsn.nsnupdatesbackend.notification;
 
 import com.nsn.nsnupdatesbackend.notificationbatch.NotificationBatchService;
-import com.nsn.nsnupdatesbackend.notificationwebsocket.NotificationWebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +32,7 @@ public class NotificationController {
 
     @GetMapping("/batch")
     public ResponseEntity<?> getNotificationBatch(Principal principal) {
+        notificationBatchService.sendBatchNotifications();
         return ResponseEntity.status(HttpStatus.OK).body(notificationBatchService.getNotificationBatchesForUserWithUsername(principal.getName()));
     }
 

@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -63,8 +64,8 @@ public class NotificationServiceTest extends AbstractBaseTestContainer {
     void canCreateNotification() {
         assertEquals(0, notificationService.getNotifications().size());
 
-        notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_UPDATE_LIKED);
-        notificationService.createNotificationFromUserAndTarget(user2, user1, ENotificationType.NOTIFICATION_UPDATE_LIKED);
+        notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOW_PUBLIC, Optional.empty());
+        notificationService.createNotificationFromUserAndTarget(user2, user1, ENotificationType.NOTIFICATION_FOLLOW_PUBLIC, Optional.empty());
 
         assertEquals(2, notificationService.getNotifications().size());
     }
@@ -73,7 +74,7 @@ public class NotificationServiceTest extends AbstractBaseTestContainer {
     void canGetNotificationForSpecificUser() {
         assertEquals(0, notificationService.getNotifications().size());
 
-        Notification notification = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_UPDATE_LIKED);
+        Notification notification = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOW_REQUEST, Optional.empty());
         notificationService.sendNotification(notification);
 
         assertEquals(0, notificationService.getNotificationsForUserWithUsername(user1.getUsername()).size());
@@ -87,13 +88,9 @@ public class NotificationServiceTest extends AbstractBaseTestContainer {
 
         assertEquals(0, notificationService.getNotifications().size());
 
-        Notification notification1 = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_UPDATE_LIKED);
-        Notification notification2 = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_UPDATE_LIKED);
-        Notification notification3 = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_UPDATE_LIKED);
-
-        notification1.setUpdate(update);
-        notification2.setUpdate(update);
-        notification3.setUpdate(update);
+        notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.of(update));
+        notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.of(update));
+        notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.of(update));
 
         notificationBatchService.sendBatchNotifications();
 

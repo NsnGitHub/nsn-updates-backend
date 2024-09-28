@@ -78,7 +78,7 @@ public class FollowRequestService {
 
         if (notify) {
             notificationService.createNotificationFromUserAndTarget(requester, target,
-                    ENotificationType.NOTIFICATION_FOLLOW_REQUEST);
+                    ENotificationType.NOTIFICATION_FOLLOW_REQUEST, Optional.empty());
         }
     }
 

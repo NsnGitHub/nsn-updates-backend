@@ -21,7 +21,7 @@ public class LikeMapper {
         return new LikeDto(
                 like.getId(),
                 appUserMapper.toUserDto(like.getAppUser()),
-                updateMapper.toUpdateDto(like.getUpdate())
+                updateMapper.toUpdateDto(like.getUpdate(), false)
         );
     }
 }

@@ -46,4 +46,11 @@ public class UpdateController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @GetMapping("/{username}")
+    public ResponseEntity<List<UpdateDto>> getUpdatesFromSpecifiedUser(Principal principal, @PathVariable String username) {
+        return ResponseEntity.ok().body(
+                updateService.getUpdatesByUsername(principal.getName(), username)
+        );
+    }
+
 }

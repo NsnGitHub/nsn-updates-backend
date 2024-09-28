@@ -14,6 +14,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 @Service
 public class LikeService {
@@ -68,7 +69,7 @@ public class LikeService {
         likeRepository.save(like);
 
         notificationService.createNotificationFromUserAndTarget(user, update.getAppUser(),
-                ENotificationType.NOTIFICATION_UPDATE_LIKED);
+                ENotificationType.NOTIFICATION_UPDATE_LIKED, Optional.of(update));
 
         return likeMapper.toLikeDto(like);
     }

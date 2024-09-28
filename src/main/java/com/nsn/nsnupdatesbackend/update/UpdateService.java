@@ -40,22 +40,15 @@ public class UpdateService {
     }
 
     public List<UpdateDto> getAllUpdates() {
-        return updateRepository.findAll().stream().map(updateMapper::toUpdateDto).collect(Collectors.toList());
+        return updateRepository.findAll().stream().map(update -> {
+            return updateMapper.toUpdateDto(update, false);
+        }).collect(Collectors.toList());
     }
 
     public Update getUpdateById(Integer id) {
         Optional<Update> update = updateRepository.findById(id);
         if (update.isPresent()) {
             return update.get();
-        } else {
-            throw new EntityNotFoundException("Update with id " + id + " not found");
-        }
-    }
-
-    public UpdateDto getUpdateDtoById(Integer id) {
-        Optional<Update> update = updateRepository.findById(id);
-        if (update.isPresent()) {
-            return updateMapper.toUpdateDto(update.get());
         } else {
             throw new EntityNotFoundException("Update with id " + id + " not found");
         }
@@ -69,7 +62,7 @@ public class UpdateService {
 
         asyncAddUpdateToAllFollowersInbox(appUser, newUpdate);
 
-        return updateMapper.toUpdateDto(newUpdate);
+        return updateMapper.toUpdateDto(newUpdate, false);
     }
 
     public void saveUpdate(Update update) {
@@ -82,7 +75,7 @@ public class UpdateService {
         update.setContent(updatePostReqDto.content());
         saveUpdate(update);
 
-        return updateMapper.toUpdateDto(update);
+        return updateMapper.toUpdateDto(update, false);
     }
 
     public void deleteUpdate(Update update) {
@@ -103,7 +96,7 @@ public class UpdateService {
             inbox.add(update);
             appUserService.saveUser(follower);
             notificationService.createNotificationFromUserAndTarget(user, follower,
-                    ENotificationType.NOTIFICATION_FOLLOWED_POSTED);
+                    ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.of(update));
         }
     }
 
@@ -111,13 +104,23 @@ public class UpdateService {
         AppUser targetAppUser = appUserService.getUserByUsername(targetUsername);
 
         if (targetAppUser.getPrivacySetting() == EPrivacySetting.PUBLIC) {
-            return updateRepository.findAllByAppUser(targetAppUser).stream().map(updateMapper::toUpdateDto).toList();
+            return updateRepository.findAllByAppUser(targetAppUser).stream().map(update -> {
+                AppUser requestingUser = appUserService.getUserByUsername(requesterUsername);
+                boolean isLikedByRequestingUser = update.hasUserLiked(requestingUser);
+
+                return updateMapper.toUpdateDto(update, isLikedByRequestingUser);
+            }).toList();
         } else if (targetAppUser.getPrivacySetting() == EPrivacySetting.PRIVATE) {
             throw new AccessDeniedException("Target user has a private profile");
         } else {
             // Only privacy setting left is if their profile is on following.
             if (followService.getIsFollowing(requesterUsername, targetAppUser.getUsername())) {
-                return updateRepository.findAllByAppUser(targetAppUser).stream().map(updateMapper::toUpdateDto).toList();
+                return updateRepository.findAllByAppUser(targetAppUser).stream().map(update -> {
+                    AppUser requestingUser = appUserService.getUserByUsername(requesterUsername);
+                    boolean isLikedByRequestingUser = update.hasUserLiked(requestingUser);
+
+                    return updateMapper.toUpdateDto(update, isLikedByRequestingUser);
+                }).toList();
             } else {
                 throw new AccessDeniedException("You are not a follower of the target user");
             }
@@ -131,7 +134,12 @@ public class UpdateService {
         // Sort
         inbox.sort(Comparator.comparing(Update::getCreatedAt).reversed());
 
-        return inbox.stream().map(updateMapper::toUpdateDto).toList();
+        return inbox.stream().map(update -> {
+            AppUser requestingUser = appUserService.getUserByUsername(username);
+            boolean isLikedByRequestingUser = update.hasUserLiked(requestingUser);
+
+            return updateMapper.toUpdateDto(update, isLikedByRequestingUser);
+        }).toList();
     }
 
     public List<UpdateDto> getUpdatesFromInboxByUsernamePaginated(int page, int size, String username) {
@@ -142,6 +150,11 @@ public class UpdateService {
         inbox.sort(Comparator.comparing(Update::getCreatedAt).reversed());
 
         // Implement pagination with stream skip and limit, then map to UpdateDto
-        return inbox.stream().skip((long) page * size).limit(size).map(updateMapper::toUpdateDto).toList();
+        return inbox.stream().skip((long) page * size).limit(size).map(update -> {
+            AppUser requestingUser = appUserService.getUserByUsername(username);
+            boolean isLikedByRequestingUser = update.hasUserLiked(requestingUser);
+
+            return updateMapper.toUpdateDto(update, isLikedByRequestingUser);
+        }).toList();
     }
 }
