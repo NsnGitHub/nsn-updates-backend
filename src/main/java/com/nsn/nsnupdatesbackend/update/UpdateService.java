@@ -10,6 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -168,7 +169,12 @@ public class UpdateService {
             return true;
         } else if (targetAppUser.getPrivacySetting() == EPrivacySetting.FOLLOWER) {
             try {
-                appUserService.getUserByUsername(requesterUsername);
+                AppUser requestingUser = appUserService.getUserByUsername(requesterUsername);
+
+                if (requestingUser.equals(targetAppUser)) {
+                    return true;
+                }
+
                 if (followService.getIsFollowing(requesterUsername, targetAppUser.getUsername())) {
                     return true;
                 } else {
@@ -178,6 +184,16 @@ public class UpdateService {
                 throw new AccessDeniedException("Target user's profile is for followers only");
             }
         } else {
+            try {
+                AppUser requestingUser = appUserService.getUserByUsername(requesterUsername);
+                if (requestingUser.equals(targetAppUser)) {
+                    return true;
+                } else {
+                    throw new AccessDeniedException("Target user's profile is private");
+                }
+            } catch (Exception ignoredException) {
+
+            }
             throw new AccessDeniedException("Target user's profile is private");
         }
     }
