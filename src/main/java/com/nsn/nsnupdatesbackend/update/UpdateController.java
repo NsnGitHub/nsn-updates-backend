@@ -5,6 +5,7 @@ import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -46,10 +47,19 @@ public class UpdateController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<List<UpdateDto>> getUpdatesFromSpecifiedUser(Principal principal, @PathVariable String username) {
+    @PreAuthorize("hasAuthority('ROLE_GUEST')")
+    @GetMapping("/user/{username}")
+    public ResponseEntity<List<UpdateDto>> getUpdatesFromSpecifiedUser(Principal principal, @PathVariable("username") String username) {
         return ResponseEntity.ok().body(
                 updateService.getUpdatesByUsername(principal.getName(), username)
+        );
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_GUEST')")
+    @GetMapping("/{id}")
+    public ResponseEntity<UpdateDto> getUpdatesFromSpecifiedUser(Principal principal, @PathVariable("id") Integer id) {
+        return ResponseEntity.ok().body(
+                updateService.getUpdateDtoById(principal.getName(), id)
         );
     }
 

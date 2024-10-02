@@ -76,12 +76,13 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                     String username = jwtUtils.getUsername(token);
 
                     if (jwtUtils.isGuestToken(token)) {
-                        System.out.println("GUEST TOKEN");
+                        System.out.println("GUEST TOKEN " + token);
 
                         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new
                                 UsernamePasswordAuthenticationToken(username, null, List.of(EUserRole.ROLE_GUEST));
                         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
+                        filterChain.doFilter(request, response);
                         return;
                     }
 

@@ -25,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping("/login/guest")
-    public ResponseEntity<?> signInGuest( HttpServletResponse response) {
+    public ResponseEntity<?> signInGuest(HttpServletResponse response) {
         authService.guestLogin(response);
         return ResponseEntity.ok().build();
     }

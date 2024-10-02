@@ -7,14 +7,11 @@ import com.nsn.nsnupdatesbackend.notification.NotificationService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -40,9 +37,7 @@ public class UpdateService {
     }
 
     public List<UpdateDto> getAllUpdates() {
-        return updateRepository.findAll().stream().map(update -> {
-            return updateMapper.toUpdateDto(update, false);
-        }).collect(Collectors.toList());
+        return updateRepository.findAll().stream().map(update -> updateMapper.toUpdateDto(update, false)).collect(Collectors.toList());
     }
 
     public Update getUpdateById(Integer id) {
@@ -103,28 +98,23 @@ public class UpdateService {
     public List<UpdateDto> getUpdatesByUsername(String requesterUsername, String targetUsername) {
         AppUser targetAppUser = appUserService.getUserByUsername(targetUsername);
 
-        if (targetAppUser.getPrivacySetting() == EPrivacySetting.PUBLIC) {
-            return updateRepository.findAllByAppUser(targetAppUser).stream().map(update -> {
-                AppUser requestingUser = appUserService.getUserByUsername(requesterUsername);
-                boolean isLikedByRequestingUser = update.hasUserLiked(requestingUser);
+        validateAccess(requesterUsername, targetAppUser);
 
-                return updateMapper.toUpdateDto(update, isLikedByRequestingUser);
-            }).toList();
-        } else if (targetAppUser.getPrivacySetting() == EPrivacySetting.PRIVATE) {
-            throw new AccessDeniedException("Target user has a private profile");
-        } else {
-            // Only privacy setting left is if their profile is on following.
-            if (followService.getIsFollowing(requesterUsername, targetAppUser.getUsername())) {
-                return updateRepository.findAllByAppUser(targetAppUser).stream().map(update -> {
-                    AppUser requestingUser = appUserService.getUserByUsername(requesterUsername);
-                    boolean isLikedByRequestingUser = update.hasUserLiked(requestingUser);
+        return updateRepository.findAllByAppUser(targetAppUser).stream().map(update -> updateMapper.toUpdateDto(
+                update, hasRequestingUsernameLikedUpdate(requesterUsername, update)
+            )
+        ).toList();
+    }
 
-                    return updateMapper.toUpdateDto(update, isLikedByRequestingUser);
-                }).toList();
-            } else {
-                throw new AccessDeniedException("You are not a follower of the target user");
-            }
-        }
+    public UpdateDto getUpdateDtoById(String requesterUsername, Integer id) {
+        Update update = updateRepository.findById(id).orElseThrow();
+        AppUser targetAppUser = update.getAppUser();
+
+        validateAccess(requesterUsername, targetAppUser);
+
+        boolean isUpdateLikedByRequestingUser = hasRequestingUsernameLikedUpdate(requesterUsername, update);
+
+        return updateMapper.toUpdateDto(update, isUpdateLikedByRequestingUser);
     }
 
     public List<UpdateDto> getUpdatesFromInboxByUsername(String username) {
@@ -156,5 +146,39 @@ public class UpdateService {
 
             return updateMapper.toUpdateDto(update, isLikedByRequestingUser);
         }).toList();
+    }
+
+    private boolean hasRequestingUsernameLikedUpdate(String requesterUsername, Update update) {
+        boolean isLikedByRequestingUser = false;
+
+        if (update != null) {
+            try {
+                AppUser requestingUser = appUserService.getUserByUsername(requesterUsername);
+                isLikedByRequestingUser = update.hasUserLiked(requestingUser);
+            } catch (EntityNotFoundException ignored) {
+                // User not found, therefore the user cannot have liked the update.
+            }
+        }
+
+        return isLikedByRequestingUser;
+    }
+
+    private boolean validateAccess(String requesterUsername, AppUser targetAppUser) {
+        if (targetAppUser.getPrivacySetting() == EPrivacySetting.PUBLIC) {
+            return true;
+        } else if (targetAppUser.getPrivacySetting() == EPrivacySetting.FOLLOWER) {
+            try {
+                appUserService.getUserByUsername(requesterUsername);
+                if (followService.getIsFollowing(requesterUsername, targetAppUser.getUsername())) {
+                    return true;
+                } else {
+                    throw new AccessDeniedException("Target user's profile is for followers only");
+                }
+            } catch (EntityNotFoundException e) {
+                throw new AccessDeniedException("Target user's profile is for followers only");
+            }
+        } else {
+            throw new AccessDeniedException("Target user's profile is private");
+        }
     }
 }

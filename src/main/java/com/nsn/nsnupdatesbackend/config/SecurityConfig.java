@@ -37,7 +37,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(authorizeRequest ->
                 authorizeRequest
-                    .requestMatchers("/api/v1/notification/**").hasAnyAuthority(EUserRole.ROLE_GUEST.getAuthority(), EUserRole.ROLE_USER.getAuthority())
+                    .requestMatchers("/api/v1/update/user/**").hasAnyAuthority(EUserRole.ROLE_GUEST.getAuthority(), EUserRole.ROLE_USER.getAuthority())
                     .requestMatchers("/api/v1/auth/**").permitAll()
                     .requestMatchers("/api/v1/register").permitAll()
                     .requestMatchers("/ws/**").permitAll()
