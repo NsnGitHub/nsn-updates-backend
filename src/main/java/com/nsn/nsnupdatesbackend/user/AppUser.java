@@ -163,4 +163,18 @@ public class AppUser {
     public void setRole(EUserRole role) {
         this.role = role;
     }
+
+    public Integer getNumberOfFollowers() {
+        if (this.followedBy == null) {
+            return 0;
+        }
+        return this.followedBy.size();
+    }
+
+    public Integer getNumberFollowing() {
+        if (this.following == null) {
+            return 0;
+        }
+        return this.following.size();
+    }
 }
