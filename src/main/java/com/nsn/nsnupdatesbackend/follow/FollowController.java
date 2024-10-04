@@ -3,9 +3,7 @@ package com.nsn.nsnupdatesbackend.follow;
 import com.nsn.nsnupdatesbackend.user.AppUserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -29,6 +27,11 @@ public class FollowController {
     @GetMapping("/following")
     public ResponseEntity<List<AppUserDto>> getFollowing(Principal principal) {
         return ResponseEntity.ok().body(followService.getFollowingDtoForUsername(principal.getName()));
+    }
+
+    @PostMapping("/status")
+    public ResponseEntity<?> getIsFollowing(Principal principal, @RequestBody String targetUsername) {
+        return ResponseEntity.ok().body(followService.getIsFollowing(principal.getName(), targetUsername));
     }
 
 }

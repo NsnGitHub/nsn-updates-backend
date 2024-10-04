@@ -1,11 +1,11 @@
 package com.nsn.nsnupdatesbackend.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1/user")
@@ -17,12 +17,9 @@ public class AppUserController {
         this.userService = userService;
     }
 
-    @PostMapping
-    public ResponseEntity<AppUserDto> getUserDetails(Principal principal) {
-
-        // Implement when user profile details figured out.
-
-        return ResponseEntity.ok().build();
+    @GetMapping(path = "/{username}")
+    public ResponseEntity<AppUserDto> getUserDetails(@PathVariable("username") String targetUsername) {
+        return ResponseEntity.ok().body(userService.getUserDtoByUsername(targetUsername));
     }
 
 }

@@ -1,6 +1,7 @@
 package com.nsn.nsnupdatesbackend.user;
 
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
+import com.nsn.nsnupdatesbackend.follow.FollowService;
 import com.nsn.nsnupdatesbackend.registration.RegistrationRequestDto;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -44,8 +45,8 @@ public class AppUserService implements UserDetailsService {
         return user;
     }
 
-    public AppUserDto getUserDtoByUsername(String username) {
-        return userMapper.toUserDto(getUserByUsername(username));
+    public AppUserDto getUserDtoByUsername(String targetUsername) {
+        return userMapper.toUserDto(getUserByUsername(targetUsername));
     }
 
     private boolean isUsernameRegistered(String requestedUsername) {
