@@ -30,10 +30,15 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<AuthDto> refreshToken(@RequestHeader("Authorization") String token,
-                                                HttpServletRequest request,
-                                                HttpServletResponse response) throws APIException {
-        return ResponseEntity.ok().body(authService.handleRefreshToken(token, request, response));
+    @GetMapping("/refresh")
+    public ResponseEntity<?> refreshToken(HttpServletRequest request,
+                                          HttpServletResponse response) throws APIException {
+        authService.handleRefreshToken(request, response);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/ping")
+    public ResponseEntity<?> ping() {
+        return ResponseEntity.ok().build();
     }
 }

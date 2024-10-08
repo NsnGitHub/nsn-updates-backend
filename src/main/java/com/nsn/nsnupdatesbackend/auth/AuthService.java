@@ -64,26 +64,35 @@ public class AuthService {
         response.addCookie(accessCookie);
     }
 
-    public AuthDto handleRefreshToken(String refreshToken, HttpServletRequest request, HttpServletResponse response) throws APIException {
-        if (refreshToken != null && refreshToken.startsWith("Bearer ")) {
-            String jwtToken = refreshToken.substring(7);
+    public void handleRefreshToken(HttpServletRequest request, HttpServletResponse response) throws APIException {
+        Cookie[] cookies = request.getCookies();
+        String jwtToken = null;
 
-            if (!jwtUtils.isRefreshToken(jwtToken)) {
-                throw new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, "Invalid Token");
-            }
-            String username = jwtUtils.getUsername(jwtToken);
-            AppUser user = userService.getUserByUsername(username);
-
-            if (user == null) {
-                throw new EntityNotFoundException("User not found");
-            }
-
-            String newAccessToken = jwtUtils.createToken(user.getUsername(), EJwtToken.ACCESS_TOKEN, EUserRole.ROLE_USER);
-
-            return new AuthDto(newAccessToken, jwtToken);
-        } else {
+        if (cookies == null) {
             throw new APIException(request.getServletPath(), HttpStatus.BAD_REQUEST, "Invalid Token");
         }
+
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(EJwtToken.REFRESH_TOKEN.toString())) {
+                jwtToken = cookie.getValue();
+            }
+        }
+
+        if (!jwtUtils.isRefreshToken(jwtToken)) {
+            throw new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, "Invalid Token");
+        }
+        String username = jwtUtils.getUsername(jwtToken);
+        AppUser user = userService.getUserByUsername(username);
+
+        if (user == null) {
+            throw new EntityNotFoundException("User not found");
+        }
+
+        String newAccessToken = jwtUtils.createToken(user.getUsername(), EJwtToken.ACCESS_TOKEN, EUserRole.ROLE_USER);
+
+        Cookie accessCookie = createHttpOnlyCookie(EJwtToken.ACCESS_TOKEN.toString(), newAccessToken, jwtUtils.getJwtTokenDuration(EJwtToken.ACCESS_TOKEN));
+
+        response.addCookie(accessCookie);
     }
 
     private Cookie createHttpOnlyCookie(String cookieName, String jwtToken, long cookieAge) {
