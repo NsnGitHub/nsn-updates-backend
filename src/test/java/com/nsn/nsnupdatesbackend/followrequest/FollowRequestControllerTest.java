@@ -115,12 +115,12 @@ public class FollowRequestControllerTest {
                 """.formatted(user2.getUsername());
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/api/v1/follow/request")
-                                .header("Authorization", "Bearer " + jwtTokenForUser1)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(validJsonToCreateFollowRequest)
-                )
-                .andExpect(status().isOk());
+            MockMvcRequestBuilders.post("/api/v1/follow/request")
+                .header("Authorization", "Bearer " + jwtTokenForUser1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(validJsonToCreateFollowRequest)
+        )
+            .andExpect(status().isOk());
 
         String validJsonToAcceptFollowRequest = """
                 {
@@ -129,12 +129,12 @@ public class FollowRequestControllerTest {
                 """.formatted(user1.getUsername());
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/api/v1/follow/request/reject")
-                                .header("Authorization", "Bearer " + jwtTokenForUser2)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(validJsonToAcceptFollowRequest)
-                )
-                .andExpect(status().isOk());
+            MockMvcRequestBuilders.post("/api/v1/follow/request/reject")
+                .header("Authorization", "Bearer " + jwtTokenForUser2)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(validJsonToAcceptFollowRequest)
+        )
+            .andExpect(status().isOk());
     }
 
     @Test
@@ -166,12 +166,12 @@ public class FollowRequestControllerTest {
                 """.formatted(user2.getUsername());
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/api/v1/follow/request")
-                                .header("Authorization", "Bearer " + jwtTokenForUser1)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(validJsonToCreateFollowRequest)
-                )
-                .andExpect(status().isOk());
+            MockMvcRequestBuilders.post("/api/v1/follow/request")
+                .header("Authorization", "Bearer " + jwtTokenForUser1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(validJsonToCreateFollowRequest)
+        )
+            .andExpect(status().isOk());
 
         String validJsonToAcceptFollowRequest = """
                 {
@@ -200,12 +200,12 @@ public class FollowRequestControllerTest {
                 """.formatted(user2.getUsername());
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/api/v1/follow/request")
-                                .header("Authorization", "Bearer " + jwtTokenForUser1)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(validJsonToCreateFollowRequest)
-                )
-                .andExpect(status().isOk());
+            MockMvcRequestBuilders.post("/api/v1/follow/request")
+                .header("Authorization", "Bearer " + jwtTokenForUser1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(validJsonToCreateFollowRequest)
+        )
+            .andExpect(status().isOk());
 
         String validJsonToAcceptFollowRequest = """
                 {

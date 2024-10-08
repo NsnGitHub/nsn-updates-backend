@@ -29,8 +29,8 @@ public class FollowController {
         return ResponseEntity.ok().body(followService.getFollowingDtoForUsername(principal.getName()));
     }
 
-    @PostMapping("/status")
-    public ResponseEntity<?> getIsFollowing(Principal principal, @RequestBody String targetUsername) {
+    @GetMapping("/status/{username}")
+    public ResponseEntity<?> getIsFollowing(Principal principal, @PathVariable("username") String targetUsername) {
         return ResponseEntity.ok().body(followService.getIsFollowing(principal.getName(), targetUsername));
     }
 

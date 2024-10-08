@@ -10,6 +10,7 @@ import com.nsn.nsnupdatesbackend.notification.Notification;
 import com.nsn.nsnupdatesbackend.notificationbatch.NotificationBatch;
 import com.nsn.nsnupdatesbackend.update.Update;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -27,7 +28,10 @@ public class AppUser {
     private String username;
     private String displayName;
     private String email;
+
+    @Size(max = 100)
     private String bio;
+
     private ZonedDateTime createdAt;
     private String passwordHash;
     private EUserRole role;
