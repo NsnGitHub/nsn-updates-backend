@@ -98,7 +98,7 @@ public class AuthService {
     private Cookie createHttpOnlyCookie(String cookieName, String jwtToken, long cookieAge) {
         Cookie cookie = new Cookie(cookieName, jwtToken);
         cookie.setHttpOnly(true);
-//        cookie.setSecure(true);
+        cookie.setSecure(false);
         cookie.setPath("/");
 
         if (cookieAge > Integer.MAX_VALUE) {

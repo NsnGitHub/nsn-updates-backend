@@ -54,6 +54,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             Cookie[] cookies = request.getCookies();
             if (cookies != null) {
                 for (Cookie cookie : cookies) {
+                    System.out.println(cookie.getName() + ": " + cookie.getValue());
                     if (cookie.getName().equals(EJwtToken.ACCESS_TOKEN.toString())) {
                         token = cookie.getValue();
                     }
@@ -95,7 +96,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                     handleException(e, request, response);
                 }
             } else {
-                filterChain.doFilter(request, response);
+                handleException(new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, "Invalid Token"), request, response);
             }
         }
     }

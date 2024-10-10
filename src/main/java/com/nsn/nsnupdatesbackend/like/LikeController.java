@@ -17,15 +17,15 @@ public class LikeController {
         this.likeService = likeService;
     }
 
-    @PostMapping
-    public ResponseEntity<?> like(Principal principal, @RequestBody LikeReqDto likeReqDto) {
-        likeService.like(principal.getName(), likeReqDto.updateId());
+    @GetMapping("/{id}")
+    public ResponseEntity<?> like(Principal principal, @PathVariable("id") Integer id) {
+        likeService.like(principal.getName(), id);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/delete")
-    public ResponseEntity<?> unlike(Principal principal, @RequestBody LikeReqDto likeReqDto) {
-        likeService.unlike(principal.getName(), likeReqDto.updateId());
+    @GetMapping("/delete/{id}")
+    public ResponseEntity<?> unlike(Principal principal, @PathVariable("id") Integer id) {
+        likeService.unlike(principal.getName(), id);
         return ResponseEntity.ok().build();
     }
 }
