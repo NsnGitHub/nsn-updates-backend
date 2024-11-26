@@ -52,6 +52,7 @@ public class UpdateService {
 
     public UpdateDto createPost(String username, UpdatePostReqDto updatePostReqDto) {
         AppUser appUser = appUserService.getUserByUsername(username);
+        AppUser appUser2 = appUserService.getUserByUsername(username);
         Update newUpdate = new Update(updatePostReqDto.content(), appUser);
 
         updateRepository.save(newUpdate);

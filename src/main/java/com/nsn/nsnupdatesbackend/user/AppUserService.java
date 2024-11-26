@@ -1,7 +1,5 @@
 package com.nsn.nsnupdatesbackend.user;
 
-import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
-import com.nsn.nsnupdatesbackend.follow.FollowService;
 import com.nsn.nsnupdatesbackend.registration.RegistrationRequestDto;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;

@@ -42,62 +42,69 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().equals("/api/v1/auth/login")
-                || request.getServletPath().equals("/api/v1/auth/refresh")) {
+
+        String requestPath = request.getServletPath();
+
+        if (requestPath.equals("/api/v1/auth/login")
+                || requestPath.equals("/api/v1/auth/refresh")
+                || requestPath.equals("/api/v1/register")) {
             filterChain.doFilter(request, response);
-        } else {
-            String authorization = request.getHeader(AUTHORIZATION);
-            String token = null;
+            return;
+        }
 
-            boolean isAccessCookieFound = false;
+        String authorization = request.getHeader(AUTHORIZATION);
+        String token = null;
 
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    System.out.println(cookie.getName() + ": " + cookie.getValue());
-                    if (cookie.getName().equals(EJwtToken.ACCESS_TOKEN.toString())) {
-                        token = cookie.getValue();
-                    }
+        boolean isAccessCookieFound = false;
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                System.out.println(cookie.getName() + ": " + cookie.getValue());
+                if (cookie.getName().equals(EJwtToken.ACCESS_TOKEN.toString())) {
+                    token = cookie.getValue();
                 }
             }
+        }
 
-            // For Controller tests, as I generate a JWT token to include within the Authorization header.
-            if (!isAccessCookieFound) {
-                if (authorization != null && authorization.startsWith("Bearer ")) {
-                    token = authorization.substring(7);
-                }
+        // For Controller tests, as I generate a JWT token to include within the Authorization header.
+        if (!isAccessCookieFound) {
+            if (authorization != null && authorization.startsWith("Bearer ")) {
+                token = authorization.substring(7);
             }
+        }
 
-            if (token != null) {
-                try {
-                    if (!jwtUtils.isAccessToken(token)) {
-                        throw new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, "Invalid Token");
-                    }
+        System.out.println(token);
 
-                    String username = jwtUtils.getUsername(token);
+        if (token != null) {
+            try {
+                if (!jwtUtils.isAccessToken(token)) {
+                    throw new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, "Invalid Token");
+                }
 
-                    if (jwtUtils.isGuestToken(token)) {
-                        System.out.println("GUEST TOKEN " + token);
+                String username = jwtUtils.getUsername(token);
 
-                        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new
-                                UsernamePasswordAuthenticationToken(username, null, List.of(EUserRole.ROLE_GUEST));
-                        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-
-                        filterChain.doFilter(request, response);
-                        return;
-                    }
+                if (jwtUtils.isGuestToken(token)) {
+                    System.out.println("GUEST TOKEN " + token);
 
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new
-                            UsernamePasswordAuthenticationToken(username, null, List.of(EUserRole.ROLE_USER));
+                            UsernamePasswordAuthenticationToken(username, null, List.of(EUserRole.ROLE_GUEST));
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
                     filterChain.doFilter(request, response);
-                } catch (Exception e) {
-                    handleException(e, request, response);
+                    return;
                 }
-            } else {
-                handleException(new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, "Invalid Token"), request, response);
+
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new
+                        UsernamePasswordAuthenticationToken(username, null, List.of(EUserRole.ROLE_USER));
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
+                filterChain.doFilter(request, response);
+            } catch (Exception e) {
+                handleException(e, request, response);
             }
+        } else {
+            handleException(new APIException(request.getServletPath(), HttpStatus.UNAUTHORIZED, "Error with token"), request, response);
         }
     }
 

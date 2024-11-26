@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
 import com.nsn.nsnupdatesbackend.enums.EUserRole;
@@ -12,18 +13,23 @@ import com.nsn.nsnupdatesbackend.update.Update;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serializable;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "app_user")
 @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
-public class AppUser {
+public class AppUser implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
     private Integer id;
+
+    @JsonIgnore
+    private static final long serializableVersionUID = 1L;
 
     private String username;
     private String displayName;
@@ -180,5 +186,23 @@ public class AppUser {
             return 0;
         }
         return this.following.size();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        return username.equals(((AppUser) obj).username);
     }
 }

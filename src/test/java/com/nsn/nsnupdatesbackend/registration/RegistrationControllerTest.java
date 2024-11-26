@@ -8,12 +8,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 public class RegistrationControllerTest {
 
     @Autowired
@@ -35,7 +34,7 @@ public class RegistrationControllerTest {
             MockMvcRequestBuilders.post("/api/v1/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidJson)
-        )
+            )
             .andExpect(status().isBadRequest())
             .andReturn().getResponse().getContentAsString();
 

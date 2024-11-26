@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.notificationbatch;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nsn.nsnupdatesbackend.enums.ENotificationType;
@@ -10,12 +11,16 @@ import com.nsn.nsnupdatesbackend.user.AppUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
 @SequenceGenerator(name = "notification_batch_seq", sequenceName = "notification_batch_seq", allocationSize = 1)
-public class NotificationBatch implements INotification {
+public class NotificationBatch implements INotification, Serializable {
+    @JsonIgnore
+    private static final long serializableVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_batch_seq")
     private Integer id;

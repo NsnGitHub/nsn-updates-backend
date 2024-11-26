@@ -1,14 +1,20 @@
 package com.nsn.nsnupdatesbackend.like;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nsn.nsnupdatesbackend.update.Update;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "update_like")
 @SequenceGenerator(name = "like_seq", sequenceName = "like_seq", allocationSize = 1)
-public class Like {
+public class Like implements Serializable {
+    @JsonIgnore
+    private static final long serializableVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "like_seq")
     private Integer id;

@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.update;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nsn.nsnupdatesbackend.like.Like;
 import com.nsn.nsnupdatesbackend.notification.Notification;
@@ -8,6 +9,7 @@ import com.nsn.nsnupdatesbackend.user.AppUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serializable;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -15,7 +17,10 @@ import java.util.List;
 
 @Entity
 @SequenceGenerator(name = "update_seq", sequenceName = "update_seq", allocationSize = 1)
-public class Update {
+public class Update implements Serializable {
+    @JsonIgnore
+    private static final long serializableVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "update_seq")
     private Integer id;

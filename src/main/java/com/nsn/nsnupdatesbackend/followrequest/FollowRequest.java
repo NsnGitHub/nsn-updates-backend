@@ -1,13 +1,19 @@
 package com.nsn.nsnupdatesbackend.followrequest;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nsn.nsnupdatesbackend.enums.EFollowRequestStatus;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name="follow_request")
 @SequenceGenerator(name = "follow_req_seq", sequenceName = "follow_req_seq", allocationSize = 1)
-public class FollowRequest {
+public class FollowRequest implements Serializable {
+    @JsonIgnore
+    private static final long serializableVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "follow_req_seq")
     private Integer id;

@@ -15,7 +15,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -58,11 +57,10 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorizeRequest ->
                 authorizeRequest
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    .requestMatchers("/api/v1/update/user/**").hasAnyAuthority(EUserRole.ROLE_GUEST.getAuthority(), EUserRole.ROLE_USER.getAuthority())
-                    .requestMatchers("/api/v1/auth/**").permitAll()
                     .requestMatchers("/api/v1/register").permitAll()
-                    .requestMatchers("/ws/**").permitAll()
-                    .anyRequest().authenticated()
+                    .requestMatchers("/api/v1/auth/**").permitAll()
+                    .requestMatchers("/ws/**").permitAll().requestMatchers("/api/v1/update/user/**").hasAnyAuthority(EUserRole.ROLE_GUEST.getAuthority(), EUserRole.ROLE_USER.getAuthority())
+                .anyRequest().authenticated()
             )
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session ->

@@ -9,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -32,8 +33,6 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
     private static final AppUser user3 = new AppUser("nsntest3", "nsntest3", "nsntest3@test.com", "password");
     private static final AppUser user4 = new AppUser("nsntest4", "nsntest4", "nsntest4@test.com", "password");
     private static final AppUser user5 = new AppUser("nsntest5", "nsntest5", "nsntest5@test.com", "password");
-
-
 
     /**
      * Start of tests
