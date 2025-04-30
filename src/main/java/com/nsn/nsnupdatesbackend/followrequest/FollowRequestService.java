@@ -17,20 +17,23 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FollowRequestService {
     private final FollowRequestRepository followRequestRepository;
     private final AppUserService appUserService;
     private final FollowService followService;
+    private final FollowRequestMapper followRequestMapper;
     private final NotificationService notificationService;
 
     @Autowired
     public FollowRequestService(FollowRequestRepository followRequestRepository, AppUserService appUserService,
-        FollowService followService, NotificationService notificationService) {
+        FollowService followService, FollowRequestMapper followRequestMapper, NotificationService notificationService) {
             this.followRequestRepository = followRequestRepository;
             this.appUserService = appUserService;
             this.followService = followService;
+            this.followRequestMapper = followRequestMapper;
             this.notificationService = notificationService;
     }
 
@@ -110,5 +113,16 @@ public class FollowRequestService {
         }
 
         return followRequest;
+    }
+
+    public List<FollowRequestDto> getAllPendingFollowRequests(String targetUsername) {
+        AppUser target = appUserService.getUserByUsername(targetUsername);
+        List<FollowRequest> followRequests = followRequestRepository.getFollowRequestsByTarget(target);
+
+        return followRequests
+                .stream()
+                .filter(followRequest -> followRequest.getStatus() == EFollowRequestStatus.FOLLOW_PENDING)
+                .map(followRequestMapper::toFollowRequestDto)
+                .toList();
     }
 }

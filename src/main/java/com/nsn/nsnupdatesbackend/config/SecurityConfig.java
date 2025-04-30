@@ -54,19 +54,21 @@ public class SecurityConfig {
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-            .authorizeHttpRequests(authorizeRequest ->
-                authorizeRequest
-                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    .requestMatchers("/api/v1/register").permitAll()
-                    .requestMatchers("/api/v1/auth/**").permitAll()
-                    .requestMatchers("/ws/**").permitAll().requestMatchers("/api/v1/update/user/**").hasAnyAuthority(EUserRole.ROLE_GUEST.getAuthority(), EUserRole.ROLE_USER.getAuthority())
-                .anyRequest().authenticated()
-            )
-            .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            .addFilterAfter(new JWTAuthorizationFilter(jwtUtils), CorsFilter.class);
+                .authorizeHttpRequests(authorizeRequest ->
+                        authorizeRequest
+                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                .requestMatchers("/api/v1/register").permitAll()
+                                .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers("/ws/**").permitAll()
+                                .requestMatchers("/ws").permitAll()
+                                .requestMatchers("/api/v1/update/user/**").hasAnyAuthority(EUserRole.ROLE_GUEST.getAuthority(), EUserRole.ROLE_USER.getAuthority())
+                                .anyRequest().authenticated()
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .addFilterAfter(new JWTAuthorizationFilter(jwtUtils), CorsFilter.class);
 
         http.cors(c -> c.configurationSource(corsConfigurationSource()));
 

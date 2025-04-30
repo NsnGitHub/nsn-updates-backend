@@ -3,6 +3,8 @@ package com.nsn.nsnupdatesbackend.followrequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nsn.nsnupdatesbackend.enums.EFollowRequestStatus;
 import com.nsn.nsnupdatesbackend.user.AppUser;
+import com.nsn.nsnupdatesbackend.user.AppUserDto;
+import com.nsn.nsnupdatesbackend.user.AppUserMapper;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -41,5 +43,11 @@ public class FollowRequest implements Serializable {
         this.target = target;
     }
 
+    public EFollowRequestStatus getStatus() {
+        return this.status;
+    }
 
+    public String getRequesterUsername() { return this.requester.getUsername(); }
+
+    public String getTargetUsername() { return this.target.getUsername(); }
 }

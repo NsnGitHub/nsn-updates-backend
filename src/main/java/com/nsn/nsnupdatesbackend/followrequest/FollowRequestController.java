@@ -4,10 +4,7 @@ import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -39,5 +36,10 @@ public class FollowRequestController {
     public ResponseEntity<?> rejectRequest(Principal principal, @Valid @RequestBody FollowRequestDto followRequestDto) {
         followRequestService.rejectFollowRequest(followRequestDto.requesterUsername(), principal.getName());
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getPendingRequests(Principal principal) {
+        return ResponseEntity.ok(followRequestService.getAllPendingFollowRequests(principal.getName()));
     }
 }

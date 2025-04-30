@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1/user")
@@ -20,6 +21,11 @@ public class AppUserController {
     @GetMapping(path = "/{username}")
     public ResponseEntity<AppUserDto> getUserDetails(@PathVariable("username") String targetUsername) {
         return ResponseEntity.ok().body(userService.getUserDtoByUsername(targetUsername));
+    }
+
+    @GetMapping(path = "/search/{usernameCriteria}")
+    public ResponseEntity<List<AppUserDto>> getUserWithUsernameContaining(@PathVariable("usernameCriteria") String targetUsernameCriteria, Principal principal) {
+        return ResponseEntity.ok().body(userService.getUserDtoListByUsernameSearch(targetUsernameCriteria, principal.getName()));
     }
 
 }

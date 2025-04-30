@@ -66,9 +66,8 @@ public class NotificationService {
                eNotificationType == ENotificationType.NOTIFICATION_FOLLOW_REQUEST ||
                eNotificationType == ENotificationType.NOTIFICATION_FOLLOW_PUBLIC) {
             sendNotification(notification);
-            notificationWebSocketService.sendNotificationForFollowsToUser(target.getUsername(),
-                    notificationMapper.toNotificationDto(notification)
-            );
+                notificationWebSocketService.sendNotificationForFollowsToUser(target.getUsername(),
+                        notificationMapper.toNotificationDto(notification));
        } else {
            notificationRepository.save(notification);
        }

@@ -47,7 +47,8 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
         if (requestPath.equals("/api/v1/auth/login")
                 || requestPath.equals("/api/v1/auth/refresh")
-                || requestPath.equals("/api/v1/register")) {
+                || requestPath.equals("/api/v1/register")
+                || requestPath.startsWith("/ws")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -71,10 +72,9 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         if (!isAccessCookieFound) {
             if (authorization != null && authorization.startsWith("Bearer ")) {
                 token = authorization.substring(7);
+                System.out.println("BEARER TOKEN: " + token);
             }
         }
-
-        System.out.println(token);
 
         if (token != null) {
             try {

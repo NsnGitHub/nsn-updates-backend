@@ -6,6 +6,7 @@ import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserDto;
 import com.nsn.nsnupdatesbackend.user.AppUserMapper;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
+import jakarta.persistence.EntityExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,6 +66,10 @@ public class FollowService {
     }
 
     private void follow(AppUser follower, AppUser followee) {
+        if (followRepository.existsFollowByFollowerAndFollowee(follower, followee)) {
+            throw new EntityExistsException("You are already following this user");
+        }
+
         Follow follow = new Follow(follower, followee);
         followRepository.save(follow);
     }

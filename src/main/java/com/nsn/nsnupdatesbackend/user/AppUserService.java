@@ -47,6 +47,12 @@ public class AppUserService implements UserDetailsService {
         return userMapper.toUserDto(getUserByUsername(targetUsername));
     }
 
+    public List<AppUserDto> getUserDtoListByUsernameSearch(String usernameCriteria, String principalUsername) {
+        AppUser currentUser = getUserByUsername(principalUsername);
+        List<AppUser> userRes = userRepository.findAppUserByUsernameContaining(usernameCriteria);
+        return userRes.stream().filter((appUser) -> appUser != currentUser).map(userMapper::toUserDto).collect(Collectors.toList());
+    }
+
     private boolean isUsernameRegistered(String requestedUsername) {
         AppUser user = userRepository.findUserByUsername(requestedUsername);
         return user != null;

@@ -29,6 +29,9 @@ public class AppUser implements Serializable {
     private Integer id;
 
     @JsonIgnore
+    private String wsToken;
+
+    @JsonIgnore
     private static final long serializableVersionUID = 1L;
 
     private String username;
@@ -186,6 +189,14 @@ public class AppUser implements Serializable {
             return 0;
         }
         return this.following.size();
+    }
+
+    public String getWsToken() {
+        return this.wsToken;
+    }
+
+    public void setWsToken(String token) {
+        this.wsToken = token;
     }
 
     @Override

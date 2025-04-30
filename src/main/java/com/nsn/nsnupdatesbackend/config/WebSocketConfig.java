@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.config;
 
+import com.nsn.nsnupdatesbackend.enums.EUserRole;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import com.nsn.nsnupdatesbackend.utils.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import java.util.List;
+
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 @EnableWebSocketMessageBroker
@@ -38,9 +41,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("http://localhost:63342");
-        registry.addEndpoint("/ws")
-                .setAllowedOrigins("http://localhost:63342")
+                .setAllowedOriginPatterns("*");
+        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:5173")
                 .withSockJS();
     }
 
@@ -60,20 +62,23 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 assert accessor != null;
 
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    String authHeader = accessor.getFirstNativeHeader("Authorization");
+
+                    String authHeader = accessor.getFirstNativeHeader("userWs");
+
+                    System.out.println(authHeader);
 
                     assert authHeader != null;
 
-                    String token = authHeader.substring(7);
-                    String username = jwtUtils.getUsername(token);
-
                     // This would verify if the user exists or not, need this here because this doesn't go through the
                     // filter chain like it would in the JWT filter.
+
+                    String username = jwtUtils.getUsername(authHeader);
+
                     UserDetails userDetails = appUserService.loadUserByUsername(username);
 
                     // Same as within custom JWT filter
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new
-                            UsernamePasswordAuthenticationToken(userDetails, null, null);
+                            UsernamePasswordAuthenticationToken(userDetails, null, List.of(EUserRole.ROLE_USER));
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
                     accessor.setUser(usernamePasswordAuthenticationToken);

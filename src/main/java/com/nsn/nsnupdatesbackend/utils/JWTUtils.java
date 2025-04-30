@@ -20,13 +20,17 @@ public class JWTUtils {
     private final String jwtSecret;
     private final long jwtAccessTokenDuration;
     private final long jwtRefreshTokenDuration;
+    private final long jwtWsTokenDuration;
 
     public JWTUtils(@Value("${JWT_SECRET}") String jwtSecret,
         @Value("${JWT_ACCESS_TOKEN_TIME}") String jwtAccessTokenDuration,
-        @Value("${JWT_REFRESH_TOKEN_TIME}") String jwtRefreshTokenDuration) {
+        @Value("${JWT_REFRESH_TOKEN_TIME}") String jwtRefreshTokenDuration,
+        @Value("${JWT_WS_TOKEN_TIME}") String jwtWsTokenDuration) {
             this.jwtSecret = jwtSecret;
             this.jwtAccessTokenDuration = Long.parseLong(jwtAccessTokenDuration);
             this.jwtRefreshTokenDuration = Long.parseLong(jwtRefreshTokenDuration);
+            this.jwtWsTokenDuration = Long.parseLong(jwtWsTokenDuration);
+
     }
 
     private Key getKey() {
@@ -38,6 +42,7 @@ public class JWTUtils {
         return switch (jwtTokenType) {
             case ACCESS_TOKEN -> jwtAccessTokenDuration;
             case REFRESH_TOKEN -> jwtRefreshTokenDuration;
+            case WS_TOKEN -> jwtWsTokenDuration;
         };
     }
 
@@ -53,6 +58,8 @@ public class JWTUtils {
 
         if (tokenType == EJwtToken.REFRESH_TOKEN) {
             duration = jwtRefreshTokenDuration;
+        } else if (tokenType == EJwtToken.WS_TOKEN) {
+            duration = jwtWsTokenDuration;
         }
 
         return Jwts.builder()
@@ -79,6 +86,11 @@ public class JWTUtils {
         return tokenRole.equals(EJwtToken.REFRESH_TOKEN.toString());
     }
 
+    public boolean isWsToken(String token) {
+        String tokenRole = extractClaims(token).get("token_role").toString();
+        return tokenRole.equals(EJwtToken.WS_TOKEN.toString());
+    }
+
     public boolean isGuestToken(String token) {
         String userRole = extractClaims(token).get("roles").toString();
         return userRole.equals(EUserRole.ROLE_GUEST.toString());
@@ -86,6 +98,15 @@ public class JWTUtils {
 
     public String getUsername(String token) {
         return extractClaims(token).getSubject();
+    }
+
+    public boolean isExpired(String token) {
+        try {
+            Date expiration = extractClaims(token).getExpiration();
+            return expiration.before(new Date());
+        } catch (Exception e) {
+            return true;
+        }
     }
 
 }

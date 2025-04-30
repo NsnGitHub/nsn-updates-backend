@@ -17,10 +17,7 @@ import java.util.List;
 
 @Entity
 @SequenceGenerator(name = "update_seq", sequenceName = "update_seq", allocationSize = 1)
-public class Update implements Serializable {
-    @JsonIgnore
-    private static final long serializableVersionUID = 1L;
-
+public class Update {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "update_seq")
     private Integer id;
