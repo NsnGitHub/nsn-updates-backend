@@ -8,6 +8,7 @@ import com.nsn.nsnupdatesbackend.user.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +55,33 @@ public class NotificationService {
                 );
 
         return notificationlist.stream().map(notificationMapper::toNotificationDto).collect(Collectors.toList());
+    }
+
+    private int getUnreadFollowNotificationsCount(String username) {
+        AppUser user = appUserService.getUserByUsername(username);
+        List<ENotificationType> friendRequestTypes = new ArrayList<>();
+        friendRequestTypes.add(ENotificationType.NOTIFICATION_FOLLOW_REQUEST);
+        friendRequestTypes.add(ENotificationType.NOTIFICATION_FOLLOW_ACCEPTED);
+        friendRequestTypes.add(ENotificationType.NOTIFICATION_FOLLOW_PUBLIC);
+
+        return notificationRepository.countByAppUserAndNotificationTypeIsInAndIsReadAndIsSentToUser(user, friendRequestTypes, false, true);
+    }
+
+    private int getUnreadNotificationsCount(String username) {
+        AppUser user = appUserService.getUserByUsername(username);
+        List<ENotificationType> notificationTypes = new ArrayList<>();
+        notificationTypes.add(ENotificationType.NOTIFICATION_UPDATE_LIKED);
+        notificationTypes.add(ENotificationType.NOTIFICATION_FOLLOWED_POSTED);
+        notificationTypes.add(ENotificationType.NOTIFICATION_UPDATE_COMMENTED);
+
+        return notificationRepository.countByAppUserAndNotificationTypeIsInAndIsReadAndIsSentToUser(user, notificationTypes, false, true);
+    }
+
+    public NotificationCountDto getUnreadNotificationCountDto(String username) {
+        int friendNotificationsCount = getUnreadFollowNotificationsCount(username);
+        int notificationsCount = getUnreadNotificationsCount(username);
+
+        return new NotificationCountDto(friendNotificationsCount, notificationsCount);
     }
 
     public Notification createNotificationFromUserAndTarget(AppUser user, AppUser target,

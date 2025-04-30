@@ -26,6 +26,7 @@ public class NotificationBatchMapper {
         return new NotificationBatchDto(
                 notificationBatch.getId(),
                 notificationBatch.getMessage(),
+                notificationBatch.getSizeOfBatch(),
                 notificationDtoList,
                 notificationBatch.getNotificationType(),
                 notificationBatch.getCreatedAt(),

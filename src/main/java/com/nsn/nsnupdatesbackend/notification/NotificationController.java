@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.notification;
 
+import com.nsn.nsnupdatesbackend.enums.ENotificationType;
 import com.nsn.nsnupdatesbackend.notificationbatch.NotificationBatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,11 @@ public class NotificationController {
     @GetMapping("/follow")
     public ResponseEntity<List<NotificationDto>> getFollowNotifications(Principal principal) {
         return ResponseEntity.status(HttpStatus.OK).body(notificationService.getFollowNotificationsForUserWithUsername(principal.getName()));
+    }
+
+    @GetMapping("/unread/count")
+    public ResponseEntity<NotificationCountDto> getUnreadFollowNotifications(Principal principal) {
+        return ResponseEntity.ok().body(notificationService.getUnreadNotificationCountDto(principal.getName()));
     }
 
     @PreAuthorize("hasAuthority('ROLE_GUEST')")

@@ -10,4 +10,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
     List<Notification> findNotificationsByIsSentToUserIsFalse();
     List<Notification> findNotificationsByIsSentToUserIsTrueAndAppUser(AppUser user);
     List<Notification> findNotificationsByIsSentToUserIsTrueAndAppUserAndNotificationTypeIsIn(AppUser user, List<ENotificationType> notificationTypeList);
+    int countByAppUserAndNotificationTypeIsInAndIsReadAndIsSentToUser(AppUser user, List<ENotificationType> notificationTypeList, boolean isRead, boolean isSentToUser);
 }

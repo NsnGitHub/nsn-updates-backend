@@ -9,6 +9,7 @@ import java.util.List;
 public record NotificationBatchDto(
         Integer id,
         String message,
+        int sizeOfBatch,
         List<NotificationDto> notificationDtoList,
         ENotificationType notificationType,
         ZonedDateTime createdAt,

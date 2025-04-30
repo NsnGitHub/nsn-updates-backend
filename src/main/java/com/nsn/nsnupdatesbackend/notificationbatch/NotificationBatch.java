@@ -109,4 +109,8 @@ public class NotificationBatch implements INotification, Serializable {
         this.updateForBatch = updateForBatch;
     }
 
+    public int getSizeOfBatch() {
+        return getNotifications().size();
+    }
+
 }
