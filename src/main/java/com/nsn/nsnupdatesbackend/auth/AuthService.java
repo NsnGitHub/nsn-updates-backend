@@ -37,6 +37,14 @@ public class AuthService {
         this.authenticationManager = authenticationManager;
     }
 
+    public void logout(HttpServletResponse response) {
+        Cookie accessCookie = createHttpOnlyCookie(EJwtToken.ACCESS_TOKEN.toString(), "", 0);
+        Cookie refreshCookie = createHttpOnlyCookie(EJwtToken.REFRESH_TOKEN.toString(), "", 0);
+
+        response.addCookie(accessCookie);
+        response.addCookie(refreshCookie);
+    }
+
     public void login(String username, String password, HttpServletResponse response) {
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
             username, password

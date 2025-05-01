@@ -3,6 +3,7 @@ package com.nsn.nsnupdatesbackend.auth;
 import com.nsn.nsnupdatesbackend.exception.APIException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +25,19 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        authService.logout(response);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/login/guest")
     public ResponseEntity<?> signInGuest(HttpServletResponse response) {
         authService.guestLogin(response);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/refresh")
+    @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(HttpServletRequest request,
                                           HttpServletResponse response) throws APIException {
         authService.handleRefreshToken(request, response);

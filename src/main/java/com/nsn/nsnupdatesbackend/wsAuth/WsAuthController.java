@@ -3,6 +3,7 @@ package com.nsn.nsnupdatesbackend.wsAuth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,12 +20,7 @@ public class WsAuthController {
         this.wsAuthService = wsAuthService;
     }
 
-    @GetMapping("/ping")
-    public ResponseEntity<String> ping() {
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping
+    @PostMapping
     public ResponseEntity<?> refreshWsToken(Principal principal) {
         return ResponseEntity.ok().body(wsAuthService.refreshWsToken(principal.getName()));
     }
