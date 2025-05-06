@@ -6,6 +6,9 @@ import com.nsn.nsnupdatesbackend.update.Update;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -55,6 +58,42 @@ public class NotificationService {
                 );
 
         return notificationlist.stream().map(notificationMapper::toNotificationDto).collect(Collectors.toList());
+    }
+
+    public List<NotificationDto> getFollowNotificationsForUserWithUsernamePaginated(String username, int page) {
+        AppUser user = appUserService.getUserByUsername(username);
+        int NUM_NOTIFICATIONS_PER_PAGE = 10;
+        Pageable pageable = PageRequest.of(page, NUM_NOTIFICATIONS_PER_PAGE, Sort.by("createdAt").descending());
+
+        List<Notification> notificationList = notificationRepository.findNotificationsByIsSentToUserIsTrueAndAppUserAndNotificationTypeIsIn(
+                user,
+                Arrays.asList(
+                        ENotificationType.NOTIFICATION_FOLLOW_ACCEPTED,
+                        ENotificationType.NOTIFICATION_FOLLOW_REQUEST,
+                        ENotificationType.NOTIFICATION_FOLLOW_PUBLIC
+                ),
+                pageable
+        );
+
+        return notificationList.stream().map(notificationMapper::toNotificationDto).collect(Collectors.toList());
+    }
+
+    public List<NotificationDto> getUpdateNotificationsForUsersWithUsernamePaginated(String username, int page) {
+        AppUser user = appUserService.getUserByUsername(username);
+        int NUM_NOTIFICATIONS_PER_PAGE = 10;
+        Pageable pageable = PageRequest.of(page, NUM_NOTIFICATIONS_PER_PAGE, Sort.by("createdAt").descending());
+
+        List<Notification> notificationList = notificationRepository.findNotificationsByIsSentToUserIsTrueAndAppUserAndNotificationTypeIsIn(
+                user,
+                Arrays.asList(
+                        ENotificationType.NOTIFICATION_UPDATE_LIKED,
+                        ENotificationType.NOTIFICATION_UPDATE_COMMENTED,
+                        ENotificationType.NOTIFICATION_FOLLOWED_POSTED
+                ),
+                pageable
+        );
+
+        return notificationList.stream().map(notificationMapper::toNotificationDto).collect(Collectors.toList());
     }
 
     private int getUnreadFollowNotificationsCount(String username) {

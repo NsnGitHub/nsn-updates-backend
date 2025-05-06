@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -40,6 +38,16 @@ public class NotificationController {
     @GetMapping("/follow")
     public ResponseEntity<List<NotificationDto>> getFollowNotifications(Principal principal) {
         return ResponseEntity.status(HttpStatus.OK).body(notificationService.getFollowNotificationsForUserWithUsername(principal.getName()));
+    }
+
+    @GetMapping("/follow/query")
+    public ResponseEntity<List<NotificationDto>> getFollowNotificationsPaginated(Principal principal, @RequestParam(required = false) Integer page) {
+        return ResponseEntity.ok().body(notificationService.getFollowNotificationsForUserWithUsernamePaginated(principal.getName(), page));
+    }
+
+    @GetMapping("/update/query")
+    public ResponseEntity<List<NotificationDto>> getUpdateNotifications(Principal principal, @RequestParam(required = false) Integer page) {
+        return ResponseEntity.ok().body(notificationService.getUpdateNotificationsForUsersWithUsernamePaginated(principal.getName(), page));
     }
 
     @GetMapping("/unread/count")
