@@ -49,7 +49,7 @@ public class AppUserService implements UserDetailsService {
 
     public List<AppUserDto> getUserDtoListByUsernameSearch(String usernameCriteria, String principalUsername) {
         AppUser currentUser = getUserByUsername(principalUsername);
-        List<AppUser> userRes = userRepository.findAppUserByUsernameContaining(usernameCriteria);
+        List<AppUser> userRes = userRepository.findAppUserByUsernameContainingIgnoreCase(usernameCriteria);
         return userRes.stream().filter((appUser) -> appUser != currentUser).map(userMapper::toUserDto).collect(Collectors.toList());
     }
 
