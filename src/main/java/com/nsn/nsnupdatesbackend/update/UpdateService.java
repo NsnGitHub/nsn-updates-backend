@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.update;
 
+import com.nsn.nsnupdatesbackend.config.PaginationConfig;
 import com.nsn.nsnupdatesbackend.enums.ENotificationType;
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
 import com.nsn.nsnupdatesbackend.follow.FollowService;
@@ -26,15 +27,17 @@ public class UpdateService {
     private final AppUserService appUserService;
     private final FollowService followService;
     private final NotificationService notificationService;
+    private final PaginationConfig paginationConfig;
 
     @Autowired
     public UpdateService(UpdateRepository updateRepository, UpdateMapper updateMapper, AppUserService appUserService,
-                         FollowService followService, NotificationService notificationService) {
+                         FollowService followService, NotificationService notificationService, PaginationConfig paginationConfig) {
             this.updateRepository = updateRepository;
             this.updateMapper = updateMapper;
             this.appUserService = appUserService;
             this.followService = followService;
             this.notificationService = notificationService;
+        this.paginationConfig = paginationConfig;
     }
 
     public List<UpdateDto> getAllUpdates() {
@@ -133,9 +136,11 @@ public class UpdateService {
         }).toList();
     }
 
-    public List<UpdateDto> getUpdatesFromInboxByUsernamePaginated(int page, int size, String username) {
+    public List<UpdateDto> getUpdatesFromInboxByUsernamePaginated(int page, String username) {
         AppUser user = appUserService.getUserByUsername(username);
         List<Update> inbox = user.getInbox();
+
+        int size = paginationConfig.getPageSize();
 
         // Sort
         inbox.sort(Comparator.comparing(Update::getCreatedAt).reversed());

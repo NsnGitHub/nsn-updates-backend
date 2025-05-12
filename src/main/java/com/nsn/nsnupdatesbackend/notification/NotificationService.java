@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.notification;
 
+import com.nsn.nsnupdatesbackend.config.PaginationConfig;
 import com.nsn.nsnupdatesbackend.enums.ENotificationType;
 import com.nsn.nsnupdatesbackend.notificationwebsocket.NotificationWebSocketService;
 import com.nsn.nsnupdatesbackend.update.Update;
@@ -24,16 +25,18 @@ public class NotificationService {
     private final NotificationMapper notificationMapper;
     private final AppUserService appUserService;
     private final NotificationWebSocketService notificationWebSocketService;
+    private final PaginationConfig paginationConfig;
 
     @Autowired
     public NotificationService(NotificationRepository notificationRepository,
                                NotificationMapper notificationMapper,
                                AppUserService appUserService,
-                               NotificationWebSocketService notificationWebSocketService) {
+                               NotificationWebSocketService notificationWebSocketService, PaginationConfig paginationConfig) {
         this.notificationRepository = notificationRepository;
         this.notificationMapper = notificationMapper;
         this.appUserService = appUserService;
         this.notificationWebSocketService = notificationWebSocketService;
+        this.paginationConfig = paginationConfig;
     }
 
     public List<NotificationDto> getNotifications() {
@@ -62,8 +65,7 @@ public class NotificationService {
 
     public List<NotificationDto> getFollowNotificationsForUserWithUsernamePaginated(String username, int page) {
         AppUser user = appUserService.getUserByUsername(username);
-        int NUM_NOTIFICATIONS_PER_PAGE = 10;
-        Pageable pageable = PageRequest.of(page, NUM_NOTIFICATIONS_PER_PAGE, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(page, paginationConfig.getPageSize(), Sort.by("createdAt").descending());
 
         List<Notification> notificationList = notificationRepository.findNotificationsByIsSentToUserIsTrueAndAppUserAndNotificationTypeIsIn(
                 user,
@@ -80,8 +82,7 @@ public class NotificationService {
 
     public List<NotificationDto> getUpdateNotificationsForUsersWithUsernamePaginated(String username, int page) {
         AppUser user = appUserService.getUserByUsername(username);
-        int NUM_NOTIFICATIONS_PER_PAGE = 10;
-        Pageable pageable = PageRequest.of(page, NUM_NOTIFICATIONS_PER_PAGE, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(page, paginationConfig.getPageSize(), Sort.by("createdAt").descending());
 
         List<Notification> notificationList = notificationRepository.findNotificationsByIsSentToUserIsTrueAndAppUserAndNotificationTypeIsIn(
                 user,

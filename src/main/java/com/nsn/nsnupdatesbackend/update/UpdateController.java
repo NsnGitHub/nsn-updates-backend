@@ -32,7 +32,7 @@ public class UpdateController {
     public ResponseEntity<List<UpdateDto>> getAllUpdatesForUserPaginated(Principal principal, @RequestParam int page,
                                                                          @RequestParam int size) {
         return ResponseEntity.ok().body(
-            updateService.getUpdatesFromInboxByUsernamePaginated(page, size, principal.getName())
+            updateService.getUpdatesFromInboxByUsernamePaginated(page, principal.getName())
         );
     }
 

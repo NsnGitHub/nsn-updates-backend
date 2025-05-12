@@ -100,12 +100,7 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
         // User should receive this in their inbox;
         final int PAGE = 0;
 
-        assertEquals(1, updateService.getUpdatesFromInboxByUsernamePaginated(PAGE, 1, user1.getUsername()).size());
-        assertEquals(2, updateService.getUpdatesFromInboxByUsernamePaginated(PAGE, 2, user1.getUsername()).size());
-        assertEquals(3, updateService.getUpdatesFromInboxByUsernamePaginated(PAGE, 3, user1.getUsername()).size());
-        assertEquals(4, updateService.getUpdatesFromInboxByUsernamePaginated(PAGE, 4, user1.getUsername()).size());
-        assertEquals(5, updateService.getUpdatesFromInboxByUsernamePaginated(PAGE, 5, user1.getUsername()).size());
-
+        assertEquals(1, updateService.getUpdatesFromInboxByUsernamePaginated(PAGE, user1.getUsername()).size());
     }
 
     @Test
