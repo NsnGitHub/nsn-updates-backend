@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.followrequest;
 
+import com.nsn.nsnupdatesbackend.follow.FollowDto;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,5 +42,10 @@ public class FollowRequestController {
     @GetMapping("/all")
     public ResponseEntity<?> getPendingRequests(Principal principal) {
         return ResponseEntity.ok(followRequestService.getAllPendingFollowRequests(principal.getName()));
+    }
+
+    @GetMapping("/status/{username}")
+    public ResponseEntity<?> getIsFollowing(Principal principal, @PathVariable("username") String targetUsername) {
+        return ResponseEntity.ok().body(new FollowDto(followRequestService.getStatus(principal.getName(), targetUsername)));
     }
 }

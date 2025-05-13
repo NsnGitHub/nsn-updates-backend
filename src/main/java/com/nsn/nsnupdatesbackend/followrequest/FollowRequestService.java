@@ -86,24 +86,27 @@ public class FollowRequestService {
     }
 
     public void rejectFollowRequest(String requesterUsername, String targetUsername) {
-        FollowRequest followRequest = getPendingFollowRequest(requesterUsername, targetUsername);
+        AppUser requester = appUserService.getUserByUsername(requesterUsername);
+        AppUser target = appUserService.getUserByUsername(targetUsername);
+
+        FollowRequest followRequest = getPendingFollowRequest(requester, target);
         followRequest.setStatus(EFollowRequestStatus.FOLLOW_REJECTED);
 
         followRequestRepository.save(followRequest);
     }
 
     public void acceptFollowRequest(String requesterUsername, String targetUsername, boolean notify) {
-        FollowRequest followRequest = getPendingFollowRequest(requesterUsername, targetUsername);
+        AppUser requester = appUserService.getUserByUsername(requesterUsername);
+        AppUser target = appUserService.getUserByUsername(targetUsername);
+
+        FollowRequest followRequest = getPendingFollowRequest(requester, target);
         followRequest.setStatus(EFollowRequestStatus.FOLLOW_ACCEPTED);
 
         followRequestRepository.save(followRequest);
         followService.followFromUsername(requesterUsername, targetUsername, notify);
     }
 
-    private FollowRequest getPendingFollowRequest(String requesterUsername, String targetUsername) {
-        AppUser requester = appUserService.getUserByUsername(requesterUsername);
-        AppUser target = appUserService.getUserByUsername(targetUsername);
-
+    private FollowRequest getPendingFollowRequest(AppUser requester, AppUser target) {
         FollowRequest followRequest = followRequestRepository.getFollowRequestByRequesterAndTargetAndStatus(
                 requester, target, EFollowRequestStatus.FOLLOW_PENDING
         );
@@ -124,5 +127,25 @@ public class FollowRequestService {
                 .filter(followRequest -> followRequest.getStatus() == EFollowRequestStatus.FOLLOW_PENDING)
                 .map(followRequestMapper::toFollowRequestDto)
                 .toList();
+    }
+
+    public EFollowRequestStatus getStatus(String requesterUsername, String targetUsername) {
+        AppUser requester = appUserService.getUserByUsername(requesterUsername);
+        AppUser target = appUserService.getUserByUsername(targetUsername);
+
+        boolean followed = followService.getIsFollowByUserObject(requester, target);
+
+        if (followed) {
+            return EFollowRequestStatus.FOLLOW_TRUE;
+        }
+
+        try {
+            getPendingFollowRequest(requester, target);
+            return EFollowRequestStatus.FOLLOW_PENDING;
+        } catch (EntityNotFoundException e) {
+            // In the case where no follow request is found, continue;
+        }
+
+        return EFollowRequestStatus.FOLLOW_FALSE;
     }
 }

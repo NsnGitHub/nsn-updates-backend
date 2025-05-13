@@ -28,10 +28,4 @@ public class FollowController {
     public ResponseEntity<List<AppUserDto>> getFollowing(Principal principal) {
         return ResponseEntity.ok().body(followService.getFollowingDtoForUsername(principal.getName()));
     }
-
-    @GetMapping("/status/{username}")
-    public ResponseEntity<?> getIsFollowing(Principal principal, @PathVariable("username") String targetUsername) {
-        return ResponseEntity.ok().body(followService.getIsFollowing(principal.getName(), targetUsername));
-    }
-
 }

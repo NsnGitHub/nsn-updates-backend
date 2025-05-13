@@ -108,4 +108,8 @@ public class FollowService {
 
         return followRepository.existsFollowByFollowerAndFollowee(requester, target);
     }
+
+    public boolean getIsFollowByUserObject(AppUser requester, AppUser target) {
+        return followRepository.existsFollowByFollowerAndFollowee(requester, target);
+    }
 }

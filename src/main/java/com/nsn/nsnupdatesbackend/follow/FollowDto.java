@@ -1,7 +1,8 @@
 package com.nsn.nsnupdatesbackend.follow;
 
+import com.nsn.nsnupdatesbackend.enums.EFollowRequestStatus;
+
 public record FollowDto(
-        String followerUsername,
-        String followeeUsername
+        EFollowRequestStatus status
 ) {
 }
