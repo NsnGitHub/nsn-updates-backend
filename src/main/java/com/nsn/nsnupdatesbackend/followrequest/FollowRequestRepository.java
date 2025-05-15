@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface FollowRequestRepository extends JpaRepository<FollowRequest, Integer> {
     FollowRequest getFollowRequestByRequesterAndTargetAndStatus(AppUser requester, AppUser target, EFollowRequestStatus status);
+    FollowRequest getFollowRequestByRequesterAndTarget(AppUser requester, AppUser target);
     boolean existsFollowRequestByRequesterAndTargetAndStatus(AppUser requester, AppUser target,
                                                              EFollowRequestStatus status);
     int countFollowRequestsByRequesterAndTargetAndStatus(AppUser requester, AppUser target,

@@ -106,6 +106,13 @@ public class FollowRequestService {
         followService.followFromUsername(requesterUsername, targetUsername, notify);
     }
 
+    public void deleteFollowRequest(String requesterUsername, String targetUsername) {
+        AppUser requester = appUserService.getUserByUsername(requesterUsername);
+        AppUser target = appUserService.getUserByUsername(targetUsername);
+        FollowRequest followRequest = followRequestRepository.getFollowRequestByRequesterAndTarget(requester, target);
+        followRequestRepository.delete(followRequest);
+    }
+
     private FollowRequest getPendingFollowRequest(AppUser requester, AppUser target) {
         FollowRequest followRequest = followRequestRepository.getFollowRequestByRequesterAndTargetAndStatus(
                 requester, target, EFollowRequestStatus.FOLLOW_PENDING
