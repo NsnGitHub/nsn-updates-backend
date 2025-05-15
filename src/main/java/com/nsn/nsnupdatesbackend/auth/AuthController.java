@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -45,7 +47,7 @@ public class AuthController {
     }
 
     @GetMapping("/ping")
-    public ResponseEntity<?> ping() {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> ping(Principal principal) {
+        return ResponseEntity.ok().body(authService.ping(principal.getName()));
     }
 }

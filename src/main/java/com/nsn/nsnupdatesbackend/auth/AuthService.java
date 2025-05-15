@@ -4,6 +4,8 @@ import com.nsn.nsnupdatesbackend.enums.EJwtToken;
 import com.nsn.nsnupdatesbackend.enums.EUserRole;
 import com.nsn.nsnupdatesbackend.exception.APIException;
 import com.nsn.nsnupdatesbackend.user.AppUser;
+import com.nsn.nsnupdatesbackend.user.AppUserDto;
+import com.nsn.nsnupdatesbackend.user.AppUserMapper;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import com.nsn.nsnupdatesbackend.utils.JWTUtils;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,8 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Random;
+import java.security.Principal;
 import java.util.UUID;
 
 
@@ -29,12 +30,14 @@ public class AuthService {
     private final AppUserService userService;
     private final JWTUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
+    private final AppUserMapper appUserMapper;
 
     @Autowired
-    public AuthService(JWTUtils jwtUtils, AppUserService userService, AuthenticationManager authenticationManager) {
+    public AuthService(JWTUtils jwtUtils, AppUserService userService, AuthenticationManager authenticationManager, AppUserMapper appUserMapper) {
         this.jwtUtils = jwtUtils;
         this.userService = userService;
         this.authenticationManager = authenticationManager;
+        this.appUserMapper = appUserMapper;
     }
 
     public void logout(HttpServletResponse response) {
@@ -116,5 +119,10 @@ public class AuthService {
         cookie.setMaxAge((int) cookieAge);
 
         return cookie;
+    }
+
+    public AppUserDto ping(String username) {
+        AppUser user = userService.getUserByUsername(username);
+        return appUserMapper.toUserDto(user);
     }
 }
