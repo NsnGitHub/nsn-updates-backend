@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix="pagination")
 public class PaginationConfig {
     public int getPageSize() {
-        return 10;
+        return 5;
     }
 }

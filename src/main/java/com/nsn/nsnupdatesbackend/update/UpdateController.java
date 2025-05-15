@@ -28,9 +28,8 @@ public class UpdateController {
         return ResponseEntity.ok().body(updateService.getUpdatesFromInboxByUsername(principal.getName()));
     }
 
-    @GetMapping("/paginated")
-    public ResponseEntity<List<UpdateDto>> getAllUpdatesForUserPaginated(Principal principal, @RequestParam int page,
-                                                                         @RequestParam int size) {
+    @GetMapping("/inbox/{page}")
+    public ResponseEntity<List<UpdateDto>> getAllUpdatesForUserPaginated(Principal principal, @PathVariable int page) {
         return ResponseEntity.ok().body(
             updateService.getUpdatesFromInboxByUsernamePaginated(page, principal.getName())
         );
@@ -48,16 +47,16 @@ public class UpdateController {
     }
 
     @PreAuthorize("hasAuthority('ROLE_GUEST')")
-    @GetMapping("/user/{username}")
-    public ResponseEntity<List<UpdateDto>> getUpdatesFromSpecifiedUser(Principal principal, @PathVariable("username") String username) {
+    @GetMapping("/{username}/{page}")
+    public ResponseEntity<List<UpdateDto>> getUpdatesFromSpecifiedUser(Principal principal, @PathVariable("username") String username, @PathVariable String page) {
         return ResponseEntity.ok().body(
-                updateService.getUpdatesByUsername(principal.getName(), username)
+                updateService.getUpdatesByUsernamePaginated(principal.getName(), username, page)
         );
     }
 
     @PreAuthorize("hasAuthority('ROLE_GUEST')")
     @GetMapping("/{id}")
-    public ResponseEntity<UpdateDto> getUpdatesFromSpecifiedUser(Principal principal, @PathVariable("id") Integer id) {
+    public ResponseEntity<UpdateDto> getUpdateFromSpecifiedUser(Principal principal, @PathVariable("id") Integer id) {
         return ResponseEntity.ok().body(
                 updateService.getUpdateDtoById(principal.getName(), id)
         );

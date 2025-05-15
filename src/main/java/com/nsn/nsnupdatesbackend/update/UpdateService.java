@@ -9,6 +9,9 @@ import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.parameters.P;
@@ -110,6 +113,23 @@ public class UpdateService {
         ).toList();
     }
 
+    public List<UpdateDto> getUpdatesByUsernamePaginated(String requesterUsername, String targetUsername, String page) {
+        AppUser targetAppUser = appUserService.getUserByUsername(targetUsername);
+        AppUser requestingUser = appUserService.getUserByUsername(requesterUsername);
+
+        validateAccess(requesterUsername, targetAppUser);
+
+        Pageable pageable = PageRequest.of(Integer.parseInt(page), paginationConfig.getPageSize(), Sort.by("createdAt").descending());
+
+        List<Update> updateList = updateRepository.findAllByAppUser(targetAppUser, pageable);
+
+        return updateList.stream().map(update -> {
+            boolean isLikedByRequestingUser = update.hasUserLiked(requestingUser);
+            return updateMapper.toUpdateDto(update, isLikedByRequestingUser);
+        }).toList();
+    }
+
+
     public UpdateDto getUpdateDtoById(String requesterUsername, Integer id) {
         Update update = updateRepository.findById(id).orElseThrow();
         AppUser targetAppUser = update.getAppUser();
@@ -129,9 +149,7 @@ public class UpdateService {
         inbox.sort(Comparator.comparing(Update::getCreatedAt).reversed());
 
         return inbox.stream().map(update -> {
-            AppUser requestingUser = appUserService.getUserByUsername(username);
-            boolean isLikedByRequestingUser = update.hasUserLiked(requestingUser);
-
+            boolean isLikedByRequestingUser = update.hasUserLiked(user);
             return updateMapper.toUpdateDto(update, isLikedByRequestingUser);
         }).toList();
     }
@@ -147,9 +165,7 @@ public class UpdateService {
 
         // Implement pagination with stream skip and limit, then map to UpdateDto
         return inbox.stream().skip((long) page * size).limit(size).map(update -> {
-            AppUser requestingUser = appUserService.getUserByUsername(username);
-            boolean isLikedByRequestingUser = update.hasUserLiked(requestingUser);
-
+            boolean isLikedByRequestingUser = update.hasUserLiked(user);
             return updateMapper.toUpdateDto(update, isLikedByRequestingUser);
         }).toList();
     }
