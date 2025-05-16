@@ -56,15 +56,25 @@ public class UpdateService {
         }
     }
 
-    public UpdateDto createPost(String username, UpdatePostReqDto updatePostReqDto) {
+    public UpdateDto putPost(String username, UpdatePostReqDto updatePostReqDto) {
         AppUser appUser = appUserService.getUserByUsername(username);
-        Update newUpdate = new Update(updatePostReqDto.content(), appUser);
 
-        updateRepository.save(newUpdate);
+        Update returnedUpdate;
 
-        asyncAddUpdateToAllFollowersInbox(appUser, newUpdate);
+        if (updatePostReqDto.id() == null) {
+            Update newUpdate = new Update(updatePostReqDto.content(), appUser);
+            updateRepository.save(newUpdate);
+            asyncAddUpdateToAllFollowersInbox(appUser, newUpdate);
 
-        return updateMapper.toUpdateDto(newUpdate, false);
+            returnedUpdate = newUpdate;
+        } else {
+            Update update = getUpdateById(updatePostReqDto.id());
+            update.setContent(updatePostReqDto.content());
+            updateRepository.save(update);
+
+            returnedUpdate = update;
+        }
+        return updateMapper.toUpdateDto(returnedUpdate, false);
     }
 
     public void saveUpdate(Update update) {

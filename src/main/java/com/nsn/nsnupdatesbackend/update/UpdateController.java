@@ -35,10 +35,13 @@ public class UpdateController {
         );
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<?> postUpdate(Principal principal, @Valid @RequestBody UpdatePostReqDto updatePostReqDto) {
-        updateService.createPost(principal.getName(), updatePostReqDto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    @PutMapping("/put")
+    public ResponseEntity<?> putUpdate(Principal principal, @Valid @RequestBody UpdatePostReqDto updatePostReqDto) {
+        updateService.putPost(principal.getName(), updatePostReqDto);
+        if (updatePostReqDto.id() == null) {
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/edit")
