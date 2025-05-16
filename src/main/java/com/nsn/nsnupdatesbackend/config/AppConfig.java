@@ -4,9 +4,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
 @Configuration
 @PropertySource("classpath:env.properties")
+@EnableScheduling
 public class AppConfig {
 
     @Value("${JWT_SECRET}")

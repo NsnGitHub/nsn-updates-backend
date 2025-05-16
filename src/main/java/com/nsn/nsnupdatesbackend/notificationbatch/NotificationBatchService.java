@@ -9,6 +9,7 @@ import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
@@ -40,8 +41,8 @@ public class NotificationBatchService {
         this.notificationBatchMapper = notificationBatchMapper;
         this.notificationWebSocketService = notificationWebSocketService;
     }
-
     @Transactional
+    @Scheduled(fixedRate = 1000 * 30)
     public void sendBatchNotifications() {
         List<Notification> unsentNotifications = notificationRepository.findNotificationsByIsSentToUserIsFalse();
 
