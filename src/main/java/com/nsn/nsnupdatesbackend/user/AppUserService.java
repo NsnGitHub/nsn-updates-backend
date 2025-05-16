@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.user;
 
+import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
 import com.nsn.nsnupdatesbackend.registration.RegistrationRequestDto;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -43,8 +44,8 @@ public class AppUserService implements UserDetailsService {
         return user;
     }
 
-    public AppUserDto getUserDtoByUsername(String targetUsername) {
-        return userMapper.toUserDto(getUserByUsername(targetUsername));
+    public AppUserDto getUserDtoByUsername(String username) {
+        return userMapper.toUserDto(getUserByUsername(username));
     }
 
     public List<AppUserDto> getUserDtoListByUsernameSearch(String usernameCriteria, String principalUsername) {
@@ -53,8 +54,8 @@ public class AppUserService implements UserDetailsService {
         return userRes.stream().filter((appUser) -> appUser != currentUser).map(userMapper::toUserDto).collect(Collectors.toList());
     }
 
-    private boolean isUsernameRegistered(String requestedUsername) {
-        AppUser user = userRepository.findUserByUsername(requestedUsername);
+    private boolean isUsernameRegistered(String username) {
+        AppUser user = userRepository.findUserByUsername(username);
         return user != null;
     }
 
@@ -93,6 +94,12 @@ public class AppUserService implements UserDetailsService {
 
     public void deleteUser(AppUser user) {
         userRepository.delete(user);
+    }
+
+    public void updatePrivacySetting(String username, EPrivacySetting privacySetting) {
+        AppUser user = getUserByUsername(username);
+        user.setPrivacySetting(privacySetting);
+        userRepository.save(user);
     }
 
     @Override

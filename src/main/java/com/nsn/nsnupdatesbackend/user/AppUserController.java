@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.user;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,12 @@ public class AppUserController {
     @GetMapping(path = "/search/{usernameCriteria}")
     public ResponseEntity<List<AppUserDto>> getUserWithUsernameContaining(@PathVariable("usernameCriteria") String targetUsernameCriteria, Principal principal) {
         return ResponseEntity.ok().body(userService.getUserDtoListByUsernameSearch(targetUsernameCriteria, principal.getName()));
+    }
+
+    @PostMapping("/privacy")
+    public ResponseEntity<?> updateUserPrivacySetting(Principal principal, @Valid @RequestBody AppUserDto appUserDto) {
+        userService.updatePrivacySetting(principal.getName(), appUserDto.privacySetting());
+        return ResponseEntity.ok().build();
     }
 
 }
