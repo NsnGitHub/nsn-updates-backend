@@ -17,6 +17,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -70,6 +72,8 @@ public class UpdateService {
         } else {
             Update update = getUpdateById(updatePostReqDto.id());
             update.setContent(updatePostReqDto.content());
+            update.setIsEdited(true);
+            update.setEditedAt(ZonedDateTime.now(ZoneId.of("UTC")));
             updateRepository.save(update);
 
             returnedUpdate = update;

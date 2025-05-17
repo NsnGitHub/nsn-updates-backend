@@ -37,11 +37,11 @@ public class UpdateController {
 
     @PutMapping("/put")
     public ResponseEntity<?> putUpdate(Principal principal, @Valid @RequestBody UpdatePostReqDto updatePostReqDto) {
-        updateService.putPost(principal.getName(), updatePostReqDto);
+        UpdateDto updateDto = updateService.putPost(principal.getName(), updatePostReqDto);
         if (updatePostReqDto.id() == null) {
             return ResponseEntity.status(HttpStatus.CREATED).build();
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(updateDto);
     }
 
     @PutMapping("/edit")

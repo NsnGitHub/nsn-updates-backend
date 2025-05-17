@@ -11,8 +11,6 @@ public record UpdatePostReqDto(
         @Size(min = 1, max = 1000, message = "Update content should be between 1 and 1000 characters")
         String content,
         @Nullable
-        Integer id,
-        @Nullable
-        ZonedDateTime editedAt
+        Integer id
 ) {
 }

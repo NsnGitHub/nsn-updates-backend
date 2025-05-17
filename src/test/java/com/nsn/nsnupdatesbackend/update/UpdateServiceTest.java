@@ -66,7 +66,7 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
     @Test
     void canCreateUpdate() {
         String content = "Hello this is a test post.";
-        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null, null);
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null);
 
         updateService.putPost("nsntest1", updatePostReqDto);
         updateService.putPost("nsntest1", updatePostReqDto);
@@ -78,7 +78,7 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
     @Test
     void canPostedUpdatesBeReceivedByFollowers() {
         String content = "Hello this is a test post.";
-        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null, null);
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null);
         updateService.putPost(user2.getUsername(), updatePostReqDto);
 
         // User should receive this in their inbox;
@@ -88,7 +88,7 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
     @Test
     void canPostedUpdatesBeReceivedByFollowersWithPagination() {
         String content = "Hello this is a test post.";
-        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null, null);
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null);
 
         // Create 5 Posts
         updateService.putPost(user2.getUsername(), updatePostReqDto);
@@ -106,13 +106,13 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
     @Test
     void canSaveUpdateEdits() {
         String content = "Hello this is a test post.";
-        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null, null);
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null);
         UpdateDto createdUpdate = updateService.putPost(user1.getUsername(), updatePostReqDto);
 
         assertFalse(createdUpdate.isEdited());
 
         String newContent = "Hello this is an edited post.";
-        UpdatePostReqDto updatePostReqDtoForEdited = new UpdatePostReqDto(newContent, null, null);
+        UpdatePostReqDto updatePostReqDtoForEdited = new UpdatePostReqDto(newContent, null);
         UpdateDto editedUpdate = updateService.editUpdate(createdUpdate, updatePostReqDtoForEdited);
 
         assertEquals(createdUpdate.id(), editedUpdate.id());
@@ -123,7 +123,7 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
     @Test
     void canDeleteUpdate() {
         String content = "Hello this is a test post.";
-        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null, null);
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null);
         UpdateDto createdUpdate = updateService.putPost(user1.getUsername(), updatePostReqDto);
 
         assertDoesNotThrow(() -> updateService.deleteUpdateById(createdUpdate.id()));
@@ -133,7 +133,7 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
     @Test
     void canViewPublicUserUpdates() {
         String content = "Hello this is a test post.";
-        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null, null);
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null);
         updateService.putPost(user2.getUsername(), updatePostReqDto);
         updateService.putPost(user4.getUsername(), updatePostReqDto);
 
@@ -146,7 +146,7 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
     @Test
     void cannotViewPrivateUserUpdates() {
         String content = "Hello this is a test post.";
-        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null, null);
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null);
         updateService.putPost(user5.getUsername(), updatePostReqDto);
 
         assertEquals(1, updateService.getAllUpdates().size());
@@ -160,7 +160,7 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
     @Test
     void canViewTargetUserUpdatesWhenRequesterIsAFollower() {
         String content = "Hello this is a test post.";
-        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null, null);
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content,null);
         updateService.putPost(user2.getUsername(), updatePostReqDto);
         updateService.putPost(user4.getUsername(), updatePostReqDto);
 
@@ -171,7 +171,7 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
     @Test
     void cannotViewTargetUserUpdatesWhenRequesterIsNotAFollower() {
         String content = "Hello this is a test post.";
-        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null, null);
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null);
         updateService.putPost(user2.getUsername(), updatePostReqDto);
         updateService.putPost(user3.getUsername(), updatePostReqDto);
 
