@@ -44,11 +44,6 @@ public class UpdateController {
         return ResponseEntity.ok().body(updateDto);
     }
 
-    @PutMapping("/edit")
-    public ResponseEntity<?> editUpdate(Principal principal, @Valid @RequestBody UpdatePostReqDto updatePostReqDto) {
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
-
     @PreAuthorize("hasAuthority('ROLE_GUEST')")
     @GetMapping("/{username}/{page}")
     public ResponseEntity<List<UpdateDto>> getUpdatesFromSpecifiedUser(Principal principal, @PathVariable("username") String username, @PathVariable String page) {
