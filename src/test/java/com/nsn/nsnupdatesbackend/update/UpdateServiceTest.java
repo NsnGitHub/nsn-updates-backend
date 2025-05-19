@@ -7,16 +7,11 @@ import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 public class UpdateServiceTest extends AbstractBaseTestContainer {
@@ -72,7 +67,7 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
         updateService.putPost("nsntest1", updatePostReqDto);
         updateService.putPost("nsntest2", updatePostReqDto);
 
-        assertEquals(3, updateService.getAllUpdates().size());
+        Assertions.assertEquals(3, updateService.getAllUpdates().size());
     }
 
     @Test
@@ -82,7 +77,7 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
         updateService.putPost(user2.getUsername(), updatePostReqDto);
 
         // User should receive this in their inbox;
-        assertEquals(1, updateService.getUpdatesFromInboxByUsername(user1.getUsername()).size());
+        Assertions.assertEquals(1, updateService.getUpdatesFromInboxByUsername(user1.getUsername()).size());
     }
 
     @Test
@@ -100,7 +95,26 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
         // User should receive this in their inbox;
         final int PAGE = 0;
 
-        assertEquals(1, updateService.getUpdatesFromInboxByUsernamePaginated(PAGE, user1.getUsername()).size());
+        Assertions.assertEquals(5, updateService.getUpdatesFromInboxByUsernamePaginated(PAGE, user1.getUsername()).size());
+    }
+
+    @Test
+    void canPostedUpdatesBeReceivedByFollowersWithPagination2() {
+        String content = "Hello this is a test post.";
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null);
+
+        // Create 5 Posts
+        updateService.putPost(user2.getUsername(), updatePostReqDto);
+        updateService.putPost(user2.getUsername(), updatePostReqDto);
+        updateService.putPost(user2.getUsername(), updatePostReqDto);
+        updateService.putPost(user2.getUsername(), updatePostReqDto);
+        updateService.putPost(user2.getUsername(), updatePostReqDto);
+        updateService.putPost(user2.getUsername(), updatePostReqDto);
+
+        // User should receive this in their inbox;
+        final int PAGE = 1;
+
+        Assertions.assertEquals(1, updateService.getUpdatesFromInboxByUsernamePaginated(PAGE, user1.getUsername()).size());
     }
 
     @Test
@@ -109,15 +123,15 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
         UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null);
         UpdateDto createdUpdate = updateService.putPost(user1.getUsername(), updatePostReqDto);
 
-        assertFalse(createdUpdate.isEdited());
+        Assertions.assertFalse(createdUpdate.isEdited());
 
         String newContent = "Hello this is an edited post.";
         UpdatePostReqDto updatePostReqDtoForEdited = new UpdatePostReqDto(newContent, null);
         UpdateDto editedUpdate = updateService.editUpdate(createdUpdate, updatePostReqDtoForEdited);
 
-        assertEquals(createdUpdate.id(), editedUpdate.id());
-        assertEquals(newContent, editedUpdate.content());
-        assertTrue(editedUpdate.isEdited());
+        Assertions.assertEquals(createdUpdate.id(), editedUpdate.id());
+        Assertions.assertEquals(newContent, editedUpdate.content());
+        Assertions.assertTrue(editedUpdate.isEdited());
     }
 
     @Test
@@ -126,8 +140,8 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
         UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null);
         UpdateDto createdUpdate = updateService.putPost(user1.getUsername(), updatePostReqDto);
 
-        assertDoesNotThrow(() -> updateService.deleteUpdateById(createdUpdate.id()));
-        assertThrows(EntityNotFoundException.class, () -> updateService.getUpdateById(createdUpdate.id()));
+        Assertions.assertDoesNotThrow(() -> updateService.deleteUpdateById(createdUpdate.id()));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> updateService.getUpdateById(createdUpdate.id()));
     }
 
     @Test
@@ -137,10 +151,10 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
         updateService.putPost(user2.getUsername(), updatePostReqDto);
         updateService.putPost(user4.getUsername(), updatePostReqDto);
 
-        assertEquals(2, updateService.getAllUpdates().size());
+        Assertions.assertEquals(2, updateService.getAllUpdates().size());
 
         List<UpdateDto> updates = updateService.getUpdatesByUsername(user1.getUsername(), user4.getUsername());
-        assertEquals(1, updates.size());
+        Assertions.assertEquals(1, updates.size());
     }
 
     @Test
@@ -149,9 +163,9 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
         UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null);
         updateService.putPost(user5.getUsername(), updatePostReqDto);
 
-        assertEquals(1, updateService.getAllUpdates().size());
+        Assertions.assertEquals(1, updateService.getAllUpdates().size());
 
-        assertThrows(AccessDeniedException.class, () -> updateService.getUpdatesByUsername(
+        Assertions.assertThrows(AccessDeniedException.class, () -> updateService.getUpdatesByUsername(
                 user1.getUsername(), user5.getUsername()
             )
         );
@@ -164,8 +178,8 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
         updateService.putPost(user2.getUsername(), updatePostReqDto);
         updateService.putPost(user4.getUsername(), updatePostReqDto);
 
-        assertEquals(2, updateService.getAllUpdates().size());
-        assertEquals(1, updateService.getUpdatesByUsername(user1.getUsername(), user2.getUsername()).size());
+        Assertions.assertEquals(2, updateService.getAllUpdates().size());
+        Assertions.assertEquals(1, updateService.getUpdatesByUsername(user1.getUsername(), user2.getUsername()).size());
     }
 
     @Test
@@ -175,8 +189,8 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
         updateService.putPost(user2.getUsername(), updatePostReqDto);
         updateService.putPost(user3.getUsername(), updatePostReqDto);
 
-        assertEquals(2, updateService.getAllUpdates().size());
-        assertThrows(AccessDeniedException.class, () -> updateService.getUpdatesByUsername(
+        Assertions.assertEquals(2, updateService.getAllUpdates().size());
+        Assertions.assertThrows(AccessDeniedException.class, () -> updateService.getUpdatesByUsername(
                 user1.getUsername(), user3.getUsername()
             ).size()
         );

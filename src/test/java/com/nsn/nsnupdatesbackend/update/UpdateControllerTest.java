@@ -7,6 +7,7 @@ import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import com.nsn.nsnupdatesbackend.utils.JWTUtils;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
-import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -60,7 +59,7 @@ public class UpdateControllerTest extends AbstractBaseTestContainer {
                 """.formatted(content);
 
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/v1/update/create")
+            MockMvcRequestBuilders.put("/api/v1/update/put")
                 .header("Authorization", "Bearer " + jwtToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(validJson)
@@ -77,7 +76,7 @@ public class UpdateControllerTest extends AbstractBaseTestContainer {
                 """;
 
         String response = mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/v1/update/create")
+            MockMvcRequestBuilders.put("/api/v1/update/put")
                 .header("Authorization", "Bearer " + jwtToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidJson)
@@ -86,7 +85,7 @@ public class UpdateControllerTest extends AbstractBaseTestContainer {
             .andReturn().getResponse().getContentAsString();
 
         System.out.println(response);
-        assertTrue(response.contains("null"));
+        Assertions.assertTrue(response.contains("null"));
     }
 
     @Test
@@ -98,7 +97,7 @@ public class UpdateControllerTest extends AbstractBaseTestContainer {
                 """;
 
         String response = mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/v1/update/create")
+            MockMvcRequestBuilders.put("/api/v1/update/put")
                 .header("Authorization", "Bearer " + jwtToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidJson)
@@ -106,7 +105,7 @@ public class UpdateControllerTest extends AbstractBaseTestContainer {
             .andExpect(status().isBadRequest())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(response.contains("1 and 1000 characters"));
+        Assertions.assertTrue(response.contains("1 and 1000 characters"));
     }
 
     @Test
@@ -122,7 +121,7 @@ public class UpdateControllerTest extends AbstractBaseTestContainer {
                 """.formatted(content);
 
         String response = mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/v1/update/create")
+            MockMvcRequestBuilders.put("/api/v1/update/put")
                 .header("Authorization", "Bearer " + jwtToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidJson)
@@ -130,7 +129,7 @@ public class UpdateControllerTest extends AbstractBaseTestContainer {
             .andExpect(status().isBadRequest())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(response.contains("1 and 1000 characters"));
+        Assertions.assertTrue(response.contains("1 and 1000 characters"));
     }
 
 }

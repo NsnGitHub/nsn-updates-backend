@@ -6,10 +6,9 @@ import com.nsn.nsnupdatesbackend.registration.RegistrationRequestDto;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional // Using transactional for test isolation
 public class AppUserServiceTest extends AbstractBaseTestContainer {
@@ -38,7 +37,7 @@ public class AppUserServiceTest extends AbstractBaseTestContainer {
     void canRegisterUser() {
         appUserService.registerUser(request1);
 
-        assertDoesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             appUserService.getUserByUsername("nsntest1");
         });
     }
@@ -51,7 +50,7 @@ public class AppUserServiceTest extends AbstractBaseTestContainer {
                 "nsntest1", "nsntest2", "nsntest2@test.com", "password", EPrivacySetting.FOLLOWER
         );
 
-        assertThrows(EntityExistsException.class, () -> appUserService.registerUser(requestWithDuplicateUsername));
+        Assertions.assertThrows(EntityExistsException.class, () -> appUserService.registerUser(requestWithDuplicateUsername));
     }
 
     @Test
@@ -62,29 +61,29 @@ public class AppUserServiceTest extends AbstractBaseTestContainer {
                 "nsntest2", "nsntest2", "nsntest1@test.com", "password", EPrivacySetting.FOLLOWER
         );
 
-        assertThrows(EntityExistsException.class, () -> appUserService.registerUser(requestWithDuplicateEmail));
+        Assertions.assertThrows(EntityExistsException.class, () -> appUserService.registerUser(requestWithDuplicateEmail));
     }
 
     @Test
     void canDeleteUser() {
         appUserService.registerUser(request1);
 
-        assertDoesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             AppUser user = appUserService.getUserByUsername("nsntest1");
             appUserService.deleteUser(user);
         });
 
-        assertThrows(EntityNotFoundException.class, () -> appUserService.getUserByUsername("nsntest1"));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> appUserService.getUserByUsername("nsntest1"));
     }
 
     @Test
     void canGetAllUsers() {
-        assertTrue(appUserService.getAllUsers().isEmpty());
+        Assertions.assertTrue(appUserService.getAllUsers().isEmpty());
 
         appUserService.registerUser(request1);
         appUserService.registerUser(request2);
 
-        assertEquals(2, appUserService.getAllUsers().size());
+        Assertions.assertEquals(2, appUserService.getAllUsers().size());
     }
 
     @Test
@@ -94,10 +93,10 @@ public class AppUserServiceTest extends AbstractBaseTestContainer {
         AppUser user = appUserService.getUserByUsername("nsntest1");
         AppUserDto userDto = appUserService.getUserDtoByUsername("nsntest1");
 
-        assertEquals(user.getUsername(), userDto.username());
-        assertEquals(user.getDisplayName(), userDto.displayName());
-        assertEquals(user.getBio(), userDto.bio());
-        assertEquals(user.getPrivacySetting(), userDto.privacySetting());
+        Assertions.assertEquals(user.getUsername(), userDto.username());
+        Assertions.assertEquals(user.getDisplayName(), userDto.displayName());
+        Assertions.assertEquals(user.getBio(), userDto.bio());
+        Assertions.assertEquals(user.getPrivacySetting(), userDto.privacySetting());
 
     }
 
@@ -115,10 +114,10 @@ public class AppUserServiceTest extends AbstractBaseTestContainer {
 
         AppUser updatedUser = appUserService.getUserByUsername("nsnupdatetest1");
 
-        assertEquals(user.getDisplayName(), updatedUser.getDisplayName());
-        assertEquals(user.getBio(), updatedUser.getBio());
-        assertEquals(user.getEmail(), updatedUser.getEmail());
-        assertEquals(user.getPrivacySetting(), updatedUser.getPrivacySetting());
+        Assertions.assertEquals(user.getDisplayName(), updatedUser.getDisplayName());
+        Assertions.assertEquals(user.getBio(), updatedUser.getBio());
+        Assertions.assertEquals(user.getEmail(), updatedUser.getEmail());
+        Assertions.assertEquals(user.getPrivacySetting(), updatedUser.getPrivacySetting());
     }
 
 }

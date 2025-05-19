@@ -10,6 +10,7 @@ import com.nsn.nsnupdatesbackend.utils.JWTUtils;
 import jakarta.transaction.Transactional;
 import org.junit.Before;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -154,7 +154,7 @@ public class FollowRequestControllerTest {
             .andExpect(status().isBadRequest())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(response.contains("Username"));
+        Assertions.assertTrue(response.contains("Username"));
     }
 
     @Test
@@ -188,7 +188,7 @@ public class FollowRequestControllerTest {
             .andExpect(status().isBadRequest())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(acceptResponse.contains("Username"));
+        Assertions.assertTrue(acceptResponse.contains("Username"));
     }
 
     @Test
@@ -222,6 +222,6 @@ public class FollowRequestControllerTest {
             .andExpect(status().isBadRequest())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(rejectResponse.contains("Username"));
+        Assertions.assertTrue(rejectResponse.contains("Username"));
     }
 }

@@ -5,11 +5,10 @@ import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 public class FollowServiceTest extends AbstractBaseTestContainer {
@@ -35,51 +34,51 @@ public class FollowServiceTest extends AbstractBaseTestContainer {
     @Test
     void canFollowFromUsernames() {
         followService.followFromUsername(user1.getUsername(), user2.getUsername(), false);
-        assertEquals(1, followService.getFollowersDtoForUsername(user2.getUsername()).size());
-        assertEquals(1, followService.getFollowingDtoForUsername(user1.getUsername()).size());
+        Assertions.assertEquals(1, followService.getFollowersDtoForUsername(user2.getUsername()).size());
+        Assertions.assertEquals(1, followService.getFollowingDtoForUsername(user1.getUsername()).size());
     }
 
     @Test
     void canFollowFromAppUserObjects() {
         followService.followFromAppUser(user1, user2, false);
-        assertEquals(1, followService.getFollowersDtoForUsername(user2.getUsername()).size());
-        assertEquals(1, followService.getFollowingDtoForUsername(user1.getUsername()).size());
+        Assertions.assertEquals(1, followService.getFollowersDtoForUsername(user2.getUsername()).size());
+        Assertions.assertEquals(1, followService.getFollowingDtoForUsername(user1.getUsername()).size());
     }
 
     @Test
     void canUnfollowFromUsernames() {
         followService.followFromAppUser(user1, user2, false);
-        assertEquals(1, followService.getFollowersDtoForUsername(user2.getUsername()).size());
-        assertEquals(1, followService.getFollowingDtoForUsername(user1.getUsername()).size());
+        Assertions.assertEquals(1, followService.getFollowersDtoForUsername(user2.getUsername()).size());
+        Assertions.assertEquals(1, followService.getFollowingDtoForUsername(user1.getUsername()).size());
 
         followService.unfollowFromUsername(user1.getUsername(), user2.getUsername(), false);
-        assertEquals(0, followService.getFollowersDtoForUsername(user2.getUsername()).size());
-        assertEquals(0, followService.getFollowingDtoForUsername(user1.getUsername()).size());
+        Assertions.assertEquals(0, followService.getFollowersDtoForUsername(user2.getUsername()).size());
+        Assertions.assertEquals(0, followService.getFollowingDtoForUsername(user1.getUsername()).size());
     }
 
     @Test
     void canUnfollowFromAppUserObjects() {
         followService.followFromAppUser(user1, user2, false);
-        assertEquals(1, followService.getFollowersDtoForUsername(user2.getUsername()).size());
-        assertEquals(1, followService.getFollowingDtoForUsername(user1.getUsername()).size());
-        assertEquals(1, followService.getFollowersForUser(user2).size());
+        Assertions.assertEquals(1, followService.getFollowersDtoForUsername(user2.getUsername()).size());
+        Assertions.assertEquals(1, followService.getFollowingDtoForUsername(user1.getUsername()).size());
+        Assertions.assertEquals(1, followService.getFollowersForUser(user2).size());
 
 
         followService.unfollowFromAppUser(user1, user2);
-        assertEquals(0, followService.getFollowersDtoForUsername(user2.getUsername()).size());
-        assertEquals(0, followService.getFollowingDtoForUsername(user1.getUsername()).size());
-        assertEquals(0, followService.getFollowersForUser(user2).size());
+        Assertions.assertEquals(0, followService.getFollowersDtoForUsername(user2.getUsername()).size());
+        Assertions.assertEquals(0, followService.getFollowingDtoForUsername(user1.getUsername()).size());
+        Assertions.assertEquals(0, followService.getFollowersForUser(user2).size());
 
     }
 
     @Test
     void isUserAFollower() {
         boolean isFollowing = followService.getIsFollowing(user1.getUsername(), user2.getUsername());
-        assertFalse(isFollowing);
+        Assertions.assertFalse(isFollowing);
 
         followService.followFromAppUser(user1, user2, false);
 
         isFollowing = followService.getIsFollowing(user1.getUsername(), user2.getUsername());
-        assertTrue(isFollowing);
+        Assertions.assertTrue(isFollowing);
     }
 }

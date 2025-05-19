@@ -13,14 +13,13 @@ import com.nsn.nsnupdatesbackend.user.AppUserService;
 import jakarta.transaction.Transactional;
 import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Transactional
 public class NotificationServiceTest extends AbstractBaseTestContainer {
@@ -62,23 +61,23 @@ public class NotificationServiceTest extends AbstractBaseTestContainer {
 
     @Test
     void canCreateNotification() {
-        assertEquals(0, notificationService.getNotifications().size());
+        Assertions.assertEquals(0, notificationService.getNotifications().size());
 
         notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOW_PUBLIC, Optional.empty());
         notificationService.createNotificationFromUserAndTarget(user2, user1, ENotificationType.NOTIFICATION_FOLLOW_PUBLIC, Optional.empty());
 
-        assertEquals(2, notificationService.getNotifications().size());
+        Assertions.assertEquals(2, notificationService.getNotifications().size());
     }
 
     @Test
     void canGetNotificationForSpecificUser() {
-        assertEquals(0, notificationService.getNotifications().size());
+        Assertions.assertEquals(0, notificationService.getNotifications().size());
 
         Notification notification = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOW_REQUEST, Optional.empty());
         notificationService.sendNotification(notification);
 
-        assertEquals(0, notificationService.getNotificationsForUserWithUsername(user1.getUsername()).size());
-        assertEquals(1, notificationService.getNotificationsForUserWithUsername(user2.getUsername()).size());
+        Assertions.assertEquals(0, notificationService.getNotificationsForUserWithUsername(user1.getUsername()).size());
+        Assertions.assertEquals(1, notificationService.getNotificationsForUserWithUsername(user2.getUsername()).size());
     }
 
     @Test
@@ -86,7 +85,7 @@ public class NotificationServiceTest extends AbstractBaseTestContainer {
         Update update = new Update("TEST POST", user1);
         updateService.saveUpdate(update);
 
-        assertEquals(0, notificationService.getNotifications().size());
+        Assertions.assertEquals(0, notificationService.getNotifications().size());
 
         notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.of(update));
         notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.of(update));
@@ -95,17 +94,17 @@ public class NotificationServiceTest extends AbstractBaseTestContainer {
         notificationBatchService.sendBatchNotifications();
 
         // Normal notification stuff
-        assertEquals(3, notificationService.getNotificationsForUserWithUsername(user2.getUsername()).size());
-        assertEquals(3, notificationService.getNotifications().size());
+        Assertions.assertEquals(3, notificationService.getNotificationsForUserWithUsername(user2.getUsername()).size());
+        Assertions.assertEquals(3, notificationService.getNotifications().size());
 
         // Batch notification stuff
         List<NotificationBatchDto> notificationBatchList = notificationBatchService.getNotificationBatchesForUserWithUsername(user2.getUsername());
 
-        assertEquals(1, notificationBatchList.size());
+        Assertions.assertEquals(1, notificationBatchList.size());
 
         NotificationBatchDto batch = notificationBatchList.getFirst();
 
-        assertEquals(3, batch.notificationDtoList().size());
+        Assertions.assertEquals(3, batch.notificationDtoList().size());
     }
 
     @Test
@@ -113,15 +112,15 @@ public class NotificationServiceTest extends AbstractBaseTestContainer {
         followRequestService.createFollowRequest(user1.getUsername(), user2.getUsername(), true);
         followRequestService.createFollowRequest(user1.getUsername(), user3.getUsername(), true);
 
-        assertEquals(0, notificationService.getFollowNotificationsForUserWithUsername(user1.getUsername()).size());
-        assertEquals(1, notificationService.getFollowNotificationsForUserWithUsername(user2.getUsername()).size());
-        assertEquals(1, notificationService.getFollowNotificationsForUserWithUsername(user3.getUsername()).size());
+        Assertions.assertEquals(0, notificationService.getFollowNotificationsForUserWithUsername(user1.getUsername()).size());
+        Assertions.assertEquals(1, notificationService.getFollowNotificationsForUserWithUsername(user2.getUsername()).size());
+        Assertions.assertEquals(1, notificationService.getFollowNotificationsForUserWithUsername(user3.getUsername()).size());
 
 
         followRequestService.acceptFollowRequest(user1.getUsername(), user2.getUsername(), true);
 
-        assertEquals(1, notificationService.getFollowNotificationsForUserWithUsername(user1.getUsername()).size());
-        assertEquals(1, notificationService.getFollowNotificationsForUserWithUsername(user2.getUsername()).size());
+        Assertions.assertEquals(1, notificationService.getFollowNotificationsForUserWithUsername(user1.getUsername()).size());
+        Assertions.assertEquals(1, notificationService.getFollowNotificationsForUserWithUsername(user2.getUsername()).size());
 
     }
 

@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.follow;
 
+import com.nsn.nsnupdatesbackend.enums.EFollowRequestStatus;
 import com.nsn.nsnupdatesbackend.enums.EJwtToken;
 import com.nsn.nsnupdatesbackend.enums.EUserRole;
 import com.nsn.nsnupdatesbackend.user.AppUser;
@@ -7,6 +8,7 @@ import com.nsn.nsnupdatesbackend.user.AppUserService;
 import com.nsn.nsnupdatesbackend.utils.JWTUtils;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -57,33 +58,33 @@ public class FollowControllerTest {
     @Test
     void canGetCorrectFollowStatus1() throws Exception {
         String response = mockMvc.perform(
-            MockMvcRequestBuilders.get("/api/v1/follow/status/nsntest2")
+            MockMvcRequestBuilders.get("/api/v1/follow/request/status/nsntest2")
                 .header("Authorization", "Bearer " + jwtTokenForUser1)
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(response.contains("true"));
+        Assertions.assertTrue(response.contains(EFollowRequestStatus.FOLLOW_TRUE.toString()));
     }
 
     @Test
     void canGetCorrectFollowStatus2() throws Exception {
         String response = mockMvc.perform(
-            MockMvcRequestBuilders.get("/api/v1/follow/status/nsntest3")
+            MockMvcRequestBuilders.get("/api/v1/follow/request/status/nsntest3")
                 .header("Authorization", "Bearer " + jwtTokenForUser1)
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(response.contains("false"));
+        Assertions.assertTrue(response.contains(EFollowRequestStatus.FOLLOW_FALSE.toString()));
     }
 
     @Test
     void canGetCorrectFollowStatusFromNonExistentUser() throws Exception {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/api/v1/follow/status/nsntest4")
+            MockMvcRequestBuilders.get("/api/v1/follow/request/status/nsntest4")
                 .header("Authorization", "Bearer " + jwtTokenForUser1)
                 .contentType(MediaType.APPLICATION_JSON)
         )

@@ -1,5 +1,6 @@
 package com.nsn.nsnupdatesbackend.registration;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -8,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -38,7 +38,7 @@ public class RegistrationControllerTest {
             .andExpect(status().isBadRequest())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(response.contains("Username"));
+        Assertions.assertTrue(response.contains("Username"));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class RegistrationControllerTest {
             .andExpect(status().isBadRequest())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(response.contains("Username"));
+        Assertions.assertTrue(response.contains("Username"));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class RegistrationControllerTest {
             .andExpect(status().isBadRequest())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(response.contains("Username"));
+        Assertions.assertTrue(response.contains("Username"));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class RegistrationControllerTest {
             .andExpect(status().isBadRequest())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(response.contains("Username"));
+        Assertions.assertTrue(response.contains("Username"));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class RegistrationControllerTest {
             .andExpect(status().isBadRequest())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(response.contains("Username"));
+        Assertions.assertTrue(response.contains("Username"));
     }
 
     @Test
@@ -153,7 +153,7 @@ public class RegistrationControllerTest {
             .andExpect(status().isBadRequest())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(response.contains("Username"));
+        Assertions.assertTrue(response.contains("Username"));
     }
 
 
@@ -177,7 +177,7 @@ public class RegistrationControllerTest {
             .andExpect(status().isBadRequest())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(response.contains("Password"));
+        Assertions.assertTrue(response.contains("Password"));
     }
 
     @Test
@@ -200,7 +200,7 @@ public class RegistrationControllerTest {
             .andExpect(status().isBadRequest())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(response.contains("Password"));
+        Assertions.assertTrue(response.contains("Password"));
     }
 
     @Test
@@ -223,7 +223,7 @@ public class RegistrationControllerTest {
             .andExpect(status().isBadRequest())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(response.contains("Password"));
+        Assertions.assertTrue(response.contains("Password"));
     }
 
     @Test
@@ -246,7 +246,7 @@ public class RegistrationControllerTest {
             .andExpect(status().isBadRequest())
             .andReturn().getResponse().getContentAsString();
 
-        assertTrue(response.contains("Email"));
+        Assertions.assertTrue(response.contains("Email"));
     }
 
     @Test
@@ -288,6 +288,6 @@ public class RegistrationControllerTest {
         .andExpect(status().isBadRequest())
         .andReturn().getResponse().getContentAsString();
 
-        assertTrue(response.contains("Privacy setting must be set"));
+        Assertions.assertTrue(response.contains("Privacy setting must be set"));
     }
 }

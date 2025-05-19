@@ -8,12 +8,11 @@ import com.nsn.nsnupdatesbackend.user.AppUserService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 public class LikeServiceTest extends AbstractBaseTestContainer {
@@ -47,17 +46,17 @@ public class LikeServiceTest extends AbstractBaseTestContainer {
     @Test
     void canGetLikeById() {
         LikeDto createdLike = likeService.like(user2.getUsername(), update.getId());
-        assertEquals(createdLike, likeService.getLikeById(createdLike.id()));
+        Assertions.assertEquals(createdLike, likeService.getLikeById(createdLike.id()));
     }
 
     @Test
     void canLike() {
-        assertDoesNotThrow(() -> likeService.like(user2.getUsername(), update.getId()));
+        Assertions.assertDoesNotThrow(() -> likeService.like(user2.getUsername(), update.getId()));
     }
 
     @Test
     void canUnlike() {
-        assertDoesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             likeService.like(user2.getUsername(), update.getId());
             likeService.unlike(user2.getUsername(), update.getId());
         });
@@ -65,7 +64,7 @@ public class LikeServiceTest extends AbstractBaseTestContainer {
 
     @Test
     void canDetectUpdateIsLikedByUser() {
-        assertThrows(EntityExistsException.class, () -> {
+        Assertions.assertThrows(EntityExistsException.class, () -> {
             likeService.like(user2.getUsername(), update.getId());
             likeService.like(user2.getUsername(), update.getId());
         });
@@ -73,7 +72,7 @@ public class LikeServiceTest extends AbstractBaseTestContainer {
 
     @Test
     void canDetectUpdateIsCreatedByUser() {
-        assertThrows(AccessDeniedException.class, () -> {
+        Assertions.assertThrows(AccessDeniedException.class, () -> {
             likeService.like(user1.getUsername(), update.getId());
         });
     }

@@ -9,12 +9,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
 public class FollowRequestServiceTest extends AbstractBaseTestContainer {
@@ -46,11 +44,11 @@ public class FollowRequestServiceTest extends AbstractBaseTestContainer {
         user2.setPrivacySetting(EPrivacySetting.PUBLIC);
         appUserService.saveUser(user2);
 
-        assertDoesNotThrow(() -> followRequestService.createFollowRequest(user1.getUsername(), user2.getUsername(),
+        Assertions.assertDoesNotThrow(() -> followRequestService.createFollowRequest(user1.getUsername(), user2.getUsername(),
                 false));
-        assertThrows(EntityNotFoundException.class, () -> followRequestService.acceptFollowRequest(user1.getUsername(),
+        Assertions.assertThrows(EntityNotFoundException.class, () -> followRequestService.acceptFollowRequest(user1.getUsername(),
                 user2.getUsername(), false));
-        assertThrows(EntityNotFoundException.class, () -> followRequestService.rejectFollowRequest(user1.getUsername(),
+        Assertions.assertThrows(EntityNotFoundException.class, () -> followRequestService.rejectFollowRequest(user1.getUsername(),
                 user2.getUsername()));
     }
 
@@ -59,7 +57,7 @@ public class FollowRequestServiceTest extends AbstractBaseTestContainer {
         // user2 already set to follower in setup
         appUserService.saveUser(user2);
 
-        assertDoesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             followRequestService.createFollowRequest(user1.getUsername(), user2.getUsername(), false);
             followRequestService.acceptFollowRequest(user1.getUsername(), user2.getUsername(),false);
         });
@@ -70,7 +68,7 @@ public class FollowRequestServiceTest extends AbstractBaseTestContainer {
         user2.setPrivacySetting(EPrivacySetting.PRIVATE);
         appUserService.saveUser(user2);
 
-        assertThrows(BadRequestException.class, () -> followRequestService.createFollowRequest(user1.getUsername(),
+        Assertions.assertThrows(BadRequestException.class, () -> followRequestService.createFollowRequest(user1.getUsername(),
                 user2.getUsername(), false));
     }
 
@@ -79,7 +77,7 @@ public class FollowRequestServiceTest extends AbstractBaseTestContainer {
         // user2 already set to follower in setup
         appUserService.saveUser(user2);
 
-        assertThrows(EntityExistsException.class, () -> {
+        Assertions.assertThrows(EntityExistsException.class, () -> {
             followRequestService.createFollowRequest(user1.getUsername(), user2.getUsername(), false);
             followRequestService.createFollowRequest(user1.getUsername(), user2.getUsername(), false);
         });
@@ -90,7 +88,7 @@ public class FollowRequestServiceTest extends AbstractBaseTestContainer {
         // user2 already set to follower in setup
         appUserService.saveUser(user2);
 
-        assertDoesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             followRequestService.createFollowRequest(user1.getUsername(), user2.getUsername(), false);
             followRequestService.rejectFollowRequest(user1.getUsername(), user2.getUsername());
 
@@ -98,7 +96,7 @@ public class FollowRequestServiceTest extends AbstractBaseTestContainer {
             followRequestService.rejectFollowRequest(user1.getUsername(), user2.getUsername());
         });
 
-        assertThrows(EntityExistsException.class, () -> {
+        Assertions.assertThrows(EntityExistsException.class, () -> {
             followRequestService.createFollowRequest(user1.getUsername(), user2.getUsername(), false);
         });
 
@@ -109,12 +107,12 @@ public class FollowRequestServiceTest extends AbstractBaseTestContainer {
         // user2 already set to follower in setup
         appUserService.saveUser(user2);
 
-        assertDoesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             followRequestService.createFollowRequest(user1.getUsername(), user2.getUsername(), false);
             followRequestService.acceptFollowRequest(user1.getUsername(), user2.getUsername(), false);
         });
 
-        assertThrows(EntityExistsException.class, () -> followRequestService.createFollowRequest(user1.getUsername(), user2.getUsername(), false));
+        Assertions.assertThrows(EntityExistsException.class, () -> followRequestService.createFollowRequest(user1.getUsername(), user2.getUsername(), false));
     }
 
     @Test
@@ -122,7 +120,7 @@ public class FollowRequestServiceTest extends AbstractBaseTestContainer {
         // user2 already set to follower in setup
         appUserService.saveUser(user2);
 
-        assertThrows(EntityNotFoundException.class, () -> followRequestService.acceptFollowRequest(user1.getUsername(), user2.getUsername(), false));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> followRequestService.acceptFollowRequest(user1.getUsername(), user2.getUsername(), false));
 
     }
 
@@ -131,7 +129,7 @@ public class FollowRequestServiceTest extends AbstractBaseTestContainer {
         // user2 already set to follower in setup
         appUserService.saveUser(user2);
 
-        assertThrows(EntityNotFoundException.class, () -> followRequestService.rejectFollowRequest(user1.getUsername(), user2.getUsername()));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> followRequestService.rejectFollowRequest(user1.getUsername(), user2.getUsername()));
 
 
     }
