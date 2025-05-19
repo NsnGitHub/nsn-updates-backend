@@ -1,7 +1,9 @@
 package com.nsn.nsnupdatesbackend.followrequest;
 
 import com.nsn.nsnupdatesbackend.AbstractBaseTestContainer;
+import com.nsn.nsnupdatesbackend.enums.EFollowRequestStatus;
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
+import com.nsn.nsnupdatesbackend.follow.FollowService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import jakarta.persistence.EntityExistsException;
@@ -19,6 +21,9 @@ public class FollowRequestServiceTest extends AbstractBaseTestContainer {
 
     @Autowired
     private FollowRequestService followRequestService;
+
+    @Autowired
+    private FollowService followService;
 
     @Autowired
     private AppUserService appUserService;
@@ -121,7 +126,6 @@ public class FollowRequestServiceTest extends AbstractBaseTestContainer {
         appUserService.saveUser(user2);
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> followRequestService.acceptFollowRequest(user1.getUsername(), user2.getUsername(), false));
-
     }
 
     @Test
@@ -130,7 +134,23 @@ public class FollowRequestServiceTest extends AbstractBaseTestContainer {
         appUserService.saveUser(user2);
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> followRequestService.rejectFollowRequest(user1.getUsername(), user2.getUsername()));
+    }
 
+    @Test
+    void canSucceedWithFollowFlow() throws BadRequestException {
+        // user2 already set to follower in setup
+        appUserService.saveUser(user2);
 
+        followRequestService.createFollowRequest(user1.getUsername(), user2.getUsername(), false);
+        EFollowRequestStatus status = followRequestService.getStatus(user1.getUsername(), user2.getUsername());
+        Assertions.assertEquals(EFollowRequestStatus.FOLLOW_PENDING, status);
+
+        followRequestService.acceptFollowRequest(user1.getUsername(), user2.getUsername(), false);
+        status = followRequestService.getStatus(user1.getUsername(), user2.getUsername());
+        Assertions.assertEquals(EFollowRequestStatus.FOLLOW_TRUE, status);
+
+        followService.unfollowFromUsername(user1.getUsername(), user2.getUsername(), false);
+        status = followRequestService.getStatus(user1.getUsername(), user2.getUsername());
+        Assertions.assertEquals(EFollowRequestStatus.FOLLOW_FALSE, status);
     }
 }
