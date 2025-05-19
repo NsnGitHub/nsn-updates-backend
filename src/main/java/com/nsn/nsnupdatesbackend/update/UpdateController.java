@@ -60,4 +60,10 @@ public class UpdateController {
         );
     }
 
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteUpdate(Principal principal, @Valid @RequestBody UpdatePostReqDto updatePostReqDto) {
+        updateService.deleteUpdateById(principal.getName(), updatePostReqDto.id());
+        return ResponseEntity.ok().build();
+    }
+
 }

@@ -89,8 +89,18 @@ public class UpdateService {
         updateRepository.delete(update);
     }
 
-    public void deleteUpdateById(Integer id) {
+    public void deleteUpdateById(String username, Integer id) {
+        AppUser user = appUserService.getUserByUsername(username);
         Update update = getUpdateById(id);
+
+        if (update == null) {
+            throw new EntityNotFoundException("Update with id " + id + " not found");
+        }
+
+        if (!update.getAppUser().equals(user)) {
+            throw new AccessDeniedException("You do not have permission to delete this update");
+        }
+
         updateRepository.delete(update);
     }
 

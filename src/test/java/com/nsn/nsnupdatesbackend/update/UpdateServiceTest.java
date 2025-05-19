@@ -141,8 +141,17 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
         UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null);
         UpdateDto createdUpdate = updateService.putPost(user1.getUsername(), updatePostReqDto);
 
-        Assertions.assertDoesNotThrow(() -> updateService.deleteUpdateById(createdUpdate.id()));
+        Assertions.assertDoesNotThrow(() -> updateService.deleteUpdateById(user1.getUsername(), createdUpdate.id()));
         Assertions.assertThrows(EntityNotFoundException.class, () -> updateService.getUpdateById(createdUpdate.id()));
+    }
+
+    @Test
+    void cannotDeleteUpdate() {
+        String content = "Hello this is a test post.";
+        UpdatePostReqDto updatePostReqDto = new UpdatePostReqDto(content, null);
+        UpdateDto createdUpdate = updateService.putPost(user1.getUsername(), updatePostReqDto);
+
+        Assertions.assertThrows(AccessDeniedException.class, () -> updateService.deleteUpdateById(user2.getUsername(), createdUpdate.id()));
     }
 
     @Test
