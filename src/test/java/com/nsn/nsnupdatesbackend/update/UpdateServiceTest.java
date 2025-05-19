@@ -126,11 +126,12 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
         Assertions.assertFalse(createdUpdate.isEdited());
 
         String newContent = "Hello this is an edited post.";
-        UpdatePostReqDto updatePostReqDtoForEdited = new UpdatePostReqDto(newContent, null);
-        UpdateDto editedUpdate = updateService.editUpdate(createdUpdate, updatePostReqDtoForEdited);
+        UpdatePostReqDto updatePostReqDtoForEdited = new UpdatePostReqDto(newContent, createdUpdate.id());
+        UpdateDto editedUpdate = updateService.putPost(user1.getUsername(), updatePostReqDtoForEdited);
 
         Assertions.assertEquals(createdUpdate.id(), editedUpdate.id());
         Assertions.assertEquals(newContent, editedUpdate.content());
+        Assertions.assertNotEquals(createdUpdate.content(), editedUpdate.content());
         Assertions.assertTrue(editedUpdate.isEdited());
     }
 

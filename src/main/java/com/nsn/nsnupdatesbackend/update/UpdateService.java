@@ -85,15 +85,6 @@ public class UpdateService {
         updateRepository.save(update);
     }
 
-    public UpdateDto editUpdate(UpdateDto updateDto, UpdatePostReqDto updatePostReqDto) {
-        Update update = getUpdateById(updateDto.id());
-        update.setIsEdited(true);
-        update.setContent(updatePostReqDto.content());
-        saveUpdate(update);
-
-        return updateMapper.toUpdateDto(update, false);
-    }
-
     public void deleteUpdate(Update update) {
         updateRepository.delete(update);
     }
