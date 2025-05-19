@@ -8,6 +8,8 @@ import com.nsn.nsnupdatesbackend.notification.NotificationService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.TransactionScoped;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -89,17 +91,27 @@ public class UpdateService {
         updateRepository.delete(update);
     }
 
+    @Transactional
     public void deleteUpdateById(String username, Integer id) {
-        AppUser user = appUserService.getUserByUsername(username);
         Update update = getUpdateById(id);
 
         if (update == null) {
             throw new EntityNotFoundException("Update with id " + id + " not found");
         }
 
+        AppUser user = appUserService.getUserByUsername(username);
+
         if (!update.getAppUser().equals(user)) {
             throw new AccessDeniedException("You do not have permission to delete this update");
         }
+
+        List<AppUser> usersWithUpdateInboxed = update.getInboxes();
+
+        for (AppUser userWithUpdateInboxed : usersWithUpdateInboxed) {
+            userWithUpdateInboxed.getInbox().remove(update);
+        }
+
+        appUserService.saveAll(usersWithUpdateInboxed);
 
         updateRepository.delete(update);
     }

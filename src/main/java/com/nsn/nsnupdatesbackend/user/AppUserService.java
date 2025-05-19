@@ -92,6 +92,10 @@ public class AppUserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    public void saveAll(List<AppUser> users) {
+        userRepository.saveAll(users);
+    }
+
     public void deleteUser(AppUser user) {
         userRepository.delete(user);
     }

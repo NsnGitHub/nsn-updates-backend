@@ -34,13 +34,16 @@ public class Update {
     @JsonManagedReference
     private List<Like> likes;
 
-    @ManyToMany(mappedBy = "inboxedUpdates", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "inboxedUpdates", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JsonIgnore
     private List<AppUser> inboxes;
 
-    @OneToMany(mappedBy = "update")
+    @OneToMany(mappedBy = "update", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Notification> notifications;
 
-    @OneToMany(mappedBy = "updateForBatch")
+    @OneToMany(mappedBy = "updateForBatch", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<NotificationBatch> notificationBatches;
 
     private boolean isEdited;
@@ -109,5 +112,9 @@ public class Update {
 
     public boolean hasUserLiked(AppUser user) {
         return likes.stream().anyMatch(like -> like.getAppUser().getId().equals(user.getId()));
+    }
+
+    public List<AppUser> getInboxes() {
+        return inboxes;
     }
 }
