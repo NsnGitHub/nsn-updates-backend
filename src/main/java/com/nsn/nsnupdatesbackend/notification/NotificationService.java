@@ -157,9 +157,13 @@ public class NotificationService {
             throw new EntityNotFoundException("Notification with id " + id + " not found");
         }
 
+        if (!notification.getIsSentToUser()) {
+            throw new EntityNotFoundException("Notification has not been batched by service yet");
+        }
+
         AppUser user = appUserService.getUserByUsername(username);
 
-        if (notification.getAppUser() != user) {
+        if (!notification.getAppUser().equals(user)) {
             throw new AccessDeniedException("You are not allowed to mark this notification as read");
         }
 

@@ -1,6 +1,7 @@
 package com.nsn.nsnupdatesbackend.notification;
 
 import com.nsn.nsnupdatesbackend.AbstractBaseTestContainer;
+import com.nsn.nsnupdatesbackend.config.PaginationConfig;
 import com.nsn.nsnupdatesbackend.enums.ENotificationType;
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
 import com.nsn.nsnupdatesbackend.followrequest.FollowRequestService;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +37,9 @@ public class NotificationServiceTest extends AbstractBaseTestContainer {
 
     @Autowired
     private FollowRequestService followRequestService;
+
+    @Autowired
+    private PaginationConfig paginationConfig;
 
     private static final AppUser user1 = new AppUser("nsntest1", "nsntest1", "nsntest1@test.com",
             "password");
@@ -78,6 +83,36 @@ public class NotificationServiceTest extends AbstractBaseTestContainer {
 
         Assertions.assertEquals(0, notificationService.getNotificationsForUserWithUsername(user1.getUsername()).size());
         Assertions.assertEquals(1, notificationService.getNotificationsForUserWithUsername(user2.getUsername()).size());
+        Assertions.assertEquals(1, notificationService.getUnreadNotificationCountDto(user2.getUsername()).unreadFollowCount());
+
+        Notification notification2 = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.empty());
+        notificationService.sendNotification(notification2);
+
+        Assertions.assertEquals(0, notificationService.getNotificationsForUserWithUsername(user1.getUsername()).size());
+        Assertions.assertEquals(2, notificationService.getNotificationsForUserWithUsername(user2.getUsername()).size());
+        Assertions.assertEquals(1, notificationService.getUnreadNotificationCountDto(user2.getUsername()).unreadUpdateCount());
+    }
+
+    @Test
+    void canMarkNotificationsAsRead() {
+        Notification notification = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.empty());
+        notificationService.sendNotification(notification);
+
+        Assertions.assertEquals(1, notificationService.getUnreadNotificationCountDto(user2.getUsername()).unreadUpdateCount());
+
+        notificationService.readNotification(user2.getUsername(), notification.getId());
+
+        Assertions.assertEquals(0, notificationService.getUnreadNotificationCountDto(user2.getUsername()).unreadUpdateCount());
+    }
+
+    @Test
+    void cannotMarkNotificationsAsReadIfNotSpecifiedUser() {
+        Notification notification = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.empty());
+        notificationService.sendNotification(notification);
+
+        Assertions.assertEquals(1, notificationService.getUnreadNotificationCountDto(user2.getUsername()).unreadUpdateCount());
+
+        Assertions.assertThrows(AccessDeniedException.class, () -> notificationService.readNotification(user1.getUsername(), notification.getId()));
     }
 
     @Test
@@ -91,6 +126,7 @@ public class NotificationServiceTest extends AbstractBaseTestContainer {
         notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.of(update));
         notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.of(update));
 
+        // This would be called through a scheduleable
         notificationBatchService.sendBatchNotifications();
 
         // Normal notification stuff
@@ -124,4 +160,49 @@ public class NotificationServiceTest extends AbstractBaseTestContainer {
 
     }
 
+    @Test
+    public void canViewPaginatedNotifications1() {
+        Notification notification1 = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.empty());
+        Notification notification2 = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.empty());
+        Notification notification3 = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.empty());
+        Notification notification4 = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.empty());
+        Notification notification5 = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.empty());
+        Notification notification6 = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOWED_POSTED, Optional.empty());
+
+        notificationService.sendNotification(notification1);
+        notificationService.sendNotification(notification2);
+        notificationService.sendNotification(notification3);
+        notificationService.sendNotification(notification4);
+        notificationService.sendNotification(notification5);
+        notificationService.sendNotification(notification6);
+
+        final int PAGE0 = 0;
+        final int PAGE1 = 1;
+
+        Assertions.assertEquals(paginationConfig.getPageSize(), notificationService.getUpdateNotificationsForUsersWithUsernamePaginated(user2.getUsername(), PAGE0).size());
+        Assertions.assertEquals(6 % paginationConfig.getPageSize(), notificationService.getUpdateNotificationsForUsersWithUsernamePaginated(user2.getUsername(), PAGE1).size());
+    }
+
+    @Test
+    public void canViewPaginatedNotifications2() {
+        Notification notification1 = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOW_REQUEST, Optional.empty());
+        Notification notification2 = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOW_REQUEST, Optional.empty());
+        Notification notification3 = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOW_REQUEST, Optional.empty());
+        Notification notification4 = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOW_REQUEST, Optional.empty());
+        Notification notification5 = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOW_REQUEST, Optional.empty());
+        Notification notification6 = notificationService.createNotificationFromUserAndTarget(user1, user2, ENotificationType.NOTIFICATION_FOLLOW_REQUEST, Optional.empty());
+
+        notificationService.sendNotification(notification1);
+        notificationService.sendNotification(notification2);
+        notificationService.sendNotification(notification3);
+        notificationService.sendNotification(notification4);
+        notificationService.sendNotification(notification5);
+        notificationService.sendNotification(notification6);
+
+        final int PAGE0 = 0;
+        final int PAGE1 = 1;
+
+        Assertions.assertEquals(paginationConfig.getPageSize(), notificationService.getFollowNotificationsForUserWithUsernamePaginated(user2.getUsername(), PAGE0).size());
+        Assertions.assertEquals(6 % paginationConfig.getPageSize(), notificationService.getFollowNotificationsForUserWithUsernamePaginated(user2.getUsername(), PAGE1).size());
+    }
 }

@@ -77,6 +77,10 @@ public class Notification implements INotification, Serializable {
 
     public Notification() {}
 
+    public Integer getId() {
+        return id;
+    }
+
     public AppUser getAppUser() {
         return appUser;
     }
