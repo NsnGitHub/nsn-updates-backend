@@ -2,6 +2,7 @@ package com.nsn.nsnupdatesbackend.notification;
 
 import com.nsn.nsnupdatesbackend.enums.ENotificationType;
 import com.nsn.nsnupdatesbackend.notificationbatch.NotificationBatchService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +54,12 @@ public class NotificationController {
     @GetMapping("/unread/count")
     public ResponseEntity<NotificationCountDto> getUnreadFollowNotifications(Principal principal) {
         return ResponseEntity.ok().body(notificationService.getUnreadNotificationCountDto(principal.getName()));
+    }
+
+    @PostMapping("/read")
+    public ResponseEntity<?> readNotification(Principal principal, @Valid @RequestBody NotificationRequestDto notificationRequestDto) {
+        notificationService.readNotification(principal.getName(), notificationRequestDto.id());
+        return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAuthority('ROLE_GUEST')")

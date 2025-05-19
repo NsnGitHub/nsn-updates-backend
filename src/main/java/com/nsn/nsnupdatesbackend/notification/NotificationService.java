@@ -6,10 +6,12 @@ import com.nsn.nsnupdatesbackend.notificationwebsocket.NotificationWebSocketServ
 import com.nsn.nsnupdatesbackend.update.Update;
 import com.nsn.nsnupdatesbackend.user.AppUser;
 import com.nsn.nsnupdatesbackend.user.AppUserService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -145,6 +147,23 @@ public class NotificationService {
 
     public void sendNotification(Notification notification) {
         notification.setIsSentToUser(true);
+        notificationRepository.save(notification);
+    }
+
+    public void readNotification(String username, Integer id) {
+        Notification notification = notificationRepository.getNotificationById(id);
+
+        if (notification == null) {
+            throw new EntityNotFoundException("Notification with id " + id + " not found");
+        }
+
+        AppUser user = appUserService.getUserByUsername(username);
+
+        if (notification.getAppUser() != user) {
+            throw new AccessDeniedException("You are not allowed to mark this notification as read");
+        }
+
+        notification.setIsRead(true);
         notificationRepository.save(notification);
     }
 }
