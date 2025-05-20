@@ -179,8 +179,8 @@ public class NotificationServiceTest extends AbstractBaseTestContainer {
         final int PAGE0 = 0;
         final int PAGE1 = 1;
 
-        Assertions.assertEquals(paginationConfig.getPageSize(), notificationService.getUpdateNotificationsForUsersWithUsernamePaginated(user2.getUsername(), PAGE0).size());
-        Assertions.assertEquals(6 % paginationConfig.getPageSize(), notificationService.getUpdateNotificationsForUsersWithUsernamePaginated(user2.getUsername(), PAGE1).size());
+        Assertions.assertEquals(5, notificationService.getUpdateNotificationsForUsersWithUsernamePaginated(user2.getUsername(), PAGE0).size());
+        Assertions.assertEquals(1, notificationService.getUpdateNotificationsForUsersWithUsernamePaginated(user2.getUsername(), PAGE1).size());
     }
 
     @Test
@@ -202,7 +202,7 @@ public class NotificationServiceTest extends AbstractBaseTestContainer {
         final int PAGE0 = 0;
         final int PAGE1 = 1;
 
-        Assertions.assertEquals(paginationConfig.getPageSize(), notificationService.getFollowNotificationsForUserWithUsernamePaginated(user2.getUsername(), PAGE0).size());
-        Assertions.assertEquals(6 % paginationConfig.getPageSize(), notificationService.getFollowNotificationsForUserWithUsernamePaginated(user2.getUsername(), PAGE1).size());
+        Assertions.assertEquals(5, notificationService.getFollowNotificationsForUserWithUsernamePaginated(user2.getUsername(), PAGE0).size());
+        Assertions.assertEquals(1, notificationService.getFollowNotificationsForUserWithUsernamePaginated(user2.getUsername(), PAGE1).size());
     }
 }
