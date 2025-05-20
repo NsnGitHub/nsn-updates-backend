@@ -1,6 +1,7 @@
 package com.nsn.nsnupdatesbackend.update;
 
 import com.nsn.nsnupdatesbackend.AbstractBaseTestContainer;
+import com.nsn.nsnupdatesbackend.config.PaginationConfig;
 import com.nsn.nsnupdatesbackend.enums.EPrivacySetting;
 import com.nsn.nsnupdatesbackend.follow.FollowService;
 import com.nsn.nsnupdatesbackend.user.AppUser;
@@ -18,6 +19,9 @@ public class UpdateServiceTest extends AbstractBaseTestContainer {
 
     @Autowired
     private UpdateService updateService;
+
+    @Autowired
+    private PaginationConfig paginationConfig;
 
     /**
      * Creating objects here to be used in multiple tests.

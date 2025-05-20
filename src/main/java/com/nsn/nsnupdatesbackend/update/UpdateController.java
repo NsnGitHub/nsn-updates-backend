@@ -39,7 +39,7 @@ public class UpdateController {
     public ResponseEntity<?> putUpdate(Principal principal, @Valid @RequestBody UpdatePostReqDto updatePostReqDto) {
         UpdateDto updateDto = updateService.putPost(principal.getName(), updatePostReqDto);
         if (updatePostReqDto.id() == null) {
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            return ResponseEntity.status(HttpStatus.CREATED).body(updateDto);
         }
         return ResponseEntity.ok().body(updateDto);
     }
@@ -61,9 +61,8 @@ public class UpdateController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteUpdate(Principal principal, @Valid @RequestBody UpdatePostReqDto updatePostReqDto) {
-        updateService.deleteUpdateById(principal.getName(), updatePostReqDto.id());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<UpdateDto> deleteUpdate(Principal principal, @Valid @RequestBody UpdatePostReqDto updatePostReqDto) {
+        return ResponseEntity.ok().body(updateService.deleteUpdateById(principal.getName(), updatePostReqDto.id()));
     }
 
 }

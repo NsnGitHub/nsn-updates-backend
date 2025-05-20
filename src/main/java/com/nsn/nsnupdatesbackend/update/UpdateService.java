@@ -92,7 +92,7 @@ public class UpdateService {
     }
 
     @Transactional
-    public void deleteUpdateById(String username, Integer id) {
+    public UpdateDto deleteUpdateById(String username, Integer id) {
         Update update = getUpdateById(id);
 
         if (update == null) {
@@ -113,7 +113,11 @@ public class UpdateService {
 
         appUserService.saveAll(usersWithUpdateInboxed);
 
+        UpdateDto returnedUpdate = updateMapper.toUpdateDto(update, false);
+
         updateRepository.delete(update);
+
+        return returnedUpdate;
     }
 
     @Async
