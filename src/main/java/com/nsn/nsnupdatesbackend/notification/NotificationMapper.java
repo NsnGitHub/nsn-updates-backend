@@ -34,6 +34,7 @@ public class NotificationMapper {
         }
 
         return new NotificationDto(
+                notification.getId(),
                 appUserDto,
                 updateDto,
                 notification.getNotificationType(),

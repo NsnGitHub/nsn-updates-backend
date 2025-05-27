@@ -7,6 +7,7 @@ import com.nsn.nsnupdatesbackend.user.AppUserDto;
 import java.time.ZonedDateTime;
 
 public record NotificationDto(
+        Integer id,
         AppUserDto actorUser,
         UpdateDto update,
         ENotificationType eNotificationType,
