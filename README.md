@@ -1,3 +1,11 @@
+# 2026 Update
+
+I eventually abandoned this personal project after running into architectural issues with authentication. I originally designed the application around stateless authentication, but when I later wanted to add WebSocket functionality, I ran into challenges because parts of the new functionality required a more stateful approach to authentication. Trying to work around this led to increasing amounts of refactoring and changes to the existing architecture.
+
+This experience made me realize that I hadn't planned the project architecture and requirements thoroughly enough from the beginning. As I continued adding features, I often had to modify or rethink earlier decisions, which made the project increasingly difficult to maintain.
+
+The biggest lesson I took away is the importance of planning the core architecture and identifying major technical requirements before starting implementation. In future projects, I want to spend more time designing the system upfront, especially around areas like authentication, communication patterns, and scalability. This should help me make better architectural decisions early on and avoid having new features force major changes later.
+
 # Feature Design
 
 ## Notifications
